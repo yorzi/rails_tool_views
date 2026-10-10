@@ -2,6 +2,8 @@
 
 Source: pinned 04_FEATURE_MVP_SPECS and SEC-01..18. LOCAL is not CI, PROVIDER, USER or BUSINESS proof. Read ../evidence/VALIDATION.md for exact commands and limits.
 
+V0 evidence is retained as the original milestone record. The full suite now includes V1 regression coverage; see [V1 acceptance](08_V1_ACCEPTANCE.md) and [current validation](../evidence/V1_VALIDATION.md). No V1 evidence closes the external gates below.
+
 | AC | Evidence | Local result / boundary |
 |---|---|---|
 | FR-01-AC-01 | registry_test.rb; privacy_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |

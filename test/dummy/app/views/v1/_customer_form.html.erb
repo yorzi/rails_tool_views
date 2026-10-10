@@ -1,0 +1,20 @@
+<% scope = v1_scope(surface) %>
+<h2>Review proposed customer</h2>
+<% if state["customer_id"] %>
+  <% record = DemoCustomer.find_by!(id: state.fetch("customer_id"), tenant_ref: scope.tenant) %>
+  <p><strong><%= record.name %></strong></p><p><%= record.email %></p><p class="v1-badge">Created in <%= scope.tenant %></p>
+<% else %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= v1_action_fields(surface, "submit_form") %>
+    <fieldset aria-describedby="<%= surface.dom_id %>_status<%= error ? " #{surface.dom_id}_error" : "" %>">
+      <legend>Correct the proposed fields before creating a record</legend>
+      <div class="v1-field"><%= label_tag "#{surface.dom_id}_name", "Customer name" %>
+        <%= text_field_tag "arguments[name]", v1_value(surface, error, :name), **v1_input_attributes(surface, error, :name), maxlength: 120 %>
+        <%= v1_error_message(surface, error, :name) %></div>
+      <div class="v1-field"><%= label_tag "#{surface.dom_id}_email", "Customer email" %>
+        <%= text_field_tag "arguments[email]", v1_value(surface, error, :email), **v1_input_attributes(surface, error, :email), maxlength: 200, inputmode: "email" %>
+        <%= v1_error_message(surface, error, :email) %></div>
+      <button type="submit" data-turbo-submits-with="Creating…">Create customer</button>
+    </fieldset>
+  <% end %>
+<% end %>

@@ -1,16 +1,16 @@
 # Current work
 
-Completed: local v0 from the pinned specs, authorized by the owner on 2026-10-10. Work ID: WORK-20261010-01.
+Completed: local v1, explicitly authorized by Andy after v0. Human inspection now pending after v1 completion. Work ID: WORK-20261010-02; base commit 57edc3e.
 
-- [x] Read source contract, security requirements, UX, gates and local context.
-- [x] Record source REVIEW status without self-approving formal gates.
-- [x] Execute bounded upstream loader/package probes and record ADR; full Gate V remains partial.
-- [x] S1 registry/render/present/action/restore with negative/security tests.
-- [x] S2 actual RubyLLM optional tool integration with offline provider fixture.
-- [x] S3 structured, replay-safe continuation and failure recovery.
-- [x] Browser/mobile/keyboard and packaged-install verification.
-- [x] Finish acceptance/human/operations docs and stop temporary processes.
+- [x] Read pinned P1 / UC-02..05 and Demo B/C contracts; inspect v0 runtime and acceptance.
+- [x] Extend generic validation feedback and action announcements without domain logic in core.
+- [x] UC-02 customer form: proposed fields, corrected input, field errors, protected attributes denied, one creation.
+- [x] Demo B / UC-03/05: scoped query/resolver, two roles/two tenants, account view, trusted assignment, draft/review and explicit local outbox.
+- [x] Demo C / UC-04: host artifact versions, deterministic edit/accept/export, explicit regeneration, conflict and recovery.
+- [x] Core + v1 workflow + optional SDK offline tests, separate-process durability, packaged install and version matrix.
+- [x] Browser keyboard/mobile/restart/error verification and inspectable docs/screenshots.
+- [x] Finalize one local main commit with ledger linkage; task-owned services stopped and port verified empty.
 
-Commit validation is recorded in the Progress Ledger. Next work requires a separate release/adoption decision; see ../operations/02_RELEASE_CHECKLIST.md. No local implementation item remains active.
+No live communications, push/publication, generated code, protocol/tree support or UC-06..09. Existing external release gates remain distinct from local v1 completion.
 
-Pre-flight: expected FR-01..08/NFR-01..06; current repository initially empty. Reversible local implementation choices; no product expansion. Human comprehension impact: system-level. Schema migration adds only namespaced tables; no existing data. Security tests cover default deny, actor/tenant/resource isolation, stale/replay/transport/source/target cases. Adapter failure follows commit; raw HTML/prompts are excluded from interaction and logs.
+Next: Andy inspects README/three workflows and the V1 acceptance/evidence records. Do not start speculative V2 or release work.

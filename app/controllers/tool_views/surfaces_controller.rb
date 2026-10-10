@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module ToolViews
-  class SurfacesController < ActionController::Base
+  # Preserve the host's authentication methods, filters and view helpers.
+  class SurfacesController < ::ApplicationController
     protect_from_forgery with: :exception
     wrap_parameters false
     before_action :limit_payload
@@ -87,7 +88,14 @@ module ToolViews
             render plain: error.message, status: error.status
           end
         end
-        format.html { render partial: "tool_views/surfaces/error", locals: { error: error }, status: error.status }
+        format.html do
+          begin
+            surface = ToolViews.restore(params[:id], scope: current_scope)
+            render html: ToolViews.render(surface, view_context: view_context, scope: current_scope, error: error), status: error.status
+          rescue ToolViews::Error
+            render partial: "tool_views/surfaces/error", locals: { error: error }, status: error.status
+          end
+        end
       end
     end
   end

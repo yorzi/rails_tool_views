@@ -4,6 +4,7 @@
   <p class="demo-lead">Present a view. Make a choice. Pick up where you left off.</p>
   <p class="demo-meta">Local v0 demo · no API key required · state saved in SQLite</p>
 </header>
+<p><%= link_to "Explore V1 business workflows", v1_support_path %></p>
 <nav class="demo-toolbar" aria-label="Present a component">
   <%= button_to "Present ChoiceCard", demo_present_path, params: { mode: "page" }, data: { turbo: false } %>
   <%= button_to "Present in chat", demo_present_path, params: { mode: "chat" }, data: { turbo: false } %>
@@ -30,4 +31,4 @@
     <p class="demo-note">Chat mode forwards the choice to a deterministic host callback. This demo does not contact an AI provider.</p>
   </aside>
 </div>
-<footer>ToolViews 0.1.0.pre.v0 · unpublished implementation draft</footer>
+<footer>ToolViews <%= ToolViews::VERSION %> · unpublished implementation draft</footer>

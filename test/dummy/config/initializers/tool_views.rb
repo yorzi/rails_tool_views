@@ -3,13 +3,14 @@ Rails.application.config.to_prepare do
   unless Rails.env.test?
     ToolViews.reset!
     ToolViews.configure do |config|
-      config.scope_resolver = ->(controller) {
-        actor = controller.session[:demo_actor]
-        actor && ToolViews::Scope.new(actor: actor, tenant: "local-demo")
-      }
+      config.scope_resolver = DemoV1::Session.method(:scope)
       # A deterministic host callback, never a simulated live provider claim.
       config.agent_adapter = ->(payload, delivery_key:) {
-        DemoEffect.find_or_create_by!(surface_id: delivery_key, value: "Continuation received: #{payload.fetch('values').fetch('key')}")
+        if payload.fetch("action") == "select_option"
+          DemoEffect.find_or_create_by!(surface_id: delivery_key, value: "Continuation received: #{payload.fetch('values').fetch('key')}")
+        else
+          DemoV1::Agent.new.call(payload, delivery_key: delivery_key)
+        end
       }
     end
     schema = {
@@ -30,5 +31,6 @@ Rails.application.config.to_prepare do
       } }
     ToolViews.register(:choice_card, description: "Select a workflow", schema: schema, partial: "choices/card", policy: policy, expose_to: [:agent], actions: { select_option: selection })
     ToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoCardComponent, policy: policy)
+    DemoV1::Registration.call
   end
 end

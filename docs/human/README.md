@@ -24,4 +24,4 @@ Recommended reading order:
 
 ## Evidence and operations
 
-For verification details use [Acceptance Matrix](../agent/06_ACCEPTANCE_MATRIX.md); for running, releasing and recovering use [Operations](../operations/README.md). Daily review starts with the most recent WORK section; use its `Work-ID:` trailer to find the exact commit.
+For verification details use [V0 Acceptance](../agent/06_ACCEPTANCE_MATRIX.md) and [V1 Acceptance](../agent/08_V1_ACCEPTANCE.md); for running, releasing and recovering use [Operations](../operations/README.md). Daily review starts with the most recent WORK section; use its `Work-ID:` trailer to find the exact commit.

@@ -12,3 +12,15 @@ Purpose: reuse a trusted host Partial/ViewComponent as a persistent interactive 
 8. Core-only and adapter tests, fresh packaged install, local Ruby/Rails matrix, CI configuration, human docs and progress ledger. Record live/provider/PostgreSQL/external/release gaps honestly.
 
 No ActionCable in v0: JSON and Turbo are the supported transports. Introducing broadcasting requires separate scoped subscription tests. Host domain state stays outside Surface. External side effects require host idempotency/outbox.
+
+## Completed local V1 extension — DELTA-002
+
+Promoted by explicit owner authorization after V0, without changing the external baseline or release gates:
+
+1. Generic bounded field feedback and authorized HTML/Turbo re-render; preserve host controller authentication/helpers.
+2. UC-02: host-owned CustomerForm and transactional create-once service with protected attributes denied.
+3. UC-03/05: independently scoped query/resolver/action policies, two roles/two tenants, account/assignment, explicit draft/review/confirmed local outbox.
+4. UC-04: host-owned immutable artifact versions, deterministic edit/accept/export, explicit regeneration, current domain-version guards and crash-safe host receipts.
+5. Full regression/SDK/matrix/package checks, separate-process durability, privacy and browser/mobile/restart/download evidence; update ADR/human/operations docs and local ledger-linked commit.
+
+Current acceptance is in 08_V1_ACCEPTANCE.md. UC-06..09 and external release/adoption work remain outside this completed implementation unit. The next action is Andy's manual inspection.

@@ -1,0 +1,37 @@
+<% scope = v1_scope(surface); staff = DemoV1::Access.staff(scope); artifact = DemoV1::Access.artifact(scope, props.fetch("artifact_id")) %>
+<h2><%= artifact.title %></h2>
+<p class="v1-badge">Artifact version <%= artifact.current_version %> · <%= artifact.accepted_version ? "Accepted" : "Draft" %></p>
+<p class="v1-preview"><%= artifact.current.body %></p>
+<% unless artifact.accepted_version %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= v1_action_fields(surface, "edit", artifact_version: artifact.current_version) %>
+    <div class="v1-field"><%= label_tag "#{surface.dom_id}_body", "Edit result" %>
+      <%= text_area_tag "arguments[body]", v1_value(surface, error, :body, artifact.current.body), **v1_input_attributes(surface, error, :body), maxlength: 4000, rows: 5 %>
+      <%= v1_error_message(surface, error, :body) %></div>
+    <button type="submit">Save human edit</button>
+  <% end %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= v1_action_fields(surface, "regenerate", artifact_version: artifact.current_version) %>
+    <div class="v1-field"><%= label_tag "#{surface.dom_id}_feedback", "Feedback for regeneration" %>
+      <%= text_field_tag "arguments[feedback]", v1_value(surface, error, :feedback, ""), **v1_input_attributes(surface, error, :feedback), maxlength: 500 %>
+      <%= v1_error_message(surface, error, :feedback) %></div>
+    <button type="submit" data-turbo-submits-with="Requesting regeneration…">Request regeneration</button>
+  <% end %>
+  <% if staff.role == "lead" %>
+    <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+      <%= v1_action_fields(surface, "accept", artifact_version: artifact.current_version) %><button type="submit">Accept current version</button>
+    <% end %>
+  <% else %><p class="demo-muted">A team lead must accept this result before export.</p><% end %>
+<% else %>
+  <p>Accepted version <%= artifact.accepted_version %> is locked. Start a new draft for further changes.</p>
+  <% if staff.role == "lead" %>
+    <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+      <%= v1_action_fields(surface, "export", artifact_version: artifact.current_version) %><button type="submit">Prepare text export</button>
+    <% end %>
+    <% export = DemoExport.find_by(artifact: artifact, artifact_version: artifact.accepted_version) %>
+    <% if export %><p><%= link_to "Download accepted result", main_app.v1_export_path(export), data: { turbo: false }, class: "v1-download" %></p><% end %>
+  <% end %>
+<% end %>
+<details class="v1-history"><summary>Recent version history</summary><ol>
+  <% artifact.versions.order(number: :desc).limit(5).each do |version| %><li>Version <%= version.number %> · <%= version.origin.humanize %></li><% end %>
+</ol></details>

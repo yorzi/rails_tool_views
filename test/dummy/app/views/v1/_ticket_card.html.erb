@@ -1,0 +1,44 @@
+<% scope = v1_scope(surface); staff = DemoV1::Access.staff(scope); ticket = DemoV1::Access.ticket(scope, props.fetch("ticket_id")); reply = ticket.reply %>
+<h2><%= ticket.subject %></h2>
+<p class="v1-badge"><%= ticket.status.capitalize %> · Ticket version <%= ticket.lock_version %></p>
+<p>Assignee: <strong><%= ticket.assignee&.name || "Unassigned" %></strong></p>
+<%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+  <%= v1_action_fields(surface, "view_account") %><button type="submit">View authorized account</button>
+<% end %>
+<% if state["account_id"] == ticket.customer_id %>
+  <div class="v1-account"><strong><%= ticket.customer.name %></strong><p><%= ticket.customer.email %></p></div>
+<% end %>
+<% if staff.role == "lead" %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= v1_action_fields(surface, "assign_ticket", ticket_version: ticket.lock_version) %>
+    <div class="v1-field"><%= label_tag "#{surface.dom_id}_assignee", "Assign to a member of this tenant" %>
+      <%= select_tag "arguments[assignee_id]", options_for_select(DemoStaff.where(tenant_ref: scope.tenant, active: true, role: %w[lead agent]).order(:name).map { |member| [member.name, member.id] }, ticket.assignee_id), id: "#{surface.dom_id}_assignee" %></div>
+    <button type="submit">Assign ticket</button>
+  <% end %>
+<% else %><p class="demo-muted">Team leads can assign tickets and queue reviewed replies.</p><% end %>
+<hr>
+<% unless reply && reply.status != "draft" %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= v1_action_fields(surface, "draft_reply", reply_version: reply&.lock_version || 0) %>
+    <button type="submit" data-turbo-submits-with="Requesting draft…"><%= reply ? "Request a new reply draft" : "Request reply draft" %></button>
+  <% end %>
+<% end %>
+<% if reply %>
+  <h3>Reply · <%= reply.status.capitalize %></h3>
+  <% if reply.status != "queued" %>
+    <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+      <%= v1_action_fields(surface, "review_reply", reply_version: reply.lock_version) %>
+      <div class="v1-field"><%= label_tag "#{surface.dom_id}_body", "Reply to review" %>
+        <%= text_area_tag "arguments[body]", v1_value(surface, error, :body, reply.body), **v1_input_attributes(surface, error, :body), maxlength: 2000, rows: 5 %>
+        <%= v1_error_message(surface, error, :body) %></div>
+      <button type="submit">Approve edited reply</button>
+    <% end %>
+    <% if staff.role == "lead" && reply.status == "reviewed" %>
+      <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+        <%= v1_action_fields(surface, "send_reply", reply_version: reply.lock_version) %>
+        <label class="v1-confirmation"><%= check_box_tag "arguments[confirmation]", "yes", false, required: true %>Queue this reviewed reply in the local outbox</label>
+        <button type="submit">Confirm local queue</button>
+      <% end %>
+    <% end %>
+  <% else %><p class="v1-preview"><%= reply.body %></p><p role="status">Queued locally. No external delivery service is configured.</p><% end %>
+<% else %><p class="demo-muted">No reply draft yet. Drafting does not send a message.</p><% end %>

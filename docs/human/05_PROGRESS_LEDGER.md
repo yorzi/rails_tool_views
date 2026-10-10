@@ -43,3 +43,37 @@ INTENTIONAL_DELTA DELTA-001：用户授权从 REVIEW 源规格完成本地 v0，
 **Follow-up / risk**
 
 正式开源发布尚需 license/name、独立安全/无障碍审查、远程 CI、真实 provider、PostgreSQL 和外部安装/对比试验。没有推送或发布。两次临时 Puma 已停止，3100 无监听，测试标签页已关闭。
+
+### WORK-20261010-02 — Build ToolViews v1 reference workflows
+
+**Date:** 2026-10-10–11
+**Baseline refs:** UC-02..05 / Demo B/C; FR-01..08 / SEC-01..18 reused as applicable; local V1-* acceptance
+**Change type:** feature / security / test / docs
+**Human comprehension impact:** system-level
+
+**What changed / why**
+
+按 Andy 明确要求，从已完成的 v0 继续到 v1，完工后才人工检查。新增三个 host 工作流：可修正与保留错误的客户表单；有角色/租户约束的客服查询、账户查看、分配、草拟、人工审阅和明确本地入队；不可变结果版本的编辑、接受、显式再生成、恢复和授权文本导出。核心新增受限 ValidationError、通用状态文案，并修正 Engine 控制器继承以保留 host 认证/helper。
+
+**Human review points**
+
+1. 执行 bin/demo，打开 /v1/customer，输入错误邮箱再修正；确认只有批准字段进入创建服务，成功后可另开新 draft。
+2. /v1/support 切换 North/South、lead/agent；检查有界查询和动作权限。请求草拟、编辑/批准、勾选本地 queue；确认 UI 没有把入队说成外部发送。
+3. /v1/review 编辑、显式再生成、接受、下载；已接受版本锁定，继续创作使用新 draft。按 README 的失败夹具步骤检查重启和重试。
+4. 对照 ADR 002、V1 acceptance/evidence，审阅业务版本、Surface revision 和续接回执三个边界。
+
+**Validation performed**
+
+核心/V1 60 tests / 468 assertions、eager load 在 Ruby 3.3.5 + Rails 7.2.3/8.1.4、Ruby 4.0.2 + Rails 8.1.4 全通过；真实 RubyLLM 2.1 SDK 离线夹具 6 tests / 44 assertions 通过。三个组合的安装后 fresh-host probe 通过，覆盖 host scope/helper 和字段反馈。独立进程并发/恢复、业务回滚、延迟续接冲突、已写入未确认的 receipt 重试、导出失败重试、SQL/参数过滤与 XSS 逃逸通过。浏览器实际表单修正、审阅/确认、角色/租户拒绝、360px、失败服务重启、续接重试、接受和下载检查通过。详见 ../evidence/V1_VALIDATION.md；本次 commit 检查 staged/range linkage 与 authored whitespace。
+
+**Architecture / data / security impact**
+
+新增九张 demo-only 主应用表；gem 仍只安装四张表，无核心 schema 迁移。组件 refs 不复制整条业务记录；查询/resolver/dispatch/下载分别重新授权。业务版本独立防止跨 Surface 过时写入；接受锁定不可变版本。业务续接和持久化 delivery receipt 同事务，外部去重仍由 host 负责。真实 provider 未调用、客服没有外部发送。参数/SQL 过滤补充 CSRF/表单值，host 示例补充 email/body/feedback；原生产隐私责任不被替代。
+
+**Living docs / alignment**
+
+README、CHANGELOG、SPEC_BASELINE、RE_ENTRY、SECURITY/CONTRIBUTING、ADR 002、V1 验收/证据、agent/human/operations 文档和实际架构图更新。docs/specs 未修改。INTENTIONAL_DELTA DELTA-002 记录本地 V1 授权，未伪造源规格 H2/C/R 或 release viability/外部采用证明。
+
+**Follow-up / risk**
+
+下一步是 Andy 人工检查。本地 V1_COMPLETE 不等于正式发布、生产认证、真实模型质量、PostgreSQL 或商业收益。发布缺口继续保留；没有推送。四次临时 Puma 已停止，3100 无监听，测试标签页关闭、viewport reset。

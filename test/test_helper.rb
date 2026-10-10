@@ -12,7 +12,8 @@ class ActiveSupport::TestCase
   include TestFixtures
   self.use_transactional_tests = false
   setup do
-    [ToolViews::AgentInteraction, ToolViews::ActionExecution, ToolViews::Presentation, ToolViews::Surface, DemoEffect].each(&:delete_all)
+    [ToolViews::AgentInteraction, ToolViews::ActionExecution, ToolViews::Presentation, ToolViews::Surface, DemoEffect,
+      DemoAgentReceipt, DemoOutboundReply, DemoReply, DemoTicket, DemoExport, DemoArtifactVersion, DemoArtifact, DemoCustomer, DemoStaff].each(&:delete_all)
     ToolViews.reset!
     register_card
   end

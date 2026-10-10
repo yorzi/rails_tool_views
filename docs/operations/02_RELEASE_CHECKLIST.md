@@ -1,11 +1,12 @@
 # Release gate — OPEN / NOT AUTHORIZED
 
-Candidate: local 0.1.0.pre.v0 on main, 2026-10-10. No public repository or RubyGem publication was performed. Local build authorization does not approve release.
+Candidate: local 0.2.0.pre.v1 on main, 2026-10-11. No public repository or RubyGem publication was performed. Local build authorization does not approve release. Andy's manual inspection follows V1 completion and remains pending.
 
 - [x] Offline core and optional adapter implementation/tests; negative/security coverage.
 - [x] Packaged install in fresh Rails host and namespaced migration.
 - [x] Local supported-version checks and mobile/keyboard/recovery evidence.
 - [x] Contribution/security/install/failure/retention documentation.
+- [x] Owner-authorized local UC-02..05 / Demo B/C, validation feedback and host version/recovery examples.
 - [ ] Human API/security/spec review and formal H2/C/R/adoption records.
 - [ ] Name/namespace and license/dependency attribution clearance.
 - [ ] Verified private security disclosure channel and maintenance policy.

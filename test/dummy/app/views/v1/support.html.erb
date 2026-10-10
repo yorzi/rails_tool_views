@@ -1,0 +1,16 @@
+<%= render "v1/navigation" %>
+<p class="v1-intro">The query returns display-safe records from this tenant. Every card and action resolves its domain record again.</p>
+<%= form_with url: v1_support_path, method: :get, data: { turbo: false }, class: "v1-search" do %>
+  <%= label_tag :q, "Find support tickets" %>
+  <%= text_field_tag :q, @query, maxlength: 80 %>
+  <button type="submit">Search tickets</button>
+<% end %>
+<div class="v1-record-list">
+  <% @tickets.each do |ticket| %>
+    <%= link_to v1_support_path(ticket_id: ticket.fetch("id")), class: "v1-record", data: { turbo: false } do %>
+      <strong><%= ticket.fetch("subject") %></strong><span><%= ticket.fetch("status").capitalize %> · Open ticket</span>
+    <% end %>
+  <% end %>
+  <% if @tickets.empty? %><p role="status">No matching tickets in this tenant.</p><% end %>
+</div>
+<%= tool_views_surface(@surface, scope: @scope) if @surface %>

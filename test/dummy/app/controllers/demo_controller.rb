@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class DemoController < ApplicationController
   def index
+    session.delete(:v1_identity)
     session[:demo_actor] ||= "demo:#{SecureRandom.uuid}"
     @scope = ToolViews::Scope.new(actor: session[:demo_actor], tenant: "local-demo")
     @surfaces = ToolViews::Surface.where(actor_ref: @scope.actor, tenant_ref: @scope.tenant).order(:created_at).map { |surface| ToolViews.restore(surface.id, scope: @scope) }

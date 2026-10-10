@@ -1,6 +1,6 @@
 # ToolViews
 
-Trusted Rails components as persistent, interactive presentation tools. **Local v0 implementation; unpublished.** The core works without RubyLLM, API keys or a provider. ToolViews does not generate executable UI code.
+Trusted Rails components as persistent, interactive presentation tools. **Local v1 implementation complete; unpublished.** The core works without RubyLLM, API keys or a provider. ToolViews does not generate executable UI code.
 
 ## Try the offline demo
 
@@ -14,6 +14,18 @@ bin/demo
 ```
 
 Present a ChoiceCard, choose a workflow, save, then refresh. “Present in chat” embeds the same component and forwards the selection to a deterministic host callback; it does not call an AI provider. The demo also renders a trusted ViewComponent and an empty-options state. Its actor is a session identifier for local demonstration, not a production authentication system. Refresh the action log to load new committed actions.
+
+V1 adds three host-owned reference workflows:
+
+| URL | Try this | Boundary |
+|---|---|---|
+| `/v1/customer` | Correct proposed name/email, submit invalid input, fix it, then create once | Only leads; tenant and privileged attributes come from the host |
+| `/v1/support` | Search/open a ticket, view its account, assign a member, request and edit a draft, approve and confirm the local queue | Two tenants/two roles; outbox only, no customer contact |
+| `/v1/review` | Save a human edit, explicitly request regeneration, accept the current version, prepare/download text | Immutable host versions; accepted content is locked |
+
+Switch the four synthetic identities to inspect role/tenant restrictions. This switch is an offline fixture, **not authentication suitable for production**. Proposed fields, draft replies and regenerated copy are deterministic fixtures; no live AI success is claimed. “Start another customer draft” and “Start a new result draft” create fresh reviewable work without overwriting completed records. The nine demo domain tables/services are in `test/dummy`, excluded from the gem runtime.
+
+To inspect continuation failure/retry, stop the normal server and run `TOOLVIEWS_DEMO_AGENT_FAILURE=1 bin/demo`. Request a draft or regeneration; saved state remains visible. Stop it, restart `bin/demo`, reload and choose “Retry AI follow-up”. Always stop the loopback server with Ctrl-C when finished.
 
 ## Install into a host Rails application
 
@@ -33,6 +45,8 @@ bin/rails db:migrate
 ```
 
 The installer adds four namespaced tables, a fail-closed initializer and a named Engine mount. The host owns the database, authentication, tenant resolution, policies, existing components and business services. The mount can use a different path; keep `as: :tool_views`.
+
+Engine controllers inherit the host's `ApplicationController`, preserving its authentication methods, filters and view helpers. An HTML-capable `ActionController::Base` host is required. Review inherited filters for the mounted routes and resolve identity from authenticated server state; request arguments must never choose actor/tenant.
 
 ## Register an existing Partial
 
@@ -79,6 +93,16 @@ ToolViews.register :choice_card,
 
 Partial locals are `props`, `state`, `surface` and `error`. A trusted ViewComponent registration uses `component: MyComponent` and receives validated props as keyword arguments (`MyComponent.new(**props.symbolize_keys)`). Wrap an existing component explicitly when it needs additional Surface state. Both renderers inherit host escaping/style; avoid `raw`/`html_safe` on untrusted props.
 
+For domain validation, a handler may raise:
+
+```ruby
+raise ToolViews::ValidationError.new(
+  fields: { email: "must be a valid email address" },
+  values: access.arguments.slice("name", "email"))
+```
+
+JSON receives `VALIDATION_FAILED`, `fields` and `values` with HTTP 422. Authorized HTML/Turbo re-render the trusted component with this `error`; the component maps fields to labeled controls and escapes retained values. The rejected request commits neither domain writes nor a new Surface revision/receipt. Return only approved, schema-validated form values, never private records or exception dumps. The [customer component](test/dummy/app/views/v1/_customer_form.html.erb) and [host workflows](test/dummy/app/services/demo_v1/workflows.rb) demonstrate this contract.
+
 ## Present, render and restore without AI
 
 ```ruby
@@ -91,7 +115,7 @@ restored = ToolViews.restore(surface.id, scope: scope)
 
 Surfaces use UUIDs and persist contract digest, props, UI state, revision and optional opaque context reference. A changed schema/renderer/action signature or version fails visibly; old state is preserved for host migration. Bump `version` when changing renderer/handler semantics not represented by the schema. Business records and agent transcripts are separate authorities.
 
-Core notifications contain metadata only. The Engine filters props, state, continuation payloads, receipts and action arguments from Rails parameter/SQL bind logs. Hosts must still project safe display fields and review their own application logs, retention and provider disclosure.
+Core notifications contain metadata only. The Engine filters props, state, continuation payloads, receipts, action arguments, validation values and CSRF tokens from Rails parameter/SQL bind logs. Hosts must still project safe display fields and review their own application logs, retention and provider disclosure. The reference host additionally filters email/body/feedback; these domain filters are not an exhaustive production privacy policy.
 
 POST `/tool_views/surfaces/:id/actions` with a session-resolved identity and CSRF token:
 
@@ -123,6 +147,8 @@ An action can return `Transition.new(state: ..., agent: true)`. `ToolViews.deliv
 
 `ToolViews::Adapters::RubyLLM::Continuation` takes `chat_resolver:` (authorized durable chat lookup) and `delivery:` (host durable deduplication around the supplied block). It uses `Chat#ask` for a new user turn; RubyLLM rejects pending tool calls. Core never fabricates tool messages. For slow work, set `auto_deliver = false`, keep `agent_adapter` configured, enqueue `ToolViews.deliver` from a host Active Job, and use the saved interaction ID. HTTP reports 202/pending while the action remains committed. The gem does not run a queue or poll your provider.
 
+The V1 host callback puts its business write and `DemoAgentReceipt` in one transaction keyed by `delivery_key`. A retry after a committed domain write but uncertain core acknowledgment does not create another version/reply. It rechecks current permissions and the domain version before applying an unseen request. This local receipt does not establish exactly-once delivery to an external provider. [TicketsQueryTool](examples/tickets_query_tool.rb) demonstrates a separate scoped RubyLLM query tool returning bounded display-safe references; query and presentation/action policies each authorize independently.
+
 ## Verification and compatibility
 
 ```sh
@@ -136,4 +162,4 @@ Tests block TCP connections; optional Chat tests use real RubyLLM 2.1 APIs with 
 
 A separately opt-in billable smoke is in `examples/provider_smoke.rb`; prepare the development DB first and load `OPENAI_API_KEY` from a secret manager or protected env file. Never put credentials in command arguments or inline exports. Run it only with explicit intent using `TOOLVIEWS_LIVE_SMOKE=1`; no live-provider success is claimed here.
 
-See [acceptance](docs/agent/06_ACCEPTANCE_MATRIX.md), [validation evidence](docs/evidence/VALIDATION.md), [operations](docs/operations/01_RUNBOOK.md), [security](SECURITY.md) and [release checklist](docs/operations/02_RELEASE_CHECKLIST.md). Name/license clearance, formal human review and external setup trials remain open. See `LICENSE_PENDING.md`; no publication is authorized.
+See [v0 acceptance](docs/agent/06_ACCEPTANCE_MATRIX.md), [v1 acceptance](docs/agent/08_V1_ACCEPTANCE.md), [v1 validation evidence](docs/evidence/V1_VALIDATION.md), [operations](docs/operations/01_RUNBOOK.md), [security](SECURITY.md) and [release checklist](docs/operations/02_RELEASE_CHECKLIST.md). Name/license clearance, formal human review and external setup trials remain open. See `LICENSE_PENDING.md`; no publication is authorized.

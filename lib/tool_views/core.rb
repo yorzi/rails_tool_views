@@ -10,10 +10,14 @@ module ToolViews
     attr_reader :code, :status
     MESSAGES = {
       "NOT_FOUND" => "This view is unavailable.", "NOT_ALLOWED" => "You do not have permission to use this view.",
-      "CONFLICT" => "This view changed. Refresh to continue.", "INVALID_ARGUMENTS" => "Choose an allowed option and try again.",
+      "CONFLICT" => "This view changed. Refresh to continue.", "INVALID_ARGUMENTS" => "Check the submitted values and try again.",
+      "VALIDATION_FAILED" => "Check the highlighted fields and try again.",
+      "ALREADY_SUBMITTED" => "This form has already been submitted.",
+      "ALREADY_ACCEPTED" => "This version was accepted. Create a new draft to make further changes.",
+      "REVIEW_REQUIRED" => "Review and approve this item before continuing.",
       "INCOMPATIBLE_COMPONENT" => "This view's contract changed. Ask the application owner to migrate or recreate it.",
       "RENDER_FAILED" => "This view cannot be rendered. Your saved state is preserved.",
-      "AGENT_UNAVAILABLE" => "Your choice was saved, but the AI follow-up could not complete.",
+      "AGENT_UNAVAILABLE" => "Your changes were saved, but the AI follow-up could not complete.",
       "IDEMPOTENCY_CONFLICT" => "This request identifier was already used for a different request."
     }.freeze
     def initialize(code, status: 400)
@@ -74,6 +78,24 @@ module ToolViews
     def reference(value, code: "INVALID_SCOPE")
       raise Error.new(code) unless value.is_a?(String) && !value.strip.empty? && value.bytesize <= 255
       value.dup.freeze
+    end
+  end
+
+  # Host-owned validation feedback. Only return approved, schema-validated form
+  # values; rejected requests do not change Surface or domain persistence.
+  class ValidationError < Error
+    attr_reader :fields, :values
+    def initialize(fields:, values: {})
+      @fields, @values = Data.bounded(fields), Data.bounded(values)
+      unless @fields.is_a?(Hash) && @values.is_a?(Hash) && @fields.all? { |key, message| key.match?(/\A[a-z][a-z0-9_]*\z/) && message.is_a?(String) && message.length <= 500 }
+        raise Error.new("INVALID_VALIDATION_FEEDBACK")
+      end
+      Data.freeze_deep(@fields)
+      Data.freeze_deep(@values)
+      super("VALIDATION_FAILED", status: 422)
+    end
+    def to_h
+      super.merge(fields: fields, values: values)
     end
   end
 

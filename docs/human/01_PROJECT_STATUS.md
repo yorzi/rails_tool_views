@@ -1,9 +1,11 @@
 # 项目状态
 
-2026-10-10：**V0_LOCAL_COMPLETE / UNPUBLISHED**。Demo A、UC-01/10 的本地实现与验证已完成。源规格仍为 REVIEW；用户通过本次 goal 明确授权本地构建，不代表正式 H2/C/R 或公共发布批准。
+2026-10-11：**V1_LOCAL_COMPLETE / UNPUBLISHED / HUMAN_REVIEW_PENDING**。Demo A、UC-01/10 和新授权的 UC-02..05、Demo B/C 均完成本地实现与验证。Andy 明确要求 v1 完成后才人工检查；当前进入这个检查点。源规格仍为 REVIEW，DELTA-001/002 记录本地授权，不代表正式 H2/C/R 或公共发布批准。
 
-本地证据：核心与可选 RubyLLM 测试；SQLite 独立进程恢复、并发/重放；打包后安装到全新 Rails host；桌面/360px 键盘、刷新、冲突与焦点检查。具体结果只记录在 ../evidence/VALIDATION.md 和 agent acceptance matrix。
+客户表单可修正字段、保留校验错误并只创建一次；工单查询和动作分别校验身份、角色、租户与关联记录，回复需人工审阅及明确本地入队；结果可编辑、显式再生成、锁定接受版本和授权导出。主应用保留九张演示业务表，gem 核心仍是四张表。
+
+本地证据：完整核心与可选 RubyLLM 离线测试；SQLite 独立进程恢复、并发/重放及业务回滚；打包后安装到全新 Rails host；三组本地版本；浏览器键盘、360px、失败续接重启/重试、接受和下载。具体命令/结果以 ../evidence/V1_VALIDATION.md 和 agent/08_V1_ACCEPTANCE.md 为准；v0 原始证据保留在 VALIDATION.md。
 
 发布未完成：名称/namespace 与许可证、独立安全审核、私密披露渠道、远程 CI、PostgreSQL、真实 provider、外部安装试用、实测替代方案接入成本。没有创建公共仓库、推送或发布 gem。
 
-下一步：人工检查 README 的 API 和服务端权限示例，决定是否进入正式开源发布阶段。不要把 v0 的技术可行性当作用户需求或市场验证。
+下一步：人工检查三个工作流及 README 的 API/服务端权限示例，决定是否进入正式开源发布阶段。没有推送或发布；所有任务临时服务已停止。不要把本地技术验证当作用户需求、外部接入收益或市场验证。

@@ -7,11 +7,11 @@ export default function toolViewsController(Controller) {
     connect() {
       this.start = () => {
         this.element.setAttribute("aria-busy", "true");
-        if (this.hasStatusTarget) this.statusTarget.textContent = "Saving selection…";
+        if (this.hasStatusTarget) this.statusTarget.textContent = "Saving changes…";
       };
       this.end = (event) => {
         this.element.removeAttribute("aria-busy");
-        if (!event.detail.success && this.hasStatusTarget) this.statusTarget.textContent = "Selection could not be saved. Review the message and try again.";
+        if (!event.detail.success && this.hasStatusTarget) this.statusTarget.textContent = "Changes could not be saved. Review the message and try again.";
       };
       this.beforeStream = (event) => {
         const stream = event.target;

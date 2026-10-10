@@ -1,18 +1,15 @@
-# Pre-flight record — WORK-20261010-01
+# Pre-flight record — WORK-20261010-02
 
-2026-10-10. Local v0 build authorized by the owner's goal.
+Base: 57edc3e, local v0 complete. Owner explicitly requests v1 before manual inspection.
 
-- [x] Read entrypoint, pinned baseline, build sequence, use cases, security contract and implementation documentation instructions.
-- [x] Identify FR-01..08, NFR-01..06, SEC-01..18; UC-01/10 only.
-- [x] Inspect initially empty implementation repository and pinned upstream source. ADR 001 records the bounded reuse decision.
-- [x] Expected: trusted existing Rails views with durable authorized actions and optional SDK integration. Observed before work: no runtime, tests or app.
-- [x] Record INTENTIONAL_DELTA: source REVIEW gates remain open while owner authorizes reversible local implementation. No formal approval was inferred.
-- [x] Classify technical choices as reversible; no new product scope, public repository, license grant or publication.
-- [x] Forecast system-level comprehension impact: registration, Surface, action receipts, continuation, scope, host responsibilities. Update human architecture/flows/status and README.
-- [x] Migration adds four namespaced tables in an empty local database; no existing production data or destructive migration.
-- [x] Plan fail-closed policies, tenant/actor isolation, trusted value checks, CSRF, payload limits, concurrency/replay and filtered logs.
-- [x] Plan labeled keyboard/mobile UI, empty/invalid/denied/conflict/pending/failure states and post-commit provider failure recovery.
-- [x] Plan core/adapter tests, independent-process durability, version matrix and packaged fresh-host installation. Live providers/external trials remain separate evidence.
-- [x] Keep generated code, arbitrary trees, ActionCable, other UC scenarios and SaaS features outside v0.
+- [x] Read entrypoint, baseline, lifecycle/progress protocol, P1 use cases, Demo B/C and security/state/continuation contracts.
+- [x] Expected: validated corrected forms, real scoped records/services, reviewed replies, versioned artifacts and deterministic vs explicit agent actions. Observed: v0 only ChoiceCard and generic runtime.
+- [x] Record DELTA-002: local v1 is authorized; external release evidence and owner review remain open.
+- [x] Technical scope: generic validation feedback/UI wording plus application-owned Rails examples. No SDK requirement, trees or provider semantics change.
+- [x] Plan host-only additive fixture tables; core persisted contracts remain compatible.
+- [x] Plan independent query/action authorization, role/tenant/association checks, protected input rejection, domain version checks and atomic receipts.
+- [x] Plan durable host continuation deduplication, delayed regeneration conflict and explicit local reply outbox; no external sending.
+- [x] Plan form field errors/input retention, keyboard/mobile/export behavior, current domain projection and recovery after restart.
+- [x] Tests and browser evidence precede the local completion claim; owner inspection follows completion.
 
-For later work, re-evaluate these items against the active change; this record does not approve future changes.
+Human comprehension impact: system-level. Update README, v1 acceptance/ADR, host architecture and workflows, runbook, project status and ledger.

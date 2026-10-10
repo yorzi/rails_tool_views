@@ -22,10 +22,12 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
   host = File.join(temporary, "host")
   FileUtils.mkdir_p(File.join(host, "config"))
   FileUtils.mkdir_p(File.join(host, "app", "views", "choices"))
+  FileUtils.mkdir_p(File.join(host, "app", "helpers"))
   FileUtils.mkdir_p(File.join(host, "storage"))
   File.write(File.join(host, "config", "database.yml"), "test:\n  adapter: sqlite3\n  database: #{host}/storage/test.sqlite3\n")
   File.write(File.join(host, "config", "routes.rb"), "Rails.application.routes.draw do\nend\n")
-  File.write(File.join(host, "app", "views", "choices", "_card.html.erb"), '<h2><%= props.fetch("title") %></h2><p><%= state["selected"] %></p>')
+  File.write(File.join(host, "app", "helpers", "packaged_helper.rb"), 'module PackagedHelper; def packaged_title(value); value; end; end')
+  File.write(File.join(host, "app", "views", "choices", "_card.html.erb"), '<h2><%= packaged_title(props.fetch("title")) %></h2><p><%= state["selected"] %></p>')
   probe = <<~'CODE'
     ENV["RAILS_ENV"] = "test"
     require "bundler/setup"
@@ -55,9 +57,12 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     Rails.application.reload_routes!
     ActiveRecord::MigrationContext.new(File.join(ARGV[1], "db", "migrate")).migrate
     class ApplicationController < ActionController::Base
+      def host_authenticated_scope
+        ToolViews::Scope.new(actor: "alice", tenant: "acme")
+      end
     end
     scope = ToolViews::Scope.new(actor: "alice", tenant: "acme")
-    ToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
+    ToolViews.configure { |config| config.scope_resolver = ->(controller) { controller.host_authenticated_scope } }
     schema = { type: "object", additionalProperties: false, required: ["title"], properties: { title: { type: "string" } } }
     params_schema = { type: "object", additionalProperties: false, required: ["key"], properties: { key: { type: "string", enum: ["a"] } } }
     ToolViews.register(:choice_card, description: "Packaged ChoiceCard", schema: schema, partial: "choices/card", policy: ->(_access) { true },
@@ -72,8 +77,17 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     client.post("/tool_views/surfaces/#{surface.id}/actions", params: { action: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-1" }, as: :json)
     raise "Installed action controller failed: #{client.response.body}" unless client.response.status == 200
     raise "Installed persistence failed" unless ToolViews.restore(surface.id, scope: scope).state["selected"] == "a"
+    ToolViews.register(:invalid_form, description: "Validation feedback", schema: schema, partial: "choices/card", policy: ->(_access) { true },
+      actions: { submit_form: { schema: params_schema, policy: ->(_access) { true }, handler: ->(access) {
+        raise ToolViews::ValidationError.new(fields: { key: "needs correction" }, values: access.arguments)
+      } } })
+    invalid = ToolViews.present(:invalid_form, props: { title: "Correct this form" }, scope: scope)
+    client.post("/tool_views/surfaces/#{invalid.id}/actions", params: { action: "submit_form", arguments: { key: "a" }, base_revision: 1, idempotency_key: "invalid-1" }, as: :json)
+    feedback = JSON.parse(client.response.body)
+    raise "Installed validation feedback failed" unless client.response.status == 422 && feedback["fields"] == { "key" => "needs correction" } && feedback["values"] == { "key" => "a" }
+    raise "Rejected form changed persistence" unless invalid.reload.revision == 1
     Rails::ZeitwerkChecker.check
-    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> escaped partial -> authorized HTTP action -> durable restore -> eager load"
+    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> HTTP action -> validation feedback -> durable restore -> eager load"
   CODE
   program = File.join(temporary, "probe.rb")
   File.write(program, probe)

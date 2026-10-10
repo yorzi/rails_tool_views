@@ -18,9 +18,10 @@ class PrivacyTest < ActiveSupport::TestCase
     assert_equal %i[component component_digest id props revision state], surface.snapshot.keys.sort
     refute_includes JSON.generate(events), "Choose a workflow"
     refute_includes JSON.generate(events), "alice"
-    filtered = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter({ "props" => "sensitive", "arguments" => "sensitive" })
+    filtered = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter({ "props" => "sensitive", "arguments" => "sensitive", "authenticity_token" => "csrf-fixture" })
     assert_equal "[FILTERED]", filtered["props"]
     assert_equal "[FILTERED]", filtered["arguments"]
+    assert_equal "[FILTERED]", filtered["authenticity_token"]
   ensure
     ActiveSupport::Notifications.unsubscribe(token) if token
   end
