@@ -1,0 +1,12 @@
+# Agent pre-flight
+- [ ] Read source map and latest human decisions; respect REVIEW gate.
+- [ ] Read pinned GenerativeUI/A2UI Rails source audit (supporting/05), then confirm current upstream docs/tag/SHA for RubyLLM/generative_ui/Hotwire and licenses; execute SP-09..12 before reuse decision.
+- [ ] Verify RubyLLM-free Registry/Surface architecture before adapter work.
+- [ ] Confirm current scenario is UC-01/10 before coding V0; B/C are V1 candidate demos and other UC-IDs exploratory.
+- [ ] State expected FR/AC IDs and tests for the current slice.
+- [ ] Preserve owner/tenant server authorization and state versioning.
+- [ ] Test model acknowledgment and browser Surface ref as separate outputs.
+- [ ] Include invalid/forged/duplicate/stale tool/action cases and SEC-13..18 across ownership, source-action binding, channel/DOM targeting and JSON/Turbo state parity.
+- [ ] Maintain implementation repo docs and one WORK ledger section per commit after Gate I.
+- [ ] Escalate name/license/API changes and any expanded V0 scope to human; no self-approval.
+- [ ] Report actual commands, errors, coverage gaps and untested claims.

@@ -1,0 +1,2 @@
+eval_gemfile "../Gemfile"
+gem "ruby_llm", ENV.fetch("RUBY_LLM_VERSION", "2.1.0")

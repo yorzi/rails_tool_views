@@ -1,0 +1,41 @@
+name: ToolViews
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: '3.3'
+            gemfile: Gemfile
+          - ruby: '3.3'
+            gemfile: gemfiles/rails72.gemfile
+          - ruby: '4.0'
+            gemfile: gemfiles/ruby4.gemfile
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec rake test zeitwerk:check
+      - run: bundle exec ruby scripts/package_smoke.rb
+      - run: node scripts/check-progress-ledger.mjs --range HEAD
+  adapter:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/adapter.gemfile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: bundle exec rake test:adapter

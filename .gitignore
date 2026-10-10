@@ -1,0 +1,13 @@
+/.bundle/
+/vendor/
+/pkg/
+/*.gem
+/tmp/
+/log/
+/test/dummy/log/*
+/test/dummy/tmp/*
+/test/dummy/storage/*
+/test/dummy/public/assets/
+/.env*
+!.env.example
+.DS_Store

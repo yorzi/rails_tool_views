@@ -1,0 +1,63 @@
+# frozen_string_literal: true
+# Only this explicitly required file loads RubyLLM.
+require "tool_views"
+require "ruby_llm"
+
+module ToolViews
+  module Adapters
+    module RubyLLM
+      class PresentUI < ::RubyLLM::Tool
+        description "Present one trusted interactive Rails component to the user."
+        def self.tool_name
+          "present_ui"
+        end
+        attr_reader :references
+        def initialize(keys:, scope:, context:, adapter_key: "ruby_llm")
+          @scope = scope
+          @context = Data.reference(context, code: "INVALID_CONTEXT")
+          @adapter_key = Data.reference(adapter_key, code: "INVALID_CORRELATION")
+          @components = ToolViews.registry.catalog(keys: keys, scope: scope)
+          raise Error.new("EMPTY_CATALOG") if @components.empty?
+          @references = []
+        end
+        def parameters_schema
+          { "type" => "object", "additionalProperties" => false, "required" => %w[component props],
+            "properties" => { "component" => { "type" => "string", "enum" => @components.map(&:key) },
+              "props" => { "anyOf" => @components.map { |component| component.schema.json }.uniq } } }
+        end
+        def execute(component:, props:, tool_call: nil)
+          definition = @components.find { |item| item.key == component.to_s }
+          raise Error.new("NOT_ALLOWED", status: 403) unless definition
+          raise Error.new("INCOMPATIBLE_COMPONENT", status: 422) unless ToolViews.registry.fetch(definition.key).digest == definition.digest
+          # A server-owned ToolCall is required for provider replay safety.
+          raise Error.new("MISSING_TOOL_CALL") unless tool_call.is_a?(::RubyLLM::ToolCall)
+          raise Error.new("INVALID_TOOL_CALL") unless tool_call.name == name
+          surface = ToolViews.present(definition.key, props: props, scope: @scope, context: @context,
+            correlation: { adapter: @adapter_key, call_id: tool_call.id, context: @context })
+          reference = { surface_id: surface.id, context_ref: @context }
+          @references << reference.freeze unless @references.include?(reference)
+          ToolViews.notify("adapter.tool_called", surface_id: surface.id, revision: surface.revision)
+          # The persisted presentation receipt preserves the original tool result.
+          presentation = ToolViews::Presentation.find_by!(surface_id: surface.id, adapter: @adapter_key, call_id: tool_call.id, context_ref: @context)
+          presentation.result.symbolize_keys
+        rescue Error => error
+          error.to_h
+        end
+      end
+
+      # Host owns durable chat lookup and delivery deduplication. This adapter
+      # only starts a supported user turn; RubyLLM prevents pending-tool mixing.
+      class Continuation
+        def initialize(chat_resolver:, delivery:)
+          @chat_resolver, @delivery = chat_resolver, delivery
+        end
+        def call(payload, delivery_key:)
+          @delivery.call(delivery_key) do
+            chat = @chat_resolver.call(payload.fetch("context_ref"))
+            chat.ask(JSON.generate(payload))
+          end
+        end
+      end
+    end
+  end
+end

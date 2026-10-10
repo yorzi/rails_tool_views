@@ -1,0 +1,274 @@
+{
+  "project": "ToolViews",
+  "spec_schema_version": "3.1",
+  "spec_baseline": {
+    "lifecycle": "REVIEW",
+    "version": "0.1.0-draft",
+    "date": "2026-10-10",
+    "source_repository": "yorzi/oddlyniche",
+    "source_folder": "toolviews",
+    "content_commit": null,
+    "authority": "product-intent-baseline",
+    "post_handoff_default": "read-mostly",
+    "commit_note": "Content commit C and registration R only after recorded H2 approval."
+  },
+  "implementation": {
+    "repository": null,
+    "handoff_status": "NOT_STARTED",
+    "handoff_date": null,
+    "authority_after_handoff": "current-implementation-reality",
+    "optional_local_spec_symlink": null
+  },
+  "entity": {
+    "legal_name": "Independent OSS initiative (ownership pending)",
+    "jurisdiction": "Not selected",
+    "form": "Open-source project",
+    "parent_site": null,
+    "compliance": "License and maintainer contact to confirm before release"
+  },
+  "domain": {
+    "primary": null,
+    "status": "Not needed for V0; revisit for documentation site",
+    "defensive": null
+  },
+  "tagline": "Your Rails components and trusted actions, now interactive tools for AI agents.",
+  "success_definition": "Offline Rails register/present/action/restore and optional AI present_ui roundtrip with independent developer evidence and security gates.",
+  "master_spec": {
+    "generated": true,
+    "generator": "scripts/build-master-spec.mjs",
+    "do_not_edit_by_hand": true
+  },
+  "documents": [
+    "00_README.md",
+    "01_BRAND_DOMAIN_POSITIONING.md",
+    "02_PRODUCT_VISION_PRD.md",
+    "03_CORE_MECHANIC_OR_METHODOLOGY_SPEC.md",
+    "04_FEATURE_MVP_SPECS.md",
+    "05_TECHNICAL_ARCHITECTURE.md",
+    "06_DESIGN_SYSTEM_AND_COPY.md",
+    "06A_VISUAL_SPEC_AND_PROTOTYPES.md",
+    "07_SEO_CONTENT_ARCHITECTURE.md",
+    "08_ANALYTICS_AND_EXPERIMENTATION.md",
+    "09_DEPLOYMENT_SECURITY_OPERATIONS.md",
+    "10_GROWTH_DISTRIBUTION_MONETIZATION.md",
+    "11_ROADMAP_EXECUTION_PLAN.md",
+    "12_AI_DEVELOPMENT_WORKFLOW.md",
+    "13_PRIVACY_ACCESSIBILITY_LEGAL.md",
+    "14_RESEARCH_SOURCES.md",
+    "15_BUSINESS_MODEL_AND_OPERATIONS.md",
+    "16_COLD_START_LAUNCH_PLAN.md",
+    "17_RISK_REGISTER.md",
+    "18_LONGEVITY_AND_CONTINUITY.md",
+    "19_PROJECT_HANDOFF_AND_IMPLEMENTATION_GOVERNANCE.md"
+  ],
+  "meta_documents": [
+    "SPEC_READINESS_CHECKLIST.md",
+    "REVIEW_FEEDBACK.md",
+    "DECISIONS.md",
+    "RE_ENTRY.md",
+    "SPEC_BASELINE_CHANGELOG.md",
+    "MASTER_SPEC.md"
+  ],
+  "review": {
+    "decision": "CHANGES_REQUIRED",
+    "reviewer": "AI-assisted initial desk review",
+    "date": "2026-10-10",
+    "report": "SPEC_REVIEW.md"
+  },
+  "coverage": [
+    {
+      "id": "01",
+      "status": "INCLUDED",
+      "paths": [
+        "01_BRAND_DOMAIN_POSITIONING.md"
+      ],
+      "reason": "OSS branding and gem-name clearance before release"
+    },
+    {
+      "id": "02",
+      "status": "INCLUDED",
+      "paths": [
+        "02_PRODUCT_VISION_PRD.md"
+      ],
+      "reason": "Falsifiable problem, users and technical alternatives"
+    },
+    {
+      "id": "03",
+      "status": "INCLUDED",
+      "paths": [
+        "03_CORE_MECHANIC_OR_METHODOLOGY_SPEC.md"
+      ],
+      "reason": "Registry/tool/action/surface domain invariants"
+    },
+    {
+      "id": "04",
+      "status": "INCLUDED",
+      "paths": [
+        "04_FEATURE_MVP_SPECS.md"
+      ],
+      "reason": "FR-01..08 with observable positive and negative acceptance"
+    },
+    {
+      "id": "05",
+      "status": "INCLUDED",
+      "paths": [
+        "05_TECHNICAL_ARCHITECTURE.md"
+      ],
+      "reason": "Rails engine, server-owned state and adapter isolation"
+    },
+    {
+      "id": "06",
+      "status": "INCLUDED",
+      "paths": [
+        "06_DESIGN_SYSTEM_AND_COPY.md",
+        "06A_VISUAL_SPEC_AND_PROTOTYPES.md",
+        "assets/design/README.md",
+        "prototype/README.md"
+      ],
+      "reason": "Rails UX, accessibility, visual reference and states"
+    },
+    {
+      "id": "07",
+      "status": "NOT_APPLICABLE",
+      "paths": [],
+      "reason": "No content-site SEO for OSS gem; revisit on docs site launch"
+    },
+    {
+      "id": "08",
+      "status": "INCLUDED",
+      "paths": [
+        "08_ANALYTICS_AND_EXPERIMENTATION.md"
+      ],
+      "reason": "External developer trials and performance/evidence metrics"
+    },
+    {
+      "id": "09",
+      "status": "INCLUDED",
+      "paths": [
+        "09_DEPLOYMENT_SECURITY_OPERATIONS.md"
+      ],
+      "reason": "Host-app security, operations, concurrency, packaging"
+    },
+    {
+      "id": "10",
+      "status": "INCLUDED",
+      "paths": [
+        "10_GROWTH_DISTRIBUTION_MONETIZATION.md"
+      ],
+      "reason": "OSS distribution rather than paid SaaS growth"
+    },
+    {
+      "id": "11",
+      "status": "INCLUDED",
+      "paths": [
+        "11_ROADMAP_EXECUTION_PLAN.md"
+      ],
+      "reason": "Phase 0, S1 to S4, GO/PIVOT/KILL checkpoints"
+    },
+    {
+      "id": "12",
+      "status": "INCLUDED",
+      "paths": [
+        "12_AI_DEVELOPMENT_WORKFLOW.md"
+      ],
+      "reason": "Agent implementation and dual authority process"
+    },
+    {
+      "id": "13",
+      "status": "INCLUDED",
+      "paths": [
+        "13_PRIVACY_ACCESSIBILITY_LEGAL.md"
+      ],
+      "reason": "Privacy, accessibility and legal/licensing checks"
+    },
+    {
+      "id": "14",
+      "status": "INCLUDED",
+      "paths": [
+        "14_RESEARCH_SOURCES.md"
+      ],
+      "reason": "Date-stamped upstream code/documentation evidence"
+    },
+    {
+      "id": "15",
+      "status": "INCLUDED",
+      "paths": [
+        "15_BUSINESS_MODEL_AND_OPERATIONS.md"
+      ],
+      "reason": "Maintenance costs and OSS operating model"
+    },
+    {
+      "id": "16",
+      "status": "INCLUDED",
+      "paths": [
+        "16_COLD_START_LAUNCH_PLAN.md"
+      ],
+      "reason": "Adoption, docs, issue feedback and public release gates"
+    },
+    {
+      "id": "17",
+      "status": "INCLUDED",
+      "paths": [
+        "17_RISK_REGISTER.md"
+      ],
+      "reason": "Architecture/adoption/security/licensing risk analysis"
+    },
+    {
+      "id": "18",
+      "status": "INCLUDED",
+      "paths": [
+        "18_LONGEVITY_AND_CONTINUITY.md"
+      ],
+      "reason": "Upgrades, migrations, deprecation and project continuity"
+    },
+    {
+      "id": "19",
+      "status": "INCLUDED",
+      "paths": [
+        "19_PROJECT_HANDOFF_AND_IMPLEMENTATION_GOVERNANCE.md"
+      ],
+      "reason": "Human-reviewed Q/H2/C/R and independent repo Gate I"
+    }
+  ],
+  "handoff_documents": [
+    "DOCUMENTATION_ARCHITECTURE.md",
+    "SPEC_COVERAGE.md",
+    "SPEC_REVIEW.md",
+    "REQUIREMENTS_TRACEABILITY.md",
+    "assets/design/README.md",
+    "assets/design/flow.mmd",
+    "prototype/README.md",
+    "human/01_PRODUCT_OVERVIEW.md",
+    "human/02_PROJECT_STATUS.md",
+    "human/03_PRODUCT_AND_LAUNCH_DECISIONS.md",
+    "human/04_AI_HANDOFF.md",
+    "human/05_DOCUMENTATION_READINESS.md",
+    "human/06_FINAL_HUMAN_APPROVAL.md",
+    "human/README.md",
+    "ai/00_ENTRYPOINT.md",
+    "ai/01_PRODUCT_CONTRACT.md",
+    "ai/02_DOMAIN_OR_METHODOLOGY_CONTRACT.md",
+    "ai/03_UX_IMPLEMENTATION_CONTRACT.md",
+    "ai/04_TECHNICAL_BUILD_CONTRACT.md",
+    "ai/05_BUILD_SEQUENCE_AND_ACCEPTANCE.md",
+    "ai/06_SOURCE_OF_TRUTH_MAP.md",
+    "ai/07_DOCUMENT_STATUS_REGISTRY.md",
+    "ai/08_AGENT_PRE_FLIGHT_CHECKLIST.md",
+    "ai/README.md",
+    "supporting/01_COMPONENT_TOOL_CONTRACT.md",
+    "supporting/02_SURFACE_ACTION_PROTOCOL.md",
+    "supporting/03_ECOSYSTEM_SPIKE.md",
+    "supporting/04_SECURITY_VERIFICATION.md",
+    "supporting/05_UPSTREAM_SOURCE_GAP_ANALYSIS.md",
+    "supporting/06_USE_CASES_AND_REFERENCE_DEMOS.md"
+  ],
+  "human_approval": {
+    "required": true,
+    "status": "PENDING",
+    "reviewer": null,
+    "date": null,
+    "reviewed_candidate_commit": null,
+    "checklist": "human/06_FINAL_HUMAN_APPROVAL.md",
+    "note": "Only a human may approve final candidate Q."
+  }
+}

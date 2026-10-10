@@ -1,0 +1,4 @@
+# Spec baseline changelog
+- **2026-10-10 / 0.1.0-draft / REVIEW:** Initial intent pack for independent open-source Rails UI Components as interactive tools. No frozen baseline, human Q/H2 approval or content C/registration R. Baseline must be registered only after real review and approval.
+- **2026-10-10 / REVIEW addendum:** Pinned source-level GenerativeUI vs A2UI Rails gap audit; conditional reuse options; tightened server-only policy, Surface state transitions and cross-format/channel boundary; SP-09..12 and SEC-13..18 added. Remains 0.1.0-draft / CHANGES_REQUIRED, no frozen Q/C/R.
+- **2026-10-10 / REVIEW addendum:** Owner selected **ToolViews** name; renamed Specs folder from `viewtools/` to `toolviews/`, Ruby API name intent set to `ToolViews`, gem slug `toolviews` pending availability check; added UC-01..10 and Demo A/B/C hypothesis map with V0 scope guardrails. No Gate H2, Q/C/R or published gem.

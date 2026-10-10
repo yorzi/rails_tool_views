@@ -1,0 +1,33 @@
+<header class="demo-header">
+  <p class="demo-eyebrow">RAILS COMPONENTS, TRUSTED ACTIONS</p>
+  <h1>ToolViews</h1>
+  <p class="demo-lead">Present a view. Make a choice. Pick up where you left off.</p>
+  <p class="demo-meta">Local v0 demo · no API key required · state saved in SQLite</p>
+</header>
+<nav class="demo-toolbar" aria-label="Present a component">
+  <%= button_to "Present ChoiceCard", demo_present_path, params: { mode: "page" }, data: { turbo: false } %>
+  <%= button_to "Present in chat", demo_present_path, params: { mode: "chat" }, data: { turbo: false } %>
+  <%= button_to "Render ViewComponent", demo_present_path, params: { mode: "component" }, data: { turbo: false } %>
+  <%= button_to "Show empty state", demo_present_path, params: { mode: "empty" }, data: { turbo: false } %>
+</nav>
+<div class="demo-grid">
+  <section aria-label="Persistent views">
+    <% if @surfaces.empty? %>
+      <div class="demo-empty"><h2>Your first interactive view</h2><p>Present a ChoiceCard above. Select a workflow, then refresh to see the saved selection.</p></div>
+    <% end %>
+    <% @surfaces.each do |surface| %>
+      <article class="demo-presentation">
+        <% if surface.context_ref == "demo-chat" %><p class="demo-chat-label">Assistant · select a workflow to continue</p><% end %>
+        <%= tool_views_surface(surface, scope: @scope) %>
+      </article>
+    <% end %>
+  </section>
+  <aside class="demo-log" aria-label="Action log">
+    <h2>Action log</h2><p>Committed Rails actions, loaded on this page visit.</p>
+    <% if @effects.empty? %><p class="demo-muted">No selections loaded yet.</p><% end %>
+    <%= link_to "Refresh action log", root_path, data: { turbo: false } %>
+    <ol><% @effects.each do |effect| %><li><strong>Selection saved</strong><span><%= effect.value %></span></li><% end %></ol>
+    <p class="demo-note">Chat mode forwards the choice to a deterministic host callback. This demo does not contact an AI provider.</p>
+  </aside>
+</div>
+<footer>ToolViews 0.1.0.pre.v0 · unpublished implementation draft</footer>

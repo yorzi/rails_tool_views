@@ -1,0 +1,20 @@
+<h2><%= props.fetch("title") %></h2>
+<% if props.fetch("options").empty? %>
+  <p role="status">No options are available.</p>
+<% else %>
+  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+    <%= hidden_field_tag :action_name, "select_option" %>
+    <%= hidden_field_tag :base_revision, surface.revision %>
+    <%= hidden_field_tag :idempotency_key, SecureRandom.uuid %>
+    <fieldset aria-describedby="<%= surface.dom_id %>_status<%= " #{surface.dom_id}_error" if local_assigns[:error] %>">
+      <legend>Choose a workflow</legend>
+      <% props.fetch("options").each_with_index do |option, index| %>
+        <label class="demo-option" for="<%= surface.dom_id %>_choice_<%= index %>">
+          <%= radio_button_tag "arguments[key]", option.fetch("key"), state["selected"] == option["key"], id: "#{surface.dom_id}_choice_#{index}", required: true %>
+          <span><%= option.fetch("label") %></span>
+        </label>
+      <% end %>
+    </fieldset>
+    <button type="submit" data-turbo-submits-with="Saving…">Save selection</button>
+  <% end %>
+<% end %>

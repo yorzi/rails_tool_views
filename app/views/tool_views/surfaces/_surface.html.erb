@@ -1,0 +1,19 @@
+<section id="<%= surface.dom_id %>" class="tool-views-surface" data-controller="tool-views" data-tool-views-revision-value="<%= surface.revision %>" aria-label="Interactive choice" aria-describedby="<%= surface.dom_id %>_status">
+  <%= tool_views_body(surface, definition, error: error) %>
+  <% if error %>
+    <p id="<%= surface.dom_id %>_error" role="alert" tabindex="-1" data-tool-views-target="error"><%= error.message %></p>
+  <% end %>
+  <p id="<%= surface.dom_id %>_status" role="status" aria-live="polite" tabindex="-1" data-tool-views-target="status">
+    <% if surface.state["selected"] %>Selection saved: <%= surface.state["selected"] %>.<% else %>View ready.<% end %>
+  </p>
+  <% interaction = surface.agent_interactions.order(:id).last %>
+  <% if interaction && interaction.status != "skipped" %>
+    <p role="status"><%= { "pending" => "AI follow-up pending.", "delivering" => "AI follow-up pending.", "completed" => "AI follow-up completed.", "failed" => "Your choice was saved, but the AI follow-up could not complete." }.fetch(interaction.status, "AI follow-up unavailable.") %></p>
+    <% if interaction.status == "failed" %>
+      <%= form_with url: tool_views_routes.surface_continuation_path(surface, interaction_id: interaction.id), method: :post do %>
+        <button type="submit">Retry AI follow-up</button>
+      <% end %>
+    <% end %>
+  <% end %>
+  <p class="tool-views-revision">Saved revision <%= surface.revision %></p>
+</section>

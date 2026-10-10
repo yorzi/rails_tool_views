@@ -1,0 +1,2 @@
+ENV["RAILS_VERSION"] = "7.2.3"
+eval_gemfile "../Gemfile"

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ToolViews · Local v0 demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= stylesheet_link_tag "demo" %>
+  <%= javascript_include_tag "turbo", type: "module" %>
+  <%= javascript_tag type: "module", nonce: true do %>
+    import { Application, Controller } from "<%= asset_path('stimulus.js') %>";
+    import toolViewsController from "<%= asset_path('tool_views_controller.js') %>";
+    const app = Application.start();
+    app.register("tool-views", toolViewsController(Controller));
+  <% end %>
+</head>
+<body><main><%= yield %></main></body>
+</html>

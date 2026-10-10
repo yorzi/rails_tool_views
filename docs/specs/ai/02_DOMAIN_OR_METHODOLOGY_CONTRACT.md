@@ -1,0 +1,3 @@
+# Domain contract
+Source: [03 core invariants](../03_CORE_MECHANIC_OR_METHODOLOGY_SPEC.md), [supporting/01](../supporting/01_COMPONENT_TOOL_CONTRACT.md), [supporting/02](../supporting/02_SURFACE_ACTION_PROTOCOL.md).
+Registry metadata ≠ ToolDescriptor ≠ PresentationRequest ≠ Surface ≠ Action ≠ AgentContinuation. Model returns proposal; trusted server resolves component and properties; tool result sent to model is separate from user-visible view ref. Auth is independent of schema. Revision/idempotency required. No provider-specific transcript message forged by core; adapter owns continuation.

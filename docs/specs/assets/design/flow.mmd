@@ -1,0 +1,13 @@
+flowchart LR
+  APP["Rails application / developer-defined component"] --> REG["Trusted Component Registry"]
+  REG --> PRESENT["Presentation Service + Validation"]
+  AI["Optional Agent SDK"] --> TOOL["Optional present_ui Adapter"]
+  TOOL --> PRESENT
+  PRESENT --> SURFACE["Persisted Surface / Revision"]
+  SURFACE --> RENDER["Rails Partial / ViewComponent"]
+  RENDER --> BROWSER["Turbo / Stimulus Browser"]
+  BROWSER --> ACTION["Validated Action Dispatcher"]
+  ACTION --> AUTH["App authorization + idempotency"]
+  AUTH --> SURFACE
+  AUTH --> AGENTRETURN["Optional structured agent continuation"]
+  AGENTRETURN --> AI

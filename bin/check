@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+bundle exec rake test zeitwerk:check
+BUNDLE_GEMFILE=gemfiles/adapter.gemfile bundle exec rake test:adapter
+bundle exec ruby scripts/package_smoke.rb

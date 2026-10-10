@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+bundle exec rake demo:prepare
+exec bundle exec ruby test/dummy/bin/rails server -b 127.0.0.1 -p "${PORT:-3100}"
