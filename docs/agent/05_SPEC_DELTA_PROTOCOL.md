@@ -11,3 +11,7 @@ Keyword registration, ViewComponent props kwargs and JSON/Turbo-only transport a
 ## DELTA-002 — owner-authorized V1 before manual inspection
 
 2026-10-10; INTENTIONAL_DELTA; ACCEPTED_TEMPORARY for local development. Andy explicitly approved proceeding to V1 and will inspect after completion. Promote pinned P1 UC-02..05 and Demo B/C into local executable scope without fabricating external adoption, release viability or formal gate signatures. Ticket/customer/artifact data and services live in the reference host, not built-in gem business models. Customer sending is demonstrated by a local durable outbox only; no external contact.
+
+## Audit 2026-10-13 — no new delta
+
+WORK-20261013-01 repaired two IMPLEMENTATION_BUGs against the pinned contract: nested schemas that were not closed (SEC-10, FR-01-AC-02) and native forms for zero-argument actions (FR-05-AC-01). Redaction scope, failure reporting and overridable wording are reversible technical choices recorded in ADR 003; form helpers, ViewComponent context, host controller choice and PostgreSQL support are recorded in ADR 004 and stay inside FR-02/05/07/08 and NFR-03. Product intent, DELTA-001 and DELTA-002 are unchanged.

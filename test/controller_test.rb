@@ -103,6 +103,59 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, DemoEffect.count
   end
 
+  test "a native form for a zero-argument action posts no arguments field and still commits" do
+    ToolViews.register(:toggle_card, description: "Open details", schema: PROPS_SCHEMA, partial: "choices/card", policy: ->(access) { access.actor == "alice" },
+      actions: { open: { schema: { type: "object", additionalProperties: false, properties: {} }, policy: ->(access) { access.actor == "alice" },
+        handler: ->(_access) { ToolViews::Transition.new(state: { message: "Details opened." }) } } })
+    surface = ToolViews.present(:toggle_card, props: props, scope: scope)
+    post path(surface), params: { action_name: "open", base_revision: 1, idempotency_key: "form-open" }, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_response :success
+    assert_includes response.body, "Details opened."
+    assert_equal 2, surface.reload.revision
+    required = present_card
+    post path(required), params: { action_name: "select_option", base_revision: 1, idempotency_key: "form-missing" }, as: :json
+    assert_response :bad_request
+    assert_equal "INVALID_ARGUMENTS", response.parsed_body["code"]
+    post path(surface), params: { action: "open", arguments: nil, base_revision: 2, idempotency_key: "json-null" }, as: :json
+    assert_equal "INVALID_ARGUMENTS", response.parsed_body["code"]
+    assert_equal 0, DemoEffect.count
+  end
+
+  test "Rails submit helper names are accepted while other unknown fields still reject" do
+    ToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
+      actions: { select_option: { schema: PARAMS_SCHEMA, policy: ->(access) { access.actor == "alice" },
+        handler: ->(access) { ToolViews::Transition.new(state: { selected: access.arguments.fetch("key"), message: "Saved by a ViewComponent." }) } } })
+    surface = ToolViews.present(:interactive_vc, props: props, scope: scope)
+    get "/tool_views/surfaces/#{surface.id}"
+    form = Nokogiri::HTML(response.body).at_css("form")
+    assert_equal "commit", form.at_css("input[type=submit]")["name"]
+    fields = form.css("input[type=hidden]").to_h { |input| [input["name"], input["value"]] }
+    post form["action"], params: fields.merge("arguments[key]" => "continue", "commit" => "Save selection"), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_response :success
+    assert_includes response.body, "Saved by a ViewComponent."
+    assert_equal "continue", surface.reload.state["selected"]
+    card = present_card
+    post path(card), params: body(card, button: ""), as: :json
+    assert_response :success
+    post path(card), params: body(card, idempotency_key: "browser-2", base_revision: 2, commit: "Save", policy: "allow"), as: :json
+    assert_equal "UNKNOWN_FIELD", response.parsed_body["code"]
+    assert_equal 2, card.reload.revision
+  end
+
+  test "without Turbo a committed HTML action returns to the page that embeds the Surface" do
+    html = { "Accept" => "text/html" }
+    surface = present_card
+    post path(surface), params: body(surface), headers: html.merge("Referer" => "http://www.example.com/v1/support?ticket_id=1")
+    assert_response :see_other
+    assert_equal "http://www.example.com/v1/support?ticket_id=1", response.headers["Location"]
+    post path(surface), params: body(surface, idempotency_key: "browser-2", base_revision: 2), headers: html
+    assert_equal "http://www.example.com/tool_views/surfaces/#{surface.id}", response.headers["Location"]
+    post path(surface), params: body(surface, idempotency_key: "browser-3", base_revision: 3), headers: html.merge("Referer" => "https://elsewhere.example/phish")
+    assert_response :see_other
+    assert_equal "http://www.example.com/tool_views/surfaces/#{surface.id}", response.headers["Location"]
+    assert_equal 4, surface.reload.revision
+  end
+
   test "missing host identity resolver denies even authenticated-looking input" do
     surface = present_card
     ToolViews.configure { |config| config.scope_resolver = nil }

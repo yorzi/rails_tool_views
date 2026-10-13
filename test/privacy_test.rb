@@ -18,10 +18,11 @@ class PrivacyTest < ActiveSupport::TestCase
     assert_equal %i[component component_digest id props revision state], surface.snapshot.keys.sort
     refute_includes JSON.generate(events), "Choose a workflow"
     refute_includes JSON.generate(events), "alice"
-    filtered = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter({ "props" => "sensitive", "arguments" => "sensitive", "authenticity_token" => "csrf-fixture" })
-    assert_equal "[FILTERED]", filtered["props"]
-    assert_equal "[FILTERED]", filtered["arguments"]
-    assert_equal "[FILTERED]", filtered["authenticity_token"]
+    inspected = surface.reload.inspect + ToolViews::ActionExecution.first.inspect
+    assert_includes inspected, "props: [FILTERED]"
+    assert_includes inspected, "state: [FILTERED]"
+    assert_includes inspected, "result: [FILTERED]"
+    refute_includes inspected, "Choose a workflow"
   ensure
     ActiveSupport::Notifications.unsubscribe(token) if token
   end
@@ -37,10 +38,25 @@ class PrivacyTest < ActiveSupport::TestCase
     refute_includes stream.string, "private-state-sentinel"
     refute_includes stream.string, '\"type\":\"agent_interaction\"'
     assert_includes stream.string, "[FILTERED]"
-    filtered = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter({ "state" => "private", "payload" => "private", "result" => "private" })
-    assert_equal ["[FILTERED]"] * 3, filtered.values
+    assert_equal "private-state-sentinel", surface.reload.state["selected"]
+    assert_equal "agent_interaction", ToolViews::AgentInteraction.first.payload["type"]
   ensure
     ActiveRecord::Base.logger = original_logger
+  end
+  test "installing the engine leaves host columns that share its attribute names visible" do
+    assert_empty Rails.application.config.filter_parameters & %i[props state payload result arguments values]
+    ActiveRecord::Base.connection.create_table(:privacy_probe_orders, temporary: true, force: true) { |table| table.string :state; table.string :result }
+    order = Class.new(ActiveRecord::Base) { self.table_name = "privacy_probe_orders" }
+    stream = StringIO.new
+    original_logger = ActiveRecord::Base.logger
+    ActiveRecord::Base.logger = ActiveSupport::Logger.new(stream)
+    record = order.create!(state: "host-state-sentinel", result: "host-result-sentinel")
+    assert_includes stream.string, "host-state-sentinel"
+    assert_includes stream.string, "host-result-sentinel"
+    assert_includes record.inspect, "host-state-sentinel"
+  ensure
+    ActiveRecord::Base.logger = original_logger
+    ActiveRecord::Base.connection.drop_table(:privacy_probe_orders, if_exists: true)
   end
   test "host retention deletion removes namespaced receipts and interactions" do
     ToolViews.reset!; register_card(agent: true)
@@ -53,5 +69,39 @@ class PrivacyTest < ActiveSupport::TestCase
     assert_equal 0, ToolViews::AgentInteraction.count
     assert_equal 0, ToolViews::Presentation.count
     assert_equal 1, DemoEffect.count # host domain history is a separate authority
+  end
+end
+
+class RequestLogPrivacyTest < ActionDispatch::IntegrationTest
+  include TestFixtures
+  setup do
+    [ToolViews::AgentInteraction, ToolViews::ActionExecution, ToolViews::Presentation, ToolViews::Surface, DemoEffect].each(&:delete_all)
+    ToolViews.reset!
+    register_card
+    ToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
+    @stream = StringIO.new
+    @original_logger = ActionController::Base.logger
+    ActionController::Base.logger = ActiveSupport::Logger.new(@stream)
+  end
+  teardown { ActionController::Base.logger = @original_logger }
+  test "engine request logs keep routing metadata and mask every other field" do
+    surface = present_card
+    post "/tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
+      base_revision: 1, idempotency_key: "logged-request-1", business_rules: "injected-policy-sentinel" }
+    assert_equal "UNKNOWN_FIELD", response.parsed_body["code"]
+    post "/tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
+      base_revision: 1, idempotency_key: "logged-request-2" }
+    assert_response :success
+    assert_match(/"arguments"\s*=>\s*"\[FILTERED\]"/, @stream.string)
+    assert_match(/"business_rules"\s*=>\s*"\[FILTERED\]"/, @stream.string)
+    assert_match(/"idempotency_key"\s*=>\s*"logged-request-2"/, @stream.string)
+    assert_match(/"base_revision"\s*=>\s*1/, @stream.string)
+    refute_includes @stream.string, "injected-policy-sentinel"
+    refute_match(/"key"\s*=>\s*"compare"/, @stream.string)
+  end
+  test "host request logs keep parameters that share engine field names" do
+    post "/demo/present", params: { mode: "page", state: "host-state-sentinel", result: "host-result-sentinel", arguments: "host-arguments-sentinel" }
+    assert_response :see_other
+    %w[host-state-sentinel host-result-sentinel host-arguments-sentinel].each { |value| assert_includes @stream.string, value }
   end
 end

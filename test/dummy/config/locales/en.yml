@@ -1,0 +1,7 @@
+# Host-owned wording for this reference app's own rejection codes.
+en:
+  tool_views:
+    errors:
+      already_submitted: "This form has already been submitted."
+      already_accepted: "This version was accepted. Create a new draft to make further changes."
+      review_required: "Review and approve this item before continuing."

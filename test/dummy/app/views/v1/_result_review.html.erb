@@ -18,16 +18,12 @@
     <button type="submit" data-turbo-submits-with="Requesting regeneration…">Request regeneration</button>
   <% end %>
   <% if staff.role == "lead" %>
-    <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
-      <%= v1_action_fields(surface, "accept", artifact_version: artifact.current_version) %><button type="submit">Accept current version</button>
-    <% end %>
+    <%= tool_views_action_button(surface, :accept, "Accept current version", arguments: { artifact_version: artifact.current_version }) %>
   <% else %><p class="demo-muted">A team lead must accept this result before export.</p><% end %>
 <% else %>
   <p>Accepted version <%= artifact.accepted_version %> is locked. Start a new draft for further changes.</p>
   <% if staff.role == "lead" %>
-    <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
-      <%= v1_action_fields(surface, "export", artifact_version: artifact.current_version) %><button type="submit">Prepare text export</button>
-    <% end %>
+    <%= tool_views_action_button(surface, :export, "Prepare text export", arguments: { artifact_version: artifact.current_version }) %>
     <% export = DemoExport.find_by(artifact: artifact, artifact_version: artifact.accepted_version) %>
     <% if export %><p><%= link_to "Download accepted result", main_app.v1_export_path(export), data: { turbo: false }, class: "v1-download" %></p><% end %>
   <% end %>

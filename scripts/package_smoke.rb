@@ -12,7 +12,7 @@ FileUtils.mkdir_p("pkg")
 spec = Gem::Specification.load("toolviews.gemspec")
 package = Gem::Package.build(spec, true, false, "pkg/toolviews-#{spec.version}.gem")
 contents = Gem::Package.new(package).contents
-%w[app/controllers/tool_views/surfaces_controller.rb app/views/tool_views/surfaces/_surface.html.erb app/assets/javascripts/tool_views_controller.js lib/generators/tool_views/install/templates/create_tool_views.rb].each do |path|
+%w[app/controllers/tool_views/surfaces_controller.rb app/helpers/tool_views/surfaces_helper.rb app/models/tool_views/redacted_json.rb app/views/tool_views/surfaces/_surface.html.erb app/assets/javascripts/tool_views_controller.js lib/generators/tool_views/install/templates/create_tool_views.rb].each do |path|
   abort "Missing packaged runtime file: #{path}" unless contents.include?(path)
 end
 abort "Core depends on RubyLLM" if spec.runtime_dependencies.any? { |dependency| dependency.name == "ruby_llm" }
@@ -26,8 +26,10 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
   FileUtils.mkdir_p(File.join(host, "storage"))
   File.write(File.join(host, "config", "database.yml"), "test:\n  adapter: sqlite3\n  database: #{host}/storage/test.sqlite3\n")
   File.write(File.join(host, "config", "routes.rb"), "Rails.application.routes.draw do\nend\n")
-  File.write(File.join(host, "app", "helpers", "packaged_helper.rb"), 'module PackagedHelper; def packaged_title(value); value; end; end')
-  File.write(File.join(host, "app", "views", "choices", "_card.html.erb"), '<h2><%= packaged_title(props.fetch("title")) %></h2><p><%= state["selected"] %></p>')
+  File.write(File.join(host, "app", "helpers", "packaged_helper.rb"), 'module PackagedHelper; def packaged_title(value); value; end; ' \
+    'def definition_has_action?(surface); ToolViews.registry.fetch(surface.component_key).actions.key?("select_option"); end; end')
+  File.write(File.join(host, "app", "views", "choices", "_card.html.erb"), '<h2><%= packaged_title(props.fetch("title")) %></h2><p><%= state["selected"] %></p>' \
+    '<%= tool_views_action_button(surface, :select_option, "Pick a", arguments: { key: "a" }) if definition_has_action?(surface) %>')
   probe = <<~'CODE'
     ENV["RAILS_ENV"] = "test"
     require "bundler/setup"
@@ -73,6 +75,7 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     controller.response = ActionDispatch::TestResponse.new
     html = ToolViews.render(surface, view_context: controller.view_context, scope: scope)
     raise "Installed partial did not render" unless html.include?("Packaged &lt;safe&gt; card")
+    raise "Installed action helper did not render a form" unless html.include?(%(action="/tool_views/surfaces/#{surface.id}/actions")) && html.include?(%(name="arguments[key]")) && html.include?(%(name="idempotency_key"))
     client = ActionDispatch::Integration::Session.new(Rails.application)
     client.post("/tool_views/surfaces/#{surface.id}/actions", params: { action: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-1" }, as: :json)
     raise "Installed action controller failed: #{client.response.body}" unless client.response.status == 200
@@ -87,7 +90,7 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     raise "Installed validation feedback failed" unless client.response.status == 422 && feedback["fields"] == { "key" => "needs correction" } && feedback["values"] == { "key" => "a" }
     raise "Rejected form changed persistence" unless invalid.reload.revision == 1
     Rails::ZeitwerkChecker.check
-    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> HTTP action -> validation feedback -> durable restore -> eager load"
+    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> validation feedback -> durable restore -> eager load"
   CODE
   program = File.join(temporary, "probe.rb")
   File.write(program, probe)

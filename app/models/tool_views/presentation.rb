@@ -3,6 +3,7 @@ module ToolViews
   class Presentation < ActiveRecord::Base
     self.table_name = "tool_views_presentations"
     belongs_to :surface
-    attribute :result, :json
+    self.filter_attributes += %i[result]
+    attribute :result, RedactedJson.new
   end
 end

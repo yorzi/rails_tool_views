@@ -4,7 +4,8 @@ module ToolViews
     self.table_name = "tool_views_agent_interactions"
     belongs_to :surface
     belongs_to :action_execution
-    attribute :payload, :json
+    self.filter_attributes += %i[payload]
+    attribute :payload, RedactedJson.new
     def delivery_key
       "toolviews:interaction:#{id}"
     end

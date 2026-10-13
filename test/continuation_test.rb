@@ -28,15 +28,25 @@ class ContinuationTest < ActiveSupport::TestCase
     ToolViews.configure { |config| config.agent_adapter = ->(_payload, delivery_key:) { keys << delivery_key; raise "provider unavailable with secret context" } }
     surface = present_card
     interaction_id = act(surface).fetch(:interaction_id)
+    reports, events = [], []
+    subscriber = Class.new { define_method(:report) { |error, **details| reports << [error.message, details[:handled], details[:context]] } }.new
+    Rails.error.subscribe(subscriber)
+    token = ActiveSupport::Notifications.subscribe("agent_failed.tool_views") { |*_timing, payload| events << payload }
     assert_equal "failed", ToolViews.deliver(interaction_id, scope: scope).status
     ToolViews.deliver(interaction_id, scope: scope)
     assert_equal 1, keys.length
+    assert_equal [["provider unavailable with secret context", true, { surface_id: surface.id, interaction_id: interaction_id }]], reports
+    assert_equal [{ surface_id: surface.id, interaction_id: interaction_id, error_class: "RuntimeError" }], events
+    assert_equal "AGENT_UNAVAILABLE", ToolViews::AgentInteraction.find(interaction_id).error_code
     ToolViews.configure { |config| config.agent_adapter = ->(_payload, delivery_key:) { keys << delivery_key } }
     assert_equal "completed", ToolViews.deliver(interaction_id, scope: scope, retry_failed: true).status
     assert_equal 1, keys.uniq.length
     assert_equal 2, surface.reload.revision
     assert_equal "compare", surface.state["selected"]
     assert_equal 1, DemoEffect.count
+  ensure
+    Rails.error.unsubscribe(subscriber) if subscriber
+    ActiveSupport::Notifications.unsubscribe(token) if token
   end
   test "continuation retry recomputes the host action permission" do
     ToolViews.reset!; register_card(agent: true)
@@ -58,6 +68,17 @@ class ContinuationTest < ActiveSupport::TestCase
     assert_equal "delivering", ToolViews.deliver(interaction.id, scope: scope).status
     assert_equal 0, count
     interaction.update!(claimed_at: 6.minutes.ago)
+    assert_equal "completed", ToolViews.deliver(interaction.id, scope: scope).status
+    assert_equal 1, count
+  end
+  test "the delivery lease is a host setting" do
+    ToolViews.reset!; register_card(agent: true)
+    count = 0
+    ToolViews.configure { |config| config.agent_adapter = ->(_payload, delivery_key:) { count += 1 }; config.delivery_lease = 30 }
+    interaction = ToolViews::AgentInteraction.find(act(present_card).fetch(:interaction_id))
+    interaction.update!(status: "delivering", claimed_at: 20.seconds.ago)
+    assert_equal "delivering", ToolViews.deliver(interaction.id, scope: scope).status
+    interaction.update!(claimed_at: 40.seconds.ago)
     assert_equal "completed", ToolViews.deliver(interaction.id, scope: scope).status
     assert_equal 1, count
   end

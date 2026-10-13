@@ -3,15 +3,20 @@
 export default function toolViewsController(Controller) {
   return class extends Controller {
     static targets = ["status", "error"];
-    static values = { revision: Number };
+    // The server-rendered Surface supplies translated copy; these are fallbacks.
+    static values = {
+      revision: Number,
+      saving: { type: String, default: "Saving changes…" },
+      failed: { type: String, default: "Changes could not be saved. Review the message and try again." }
+    };
     connect() {
       this.start = () => {
         this.element.setAttribute("aria-busy", "true");
-        if (this.hasStatusTarget) this.statusTarget.textContent = "Saving changes…";
+        if (this.hasStatusTarget) this.statusTarget.textContent = this.savingValue;
       };
       this.end = (event) => {
         this.element.removeAttribute("aria-busy");
-        if (!event.detail.success && this.hasStatusTarget) this.statusTarget.textContent = "Changes could not be saved. Review the message and try again.";
+        if (!event.detail.success && this.hasStatusTarget) this.statusTarget.textContent = this.failedValue;
       };
       this.beforeStream = (event) => {
         const stream = event.target;

@@ -2,8 +2,9 @@
 module ToolViews
   class Surface < ActiveRecord::Base
     self.table_name = "tool_views_surfaces"
-    attribute :props, :json, default: -> { {} }
-    attribute :state, :json, default: -> { {} }
+    self.filter_attributes += %i[props state]
+    attribute :props, RedactedJson.new, default: -> { {} }
+    attribute :state, RedactedJson.new, default: -> { {} }
     has_many :presentations, dependent: :destroy
     has_many :action_executions, dependent: :destroy
     has_many :agent_interactions, dependent: :destroy

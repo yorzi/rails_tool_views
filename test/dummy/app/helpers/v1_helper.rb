@@ -4,8 +4,7 @@ module V1Helper
     ToolViews::Scope.new(actor: surface.actor_ref, tenant: surface.tenant_ref)
   end
   def v1_action_fields(surface, action, arguments = {})
-    fields = { action_name: action, base_revision: surface.revision, idempotency_key: SecureRandom.uuid, source_component: surface.component_key }
-    safe_join(fields.map { |name, value| hidden_field_tag(name, value) } + arguments.map { |name, value| hidden_field_tag("arguments[#{name}]", value) })
+    safe_join([tool_views_action_fields(surface, action)] + arguments.map { |name, value| hidden_field_tag("arguments[#{name}]", value, id: nil) })
   end
   def v1_value(surface, error, field, fallback = nil)
     values = error.is_a?(ToolViews::ValidationError) ? error.values : surface.props.fetch("values", {})

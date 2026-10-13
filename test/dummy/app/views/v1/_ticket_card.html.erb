@@ -2,9 +2,7 @@
 <h2><%= ticket.subject %></h2>
 <p class="v1-badge"><%= ticket.status.capitalize %> · Ticket version <%= ticket.lock_version %></p>
 <p>Assignee: <strong><%= ticket.assignee&.name || "Unassigned" %></strong></p>
-<%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
-  <%= v1_action_fields(surface, "view_account") %><button type="submit">View authorized account</button>
-<% end %>
+<%= tool_views_action_button(surface, :view_account, "View authorized account") %>
 <% if state["account_id"] == ticket.customer_id %>
   <div class="v1-account"><strong><%= ticket.customer.name %></strong><p><%= ticket.customer.email %></p></div>
 <% end %>
@@ -18,10 +16,8 @@
 <% else %><p class="demo-muted">Team leads can assign tickets and queue reviewed replies.</p><% end %>
 <hr>
 <% unless reply && reply.status != "draft" %>
-  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
-    <%= v1_action_fields(surface, "draft_reply", reply_version: reply&.lock_version || 0) %>
-    <button type="submit" data-turbo-submits-with="Requesting draft…"><%= reply ? "Request a new reply draft" : "Request reply draft" %></button>
-  <% end %>
+  <%= tool_views_action_button(surface, :draft_reply, reply ? "Request a new reply draft" : "Request reply draft",
+    arguments: { reply_version: reply&.lock_version || 0 }, data: { turbo_submits_with: "Requesting draft…" }) %>
 <% end %>
 <% if reply %>
   <h3>Reply · <%= reply.status.capitalize %></h3>

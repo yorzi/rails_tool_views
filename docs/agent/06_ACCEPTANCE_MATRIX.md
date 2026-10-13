@@ -9,7 +9,7 @@ V0 evidence is retained as the original milestone record. The full suite now inc
 | FR-01-AC-01 | registry_test.rb; privacy_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | FR-01-AC-02 | registry_test.rb; privacy_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | FR-01-AC-03 | registry_test.rb; privacy_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
-| FR-02-AC-01 | rendering_test.rb; registry_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
+| FR-02-AC-01 | rendering_test.rb; registry_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. A ViewComponent can also receive Surface context and post actions (ADR 004). |
 | FR-02-AC-02 | rendering_test.rb; registry_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | FR-03-AC-01 | adapter/ruby_llm_test.rb; privacy_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | FR-03-AC-02 | adapter/ruby_llm_test.rb; privacy_test.rb | LOCAL_PASS; Real Chat acknowledgment and authorized HTML share an explicit reference; no model-text renderer. |
@@ -35,7 +35,7 @@ V0 evidence is retained as the original milestone record. The full suite now inc
 | NFR-01-AC-01 | registry_test.rb; rendering_test.rb; controller_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-02-AC-01 | durability_test.rb; runtime_test.rb; controller_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-02-AC-02 | durability_test.rb; runtime_test.rb; controller_test.rb | LOCAL_PASS; Fresh process and concurrent workers pass. Channels N/A while absent. |
-| NFR-03-AC-01 | local Ruby/Rails matrix; .github/workflows/ci.yml | LOCAL_PARTIAL / RELEASE_OPEN; Three exact local combinations pass; remote Linux CI is configured but NOT_RUN. |
+| NFR-03-AC-01 | local Ruby/Rails matrix; .github/workflows/ci.yml | LOCAL_PARTIAL / RELEASE_OPEN; Three exact local combinations pass on SQLite and one on PostgreSQL 17.11 (../evidence/AUDIT_VALIDATION.md); MySQL NOT_RUN; remote Linux CI is configured but NOT_RUN. |
 | NFR-04-AC-01 | privacy_test.rb; offline network guard; package smoke | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-05-AC-01 | privacy_test.rb; SECURITY.md; host projection/retention contract | LOCAL_PASS; No transcript/credentials/raw domain dump is persisted by core; accepted display fields require host projection. |
 | NFR-06-AC-01 | manual browser evidence; rendering_test.rb | LOCAL_PASS; Desktop/360px no-overflow, restored choice and focus; assistive-technology audit still a release review. |
@@ -53,15 +53,15 @@ V0 evidence is retained as the original milestone record. The full suite now inc
 | SEC-07 | Action replay receipt, tool correlation and provider retry create once; concurrent same key effects once. |
 | SEC-08 | Presentation keys isolate actor/tenant/adapter/context; chat scopes differ. |
 | SEC-09 | Digest/missing component fails recoverably without deleting state. |
-| SEC-10 | Size/depth/unknown-field/ref/schema tests; TCP blocked in tests. |
-| SEC-11 | Provider callback failure, unchanged committed selection, explicit retry and active lease. |
-| SEC-12 | Metadata-only notifications, filtered parameters, snapshot projection and retention deletion. |
-| SEC-13 | HTTP business_rules/tenant/policy-like extra fields rejected; host policy recomputed. |
+| SEC-10 | Size/depth/unknown-field/ref/schema tests; every nested value position must be typed, closed and item-bounded (registry_test, WORK-20261013-01); TCP blocked in tests. |
+| SEC-11 | Provider callback failure, unchanged committed selection, explicit retry and active lease; failure reported to Rails.error with a metadata-only event. |
+| SEC-12 | Metadata-only notifications, Engine-scoped request/SQL/inspect redaction with host parameters and columns left visible (privacy_test, ADR 003), snapshot projection and retention deletion. |
+| SEC-13 | HTTP business_rules/tenant/policy-like extra fields rejected; host policy recomputed. Only Rails' inert `commit`/`button` submit names are tolerated (controller_test, ADR 004). |
 | SEC-14 | Forged source and action not declared on registered component reject. |
 | SEC-15 | Actor/tenant HTTP read/write denial. ActionCable subscription/broadcast N/A; no channel shipped. |
 | SEC-16 | Client target body rejects; replacement target is authorized Surface only; browser ignores older revision. |
 | SEC-17 | Identical JSON/Turbo committed state and replay; format does not branch mutation. |
-| SEC-18 | SQLite restored in new Ruby process; two separate concurrent workers; durable receipts. |
+| SEC-18 | SQLite and PostgreSQL 17.11 restored in new Ruby process; two separate concurrent workers; durable receipts; database rollback returned as retryable CONFLICT. |
 
 ## Evidence gates outside local v0
 

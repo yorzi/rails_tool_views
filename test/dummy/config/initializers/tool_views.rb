@@ -27,10 +27,11 @@ Rails.application.config.to_prepare do
       policy: ->(access) { policy.call(access) && %w[compare continue].include?(access.arguments.fetch("key")) && access.props.fetch("options").any? { |option| option.fetch("key") == access.arguments.fetch("key") } },
       handler: ->(access) {
         DemoEffect.create!(surface_id: access.surface.id, value: access.arguments.fetch("key"))
-        ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }, agent: access.surface.context_ref == "demo-chat")
+        key = access.arguments.fetch("key")
+        ToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: access.surface.context_ref == "demo-chat")
       } }
     ToolViews.register(:choice_card, description: "Select a workflow", schema: schema, partial: "choices/card", policy: policy, expose_to: [:agent], actions: { select_option: selection })
-    ToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoCardComponent, policy: policy)
+    ToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoChoiceComponent, policy: policy, actions: { select_option: selection })
     DemoV1::Registration.call
   end
 end

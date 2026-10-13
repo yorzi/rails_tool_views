@@ -125,13 +125,15 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
     ApplicationController.remove_method(:demo_authenticated_staff)
   end
   test "host identity mutation retains CSRF protection" do
-    Rails.application.config.action_controller.allow_forgery_protection = true
+    # Toggle only this controller. Changing the application config here would be
+    # copied onto ActionController::Base if this test is the first to load it,
+    # leaving forgery protection on for every later test in the process.
+    original = V1::BaseController.allow_forgery_protection
     V1::BaseController.allow_forgery_protection = true
     post "/v1/identity", params: { code: "south-lead" }
     assert_response :forbidden
     assert_includes response.body, "INVALID_CSRF"
   ensure
-    Rails.application.config.action_controller.allow_forgery_protection = false
-    V1::BaseController.allow_forgery_protection = false
+    V1::BaseController.allow_forgery_protection = original
   end
 end

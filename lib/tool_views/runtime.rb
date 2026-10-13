@@ -85,7 +85,9 @@ module ToolViews
       end
       notify("action.executed", surface_id: surface.id, revision: result[:revision], action: definition.key)
       result
-    rescue ActiveRecord::StaleObjectError
+    rescue ActiveRecord::StaleObjectError, ActiveRecord::TransactionRollbackError, ActiveRecord::LockWaitTimeout
+      # The database rolled the whole action back (deadlock, serialization failure,
+      # lock timeout); retrying with the same key is safe.
       raise Error.new("CONFLICT", status: 409)
     rescue ActiveRecord::StatementInvalid => error
       raise Error.new("CONFLICT", status: 409) if error.cause.class.name.include?("Busy") || error.cause.class.name.include?("Locked")
@@ -110,7 +112,7 @@ module ToolViews
         if %w[completed skipped].include?(interaction.status)
           next
         end
-        if interaction.status == "delivering" && interaction.claimed_at && interaction.claimed_at > 5.minutes.ago
+        if interaction.status == "delivering" && interaction.claimed_at && interaction.claimed_at > Time.current - configuration.delivery_lease
           next
         end
         next if interaction.status == "failed" && !retry_failed
@@ -126,8 +128,9 @@ module ToolViews
         adapter.call(Data.freeze_deep(Data.normalize(interaction.payload)), delivery_key: interaction.delivery_key)
         interaction.update!(status: "completed", claimed_at: nil)
         notify("agent_returned", surface_id: interaction.surface_id, interaction_id: interaction.id)
-      rescue StandardError
+      rescue StandardError => error
         interaction.update!(status: "failed", error_code: "AGENT_UNAVAILABLE", claimed_at: nil)
+        report(error, "agent_failed", surface_id: interaction.surface_id, interaction_id: interaction.id)
       end
       interaction.reload
     end
@@ -136,9 +139,7 @@ module ToolViews
       # Never trust an already-loaded object as an authorization decision.
       surface = restore(surface.id, scope: scope)
       component = compatible_component!(surface)
-      html = view_context.render(partial: "tool_views/surfaces/surface", formats: [:html], locals: { surface: surface, definition: component, error: error })
-      notify("surface.rendered", surface_id: surface.id, component: component.key, revision: surface.revision)
-      html
+      view_context.render(partial: "tool_views/surfaces/surface", formats: [:html], locals: { surface: surface, definition: component, error: error })
     rescue Error => failure
       view_context.render(partial: "tool_views/surfaces/error", formats: [:html], locals: { error: failure })
     end
@@ -153,12 +154,27 @@ module ToolViews
       raise
     end
 
+    # The mounted controller needs CSRF protection, helpers and HTML rendering.
+    def parent_controller
+      parent = configuration.parent_controller.to_s.constantize
+      return parent if parent <= ::ActionController::Base
+      raise ArgumentError, "ToolViews parent_controller must inherit from ActionController::Base; #{parent} does not"
+    end
+
     def access(scope, operation, **attributes)
       Access.new(actor: scope.actor, tenant: scope.tenant, operation: operation, **attributes).freeze
     end
 
     def notify(event, **payload)
       ActiveSupport::Notifications.instrument("#{event}.tool_views", payload)
+    end
+
+    # Host renderer or adapter code failed behind a rescue. Surface it the way
+    # Rails surfaces handled errors; the event itself stays metadata-only.
+    def report(error, event, **payload)
+      notify(event, **payload, error_class: error.class.name)
+      Rails.error.report(error, handled: true, severity: :error, context: payload, source: "tool_views")
+      Rails.logger&.error("ToolViews #{event} handled #{error.class} (#{error.message}) - #{error.backtrace&.first}")
     end
 
     private

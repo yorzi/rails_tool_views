@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 module ToolViews
   # Preserve the host's authentication methods, filters and view helpers.
-  class SurfacesController < ::ApplicationController
+  class SurfacesController < ToolViews.parent_controller
+    # Request logs for these routes keep routing metadata only. Everything else,
+    # including unknown injected fields, is masked here rather than in the host's
+    # global filter list, which would also redact the host's own parameters.
+    LOGGED_PARAMETERS = %w[controller action id interaction_id format action_name base_revision idempotency_key source_component target].freeze
+    UNLOGGED_PARAMETER = /\A(?!(?:#{LOGGED_PARAMETERS.join('|')})\z)/
+    # Rails' own form and submit helpers post these names; their values are never read.
+    FORM_FURNITURE = %w[authenticity_token commit button].freeze
+
     protect_from_forgery with: :exception
     wrap_parameters false
     before_action :limit_payload
@@ -22,7 +30,8 @@ module ToolViews
     def act
       reject_unknown_fields(%w[action action_name arguments base_revision idempotency_key source_component target])
       result = ToolViews.dispatch(params[:id], scope: current_scope, action: input["action"] || input["action_name"],
-        arguments: input["arguments"],
+        # A native form for an action without arguments cannot post an empty object.
+        arguments: input.fetch("arguments", {}),
         base_revision: parse_revision(input["base_revision"]), idempotency_key: input["idempotency_key"],
         source_component: input["source_component"], target: input["target"])
       if result[:interaction_id] && ToolViews.configuration.agent_adapter && ToolViews.configuration.auto_deliver
@@ -41,6 +50,11 @@ module ToolViews
     end
 
     private
+    # Runs before Rails reads the filtered parameters for its request log.
+    def process_action(*)
+      request.set_header("action_dispatch.parameter_filter", Array(request.get_header("action_dispatch.parameter_filter")) + [UNLOGGED_PARAMETER])
+      super
+    end
     def current_scope
       @current_scope ||= ToolViews.configuration.scope_resolver&.call(self)
       raise Error.new("NOT_ALLOWED", status: 403) unless @current_scope.is_a?(Scope)
@@ -50,7 +64,7 @@ module ToolViews
       raise Error.new("PAYLOAD_TOO_LARGE", status: 413) if request.content_length.to_i > ToolViews.configuration.max_payload_bytes || request.raw_post.to_s.bytesize > ToolViews.configuration.max_payload_bytes
     end
     def reject_unknown_fields(allowed)
-      extra = input.keys - allowed - %w[authenticity_token]
+      extra = input.keys - allowed - FORM_FURNITURE
       raise Error.new("UNKNOWN_FIELD") unless extra.empty?
       raise Error.new("UNKNOWN_FIELD") if input.key?("action") && input.key?("action_name")
     end
@@ -72,7 +86,8 @@ module ToolViews
       respond_to do |format|
         format.json { render json: response, status: status }
         format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, ToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
-        format.html { redirect_to tool_views.surface_path(surface), status: :see_other }
+        # Without Turbo, return to the page that embeds the Surface; it re-renders saved state.
+        format.html { redirect_back_or_to tool_views.surface_path(surface), allow_other_host: false, status: :see_other }
       end
     end
     def reject_request(error)

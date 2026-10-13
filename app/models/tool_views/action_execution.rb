@@ -4,6 +4,7 @@ module ToolViews
     self.table_name = "tool_views_action_executions"
     belongs_to :surface
     has_one :agent_interaction, dependent: :destroy
-    attribute :result, :json
+    self.filter_attributes += %i[result]
+    attribute :result, RedactedJson.new
   end
 end

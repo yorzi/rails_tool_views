@@ -25,6 +25,17 @@ class DurabilityTest < ActiveSupport::TestCase
     assert_equal "compare", snapshot["state"]["selected"]
     assert_equal ToolViews::Data.normalize(surface.reload.snapshot), snapshot
   end
+  test "the mounted controller inherits the host controller the configuration names" do
+    surface = present_card
+    output, errors, status = Open3.capture3(RbConfig.ruby, "test/fixtures/parent_controller_worker.rb")
+    assert status.success?, errors
+    assert_equal({ "superclass" => "SignedInController", "status" => 200, "revision" => 2 }, JSON.parse(output.lines.last))
+    assert_equal "::ApplicationController", ToolViews.configuration.parent_controller
+    ToolViews.configuration.parent_controller = "ActionController::API"
+    error = assert_raises(ArgumentError) { ToolViews.parent_controller }
+    assert_includes error.message, "must inherit from ActionController::Base"
+    assert_equal 1, surface.reload.revision
+  end
   test "separate concurrent workers never repeat host effects for one key" do
     surface = present_card
     results = workers(surface, ["same-request", "same-request"])

@@ -27,7 +27,8 @@ module TestFixtures
           access.actor == "alice" && %w[compare continue].include?(access.arguments["key"]) && access.surface.props["options"].any? { |option| option["key"] == access.arguments["key"] }
         }, handler: handler || ->(access) {
           DemoEffect.create!(surface_id: access.surface.id, value: access.arguments.fetch("key"))
-          ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }, agent: agent)
+          key = access.arguments.fetch("key")
+          ToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: agent)
         } }
       })
   end

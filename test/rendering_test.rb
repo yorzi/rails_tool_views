@@ -47,4 +47,106 @@ class RenderingTest < ActiveSupport::TestCase
     assert_includes html, "No options are available"
     refute_includes html, "type=\"submit\""
   end
+
+  def observe
+    reports, events = [], []
+    subscriber = Class.new { define_method(:report) { |error, **details| reports << [error, details] } }.new
+    Rails.error.subscribe(subscriber)
+    token = ActiveSupport::Notifications.subscribe(/\.tool_views\z/) { |name, *_timing, payload| events << [name, payload] }
+    yield
+    [reports, events]
+  ensure
+    Rails.error.unsubscribe(subscriber)
+    ActiveSupport::Notifications.unsubscribe(token)
+  end
+  test "a broken host renderer is reported instead of failing silently" do
+    ToolViews.register(:missing, description: "Missing renderer", schema: PROPS_SCHEMA, partial: "choices/missing", policy: ->(_access) { true })
+    missing = ToolViews.present(:missing, props: props.merge(title: "private-title-sentinel"), scope: scope)
+    html = nil
+    reports, events = observe { html = ToolViews.render(missing, view_context: view, scope: scope) }
+    assert_includes html, "cannot be rendered"
+    assert_equal 1, reports.length
+    error, details = reports.first
+    assert_kind_of ActionView::MissingTemplate, error
+    assert_equal [true, "tool_views", missing.id], [details[:handled], details[:source], details[:context][:surface_id]]
+    assert_equal ["surface.render_failed.tool_views"], events.map(&:first)
+    assert_equal({ surface_id: missing.id, component: "missing", error_class: "ActionView::MissingTemplate" }, events.first.last)
+    refute_includes events.inspect, "private-title-sentinel"
+  end
+  test "a successful render is announced once and a host renderer rejection is shown as itself" do
+    surface = present_card
+    reports, events = observe { ToolViews.render(surface, view_context: view, scope: scope) }
+    assert_empty reports
+    assert_equal ["surface.rendered.tool_views"], events.map(&:first)
+    ToolViews.register(:guarded, description: "Host guarded renderer", partial: "v1/ticket_card", policy: ->(_access) { true },
+      schema: { type: "object", additionalProperties: false, properties: { ticket_id: { type: "string" } } })
+    guarded = ToolViews.present(:guarded, props: { ticket_id: "1" }, scope: scope)
+    html = nil
+    reports, events = observe { html = ToolViews.render(guarded, view_context: view, scope: scope) }
+    assert_includes html, "You do not have permission to use this view."
+    refute_includes html, "cannot be rendered"
+    assert_empty reports
+    assert_empty events
+  end
+  test "status copy is generic by default and host translations replace engine wording" do
+    ToolViews.reset!
+    register_card { |access| ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) }
+    surface = present_card
+    assert_includes ToolViews.render(surface, view_context: view, scope: scope), "View ready."
+    act(surface)
+    html = ToolViews.render(surface, view_context: view, scope: scope)
+    assert_includes html, "Changes saved."
+    refute_includes html, "Selection saved"
+    I18n.backend.store_translations(:en, tool_views: { surface: { saved: "已保存更改。", revision: "第 %{revision} 版", saving: "正在保存…" } })
+    html = ToolViews.render(surface, view_context: view, scope: scope)
+    assert_includes html, "已保存更改。"
+    assert_includes html, "第 2 版"
+    assert_includes html, 'data-tool-views-saving-value="正在保存…"'
+    refute_includes html, "Saved revision"
+  ensure
+    I18n.backend.reload!
+  end
+
+  test "action form helper scopes fields keeps ids unique per Surface and fills routing fields" do
+    first, second = present_card, present_card
+    act(second)
+    documents = [first, second].map { |surface| Nokogiri::HTML(ToolViews.render(surface, view_context: view, scope: scope)) }
+    ids = documents.flat_map { |document| document.css("[id]").map { |node| node["id"] } }
+    assert_equal ids.uniq, ids
+    documents.zip([first, second]).each do |document, surface|
+      form = document.at_css("form")
+      assert_equal "/tool_views/surfaces/#{surface.id}/actions", form["action"]
+      hidden = form.css("input[type=hidden]").to_h { |input| [input["name"], input["value"]] }
+      assert_equal ["select_option", surface.reload.revision.to_s, "choice_card"], hidden.values_at("action_name", "base_revision", "source_component")
+      assert_match(/\A[0-9a-f-]{36}\z/, hidden["idempotency_key"])
+      assert_equal %w[arguments[key]], form.css("input[type=radio]").map { |input| input["name"] }.uniq
+      form.css("label").each { |label| assert document.at_css("##{label['for']}"), "label targets a control in this Surface" }
+    end
+    assert_equal "compare", documents.last.at_css("input[type=radio][checked]")["value"]
+  end
+  test "button helper posts fixed arguments and a mistyped action fails at render with its name" do
+    surface = present_card
+    form = Nokogiri::HTML(view.tool_views_action_button(surface, :select_option, "Compare now", arguments: { key: "compare" }, class: "primary")).at_css("form")
+    assert_equal "compare", form.at_css("input[name='arguments[key]']")["value"]
+    button = form.at_css("button")
+    assert_equal ["Compare now", "submit", "primary", nil], [button.text, button["type"], button["class"], button["name"]]
+    error = assert_raises(ArgumentError) { view.tool_views_action_fields(surface, :select_optoin) }
+    assert_equal 'choice_card does not register the action "select_optoin"', error.message
+  end
+  test "a ViewComponent receives only the Surface context its initializer names" do
+    plain = ToolViews.register(:plain_vc, description: "Props only", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
+    assert_empty plain.context
+    interactive = ToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
+      actions: { select_option: { schema: PARAMS_SCHEMA, policy: ->(access) { access.actor == "alice" },
+        handler: ->(access) { ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) } } })
+    assert_equal %i[surface state error], interactive.context
+    surface = ToolViews.present(:interactive_vc, props: props, scope: scope)
+    ToolViews.dispatch(surface.id, scope: scope, action: "select_option", arguments: { key: "continue" }, base_revision: 1, idempotency_key: "vc-1")
+    document = Nokogiri::HTML(ToolViews.render(surface, view_context: view, scope: scope))
+    assert_equal "/tool_views/surfaces/#{surface.id}/actions", document.at_css("form")["action"]
+    assert_equal "2", document.at_css("input[name=base_revision]")["value"]
+    assert_equal "continue", document.at_css("input[type=radio][checked]")["value"]
+    ambiguous = { type: "object", additionalProperties: false, properties: { title: { type: "string" }, options: { type: "array", items: { type: "string" } }, state: { type: "string" } } }
+    assert_error("INVALID_COMPONENT") { ToolViews.register(:ambiguous_vc, description: "Ambiguous", schema: ambiguous, component: DemoChoiceComponent, policy: ->(_access) { true }) }
+  end
 end

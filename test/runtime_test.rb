@@ -79,6 +79,23 @@ class RuntimeTest < ActiveSupport::TestCase
     assert_equal 0, ToolViews::ActionExecution.count
   end
 
+  test "a database rollback of the action is a retryable conflict with nothing committed" do
+    [ActiveRecord::Deadlocked, ActiveRecord::SerializationFailure, ActiveRecord::LockWaitTimeout].each do |rollback|
+      ToolViews.reset!
+      attempts = 0
+      register_card do |access|
+        DemoEffect.create!(surface_id: access.surface.id, value: "rolled back")
+        raise rollback, "simulated by the database" if (attempts += 1) == 1
+        ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") })
+      end
+      surface = present_card
+      assert_error("CONFLICT") { act(surface, idempotency: "retry-me") }
+      assert_equal [1, 0, 0], [surface.reload.revision, DemoEffect.where(surface_id: surface.id).count, ToolViews::ActionExecution.where(surface_id: surface.id).count]
+      assert_equal 2, act(surface, idempotency: "retry-me")[:revision]
+      assert_equal 1, DemoEffect.where(surface_id: surface.id).count
+    end
+  end
+
   test "correlation is durable and isolated by actor tenant adapter and context" do
     correlation = { adapter: "test", call_id: "call-1", context: "chat-1" }
     first = present_card(correlation: correlation)

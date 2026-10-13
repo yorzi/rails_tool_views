@@ -1,0 +1,2 @@
+eval_gemfile "../Gemfile"
+gem "pg", "~> 1.5"

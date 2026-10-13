@@ -12,17 +12,20 @@ module ToolViews
       "NOT_FOUND" => "This view is unavailable.", "NOT_ALLOWED" => "You do not have permission to use this view.",
       "CONFLICT" => "This view changed. Refresh to continue.", "INVALID_ARGUMENTS" => "Check the submitted values and try again.",
       "VALIDATION_FAILED" => "Check the highlighted fields and try again.",
-      "ALREADY_SUBMITTED" => "This form has already been submitted.",
-      "ALREADY_ACCEPTED" => "This version was accepted. Create a new draft to make further changes.",
-      "REVIEW_REQUIRED" => "Review and approve this item before continuing.",
       "INCOMPATIBLE_COMPONENT" => "This view's contract changed. Ask the application owner to migrate or recreate it.",
       "RENDER_FAILED" => "This view cannot be rendered. Your saved state is preserved.",
       "AGENT_UNAVAILABLE" => "Your changes were saved, but the AI follow-up could not complete.",
       "IDEMPOTENCY_CONFLICT" => "This request identifier was already used for a different request."
     }.freeze
-    def initialize(code, status: 400)
+    # Hosts own the wording of their codes: pass message:, or translate
+    # tool_views.errors.<downcased code>. Built-in codes translate the same way.
+    def self.message_for(code)
+      fallback = MESSAGES.fetch(code) { "The request was rejected (#{code})." }
+      defined?(::I18n) ? ::I18n.t(code.downcase, scope: %i[tool_views errors], default: fallback) : fallback
+    end
+    def initialize(code, status: 400, message: nil)
       @code, @status = code, status
-      super(MESSAGES.fetch(code, "The request was rejected (#{code})."))
+      super(message || self.class.message_for(code))
     end
     def to_h
       { status: "rejected", code: code, message: message }
@@ -85,14 +88,14 @@ module ToolViews
   # values; rejected requests do not change Surface or domain persistence.
   class ValidationError < Error
     attr_reader :fields, :values
-    def initialize(fields:, values: {})
+    def initialize(fields:, values: {}, message: nil)
       @fields, @values = Data.bounded(fields), Data.bounded(values)
-      unless @fields.is_a?(Hash) && @values.is_a?(Hash) && @fields.all? { |key, message| key.match?(/\A[a-z][a-z0-9_]*\z/) && message.is_a?(String) && message.length <= 500 }
+      unless @fields.is_a?(Hash) && @values.is_a?(Hash) && @fields.all? { |key, text| key.match?(/\A[a-z][a-z0-9_]*\z/) && text.is_a?(String) && text.length <= 500 }
         raise Error.new("INVALID_VALIDATION_FEEDBACK")
       end
       Data.freeze_deep(@fields)
       Data.freeze_deep(@values)
-      super("VALIDATION_FAILED", status: 422)
+      super("VALIDATION_FAILED", status: 422, message: message)
     end
     def to_h
       super.merge(fields: fields, values: values)
@@ -101,6 +104,8 @@ module ToolViews
 
   class Schema
     KEYWORDS = %w[type properties required additionalProperties items enum const minimum maximum minLength maxLength pattern minItems maxItems uniqueItems description title anyOf oneOf allOf].freeze
+    TYPES = %w[object array string number integer boolean null].freeze
+    COMBINATORS = %w[anyOf oneOf allOf].freeze
     attr_reader :json
     def initialize(schema)
       @json = Data.bounded(schema)
@@ -118,14 +123,26 @@ module ToolViews
       data
     end
     private
-    def inspect_schema!(schema)
+    # Every subschema is walked, and every value position must say what it
+    # accepts: an untyped or empty schema admits any JSON, which would reopen a
+    # closed object from the inside. `bounded` is true only for a combinator
+    # branch whose enclosing schema already constrains the same value.
+    def inspect_schema!(schema, bounded: false)
       raise Error.new("INVALID_SCHEMA") unless schema.is_a?(Hash) && (schema.keys - KEYWORDS).empty?
-      if schema["type"] == "object" || Array(schema["type"]).include?("object")
-        raise Error.new("INVALID_SCHEMA") unless schema["additionalProperties"] == false && schema.fetch("properties", {}).is_a?(Hash)
-        schema.fetch("properties", {}).each_value { |child| inspect_schema!(child) }
-      end
+      types = Array(schema["type"])
+      combinators = COMBINATORS.select { |key| schema.key?(key) }
+      constrained = types.any? || schema.key?("enum") || schema.key?("const")
+      valid = (types - TYPES).empty? && (constrained || bounded || combinators.any?) &&
+        (!schema.key?("enum") || schema["enum"].is_a?(Array)) &&
+        (!schema.key?("additionalProperties") || schema["additionalProperties"] == false) &&
+        schema.fetch("properties", {}).is_a?(Hash) && schema.fetch("items", {}).is_a?(Hash) &&
+        (!types.include?("object") || schema["additionalProperties"] == false) &&
+        (!types.include?("array") || schema.key?("items")) &&
+        combinators.all? { |key| schema[key].is_a?(Array) && schema[key].any? }
+      raise Error.new("INVALID_SCHEMA") unless valid
+      schema.fetch("properties", {}).each_value { |child| inspect_schema!(child) }
       inspect_schema!(schema["items"]) if schema.key?("items")
-      %w[anyOf oneOf allOf].each { |key| schema.fetch(key, []).each { |child| inspect_schema!(child) } }
+      combinators.each { |key| schema[key].each { |child| inspect_schema!(child, bounded: bounded || constrained) } }
     end
   end
 
@@ -142,7 +159,9 @@ module ToolViews
   Action = Struct.new(:key, :schema, :policy, :handler, keyword_init: true)
 
   class Component
-    attr_reader :key, :description, :schema, :partial, :component, :policy, :actions, :expose_to, :digest, :version
+    # A ViewComponent opts into these by naming them as initializer keywords.
+    CONTEXT = %i[surface state error].freeze
+    attr_reader :key, :description, :schema, :partial, :component, :policy, :actions, :expose_to, :digest, :version, :context
     def initialize(key, description:, schema:, partial: nil, component: nil, policy: nil, actions: {}, expose_to: [], version: "1")
       @key = key.to_s.freeze
       raise Error.new("INVALID_COMPONENT") unless @key.match?(/\A[a-z][a-z0-9_]{0,63}\z/)
@@ -153,6 +172,9 @@ module ToolViews
         raise Error.new("INVALID_RENDERER")
       end
       @partial, @component, @policy = partial&.dup&.freeze, component, policy
+      keywords = component ? component.instance_method(:initialize).parameters.filter_map { |kind, name| name if %i[key keyreq].include?(kind) } : []
+      @context = (CONTEXT & keywords).freeze
+      raise Error.new("INVALID_COMPONENT") if (@context.map(&:to_s) & @schema.json.fetch("properties", {}).keys).any?
       @expose_to = expose_to.map(&:to_sym).freeze
       @actions = actions.to_h do |name, definition|
         name = name.to_s.freeze
@@ -194,10 +216,13 @@ module ToolViews
   end
 
   class Configuration
-    attr_accessor :scope_resolver, :agent_adapter, :max_payload_bytes, :max_depth, :max_catalog_components, :max_actions_per_minute, :auto_deliver
+    attr_accessor :scope_resolver, :agent_adapter, :max_payload_bytes, :max_depth, :max_catalog_components, :max_actions_per_minute, :auto_deliver,
+      :parent_controller, :delivery_lease
     def initialize
       @max_payload_bytes, @max_depth, @max_catalog_components, @max_actions_per_minute = 32_768, 16, 20, 60
       @auto_deliver = true
+      # Name the host controller that carries authentication; seconds before an unfinished delivery may be reclaimed.
+      @parent_controller, @delivery_lease = "::ApplicationController", 300
     end
   end
 

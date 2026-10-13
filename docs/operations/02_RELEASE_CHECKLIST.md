@@ -11,7 +11,7 @@ Candidate: local 0.2.0.pre.v1 on main, 2026-10-11. No public repository or RubyG
 - [ ] Name/namespace and license/dependency attribution clearance.
 - [ ] Verified private security disclosure channel and maintenance policy.
 - [ ] Remote Linux CI execution against the exact candidate commit.
-- [ ] PostgreSQL concurrency verification before broader database support.
+- [ ] PostgreSQL concurrency verification before broader database support. Local PostgreSQL 17.11 passed the suite, separate-process concurrency and the demo on 2026-10-13; the CI job is configured and NOT_RUN, so this stays open.
 - [ ] Configured real-provider presentation/continuation smoke.
 - [ ] Complete upstream extraction/runtime comparison SP-09..12; no inferred exploit claims.
 - [ ] At least three external setup trials and measured bespoke integration comparator.
