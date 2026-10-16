@@ -1,5 +1,7 @@
 # 项目状态
 
+2026-10-16：**RENAME_LOCAL_VERIFIED / PRIVATE_REMOTE_CONFIGURED / GEM_UNPUBLISHED**。Andy 明确要求改名、commit 和 push；WORK-20261016-01 将 gem 更新为 `rails_tool_views` 0.2.0.pre.v2，namespace 为 `RailsToolViews`。旧 API、四张表、组件契约和回放标识保留；原始 Specs 不改，新增命名合同作为补充来源。验证见 `../evidence/RENAME_VALIDATION.md`；设计见 ADR 005。Andy 随后指定 `yorzi/rails_tool_views` private；私有仓库已创建并配置 origin，本次提交后推送并核验远端 SHA。保持 private。RubyGems 发布、正式 H2 和 OddlyDock 集成仍未完成。下面是此前各工作单元的历史状态，不代表当前禁止 push。
+
 2026-10-13：**AUDIT_HARDENING_LOCAL_COMPLETE / COMMITTED_LOCAL / UNPUSHED / HUMAN_REVIEW_PENDING**。应 Andy 要求对 v1 做了审阅与审计（WORK-20261013-01，ADR 003）。复现并修复六个问题：嵌套 schema 未闭合、日志过滤波及主应用、渲染/续接失败被吞掉、主应用无法为自己的错误码写文案、无参数表单被拒、测试结果依赖执行顺序。应 Andy 要求已在 main 本地提交，未推送（仓库没有 remote）。证据见 ../evidence/AUDIT_VALIDATION.md。
 
 同一天应 Andy “继续”的要求，又做了降低接入成本的改动和 PostgreSQL 验证（ADR 004）：三个动作表单 helper；Rails 自带的 `form.submit`/`form.button` 不再被拒；ViewComponent 可以拿到 surface/state/error 并发起动作；`parent_controller` 与 `delivery_lease` 可配置；没有 Turbo 时提交后回到嵌入页面；数据库回滚（死锁等）返回可重试的 CONFLICT。完整套件 78 tests 在 SQLite 三个组合和本地 PostgreSQL 17.11 上通过，demo 在两种数据库上经 HTTP 验证。

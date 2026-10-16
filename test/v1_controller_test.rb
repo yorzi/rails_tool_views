@@ -4,11 +4,11 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
   setup do
     DemoV1::Seeds.call
     DemoV1::Registration.call
-    ToolViews.configuration.scope_resolver = DemoV1::Session.method(:scope)
-    ToolViews.configuration.agent_adapter = DemoV1::Agent.new
+    RailsToolViews.configuration.scope_resolver = DemoV1::Session.method(:scope)
+    RailsToolViews.configuration.agent_adapter = DemoV1::Agent.new
   end
   def surface
-    ToolViews::Surface.order(:created_at).last
+    RailsToolViews::Surface.order(:created_at).last
   end
   def payload(action, arguments, key = SecureRandom.uuid)
     { action: action, arguments: arguments, base_revision: surface.reload.revision, idempotency_key: key }
@@ -116,7 +116,7 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
   end
   test "Engine requests use the host controller authentication method" do
     ApplicationController.define_method(:demo_authenticated_staff) { DemoStaff.find_by!(code: session.fetch(:v1_identity)) }
-    ToolViews.configuration.scope_resolver = ->(controller) { DemoV1::Access.scope_for(controller.demo_authenticated_staff) }
+    RailsToolViews.configuration.scope_resolver = ->(controller) { DemoV1::Access.scope_for(controller.demo_authenticated_staff) }
     get "/v1/customer"
     post "/tool_views/surfaces/#{surface.id}/actions", params: payload("submit_form", { name: "Host authenticated", email: "host@example.test" }), as: :json
     assert_response :success

@@ -13,3 +13,9 @@ Host-owned customer form, scoped support workflows and versioned result review r
 ## 0.1.0.pre.v0 — 2026-10-10 (unpublished)
 
 Strict registry and trusted Partial/ViewComponent rendering; scoped ActiveRecord Surfaces; atomic authorized actions with revision/replay receipts; JSON/Turbo controller and optional Stimulus focus/loading support; optional RubyLLM present_ui and structured continuation; installer and offline ChoiceCard demo. Local integration/security/concurrency/package/browser verification is recorded in docs/evidence/VALIDATION.md. Release and adoption gates remain open.
+
+## Unreleased — RailsToolViews identity (2026-10-16)
+
+- Rename the package to `rails_tool_views` and the canonical namespace to `RailsToolViews`.
+- Preserve legacy Ruby requires/constants/helpers/mounts, database and wire identifiers.
+- Add independent packaged-host and pre-rename persisted-data compatibility verification. No RubyGems release.

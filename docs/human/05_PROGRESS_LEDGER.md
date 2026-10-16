@@ -135,3 +135,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Follow-up / risk**
 
 应 Andy 要求在 main 上本地提交为一个 commit；仓库没有配置 remote，未推送、未发布。两轮改动合为一个 commit，因为它们改的是同一批文件，而完整验证只针对最终状态。下一步是 Andy 按自己的节奏检查 v1 工作流和 ADR 003/004。`RedactedJson` 在 MySQL 上未验证，PostgreSQL 只验证了本地 17.11。六条未实现的发现列在项目状态页。四次临时 demo 服务和一次临时 PostgreSQL 已停止，数据目录已删除，3100 与 54329 无监听，浏览器标签页已关闭。
+
+### WORK-20261016-01 — RailsToolViews 改名与兼容更新
+
+2026-10-16。Andy 明确要求查找原始 Specs，更新 gem，改名 RailsToolViews，完成后 commit/push。基于 26825cb；原始 Specs 59 个文件逐字节匹配固定版本 0ea28b1；新增命名/兼容合同取自 OddlyNiche c100a73，外部来源只读。
+
+- **改变与原因：** gem 更新为 `rails_tool_views` 0.2.0.pre.v2，canonical namespace 为 `RailsToolViews`；同步 require、安装器、helper、新 host mount、示例和文档。旧 `ToolViews` 及 require/helper/mount 仍兼容；数据库/组件摘要/DOM/交互 delivery key 不改，避免改名破坏持久化与重放。依赖约束和第三方版本保留。
+- **映射：** 命名合同 TV-01/04/05；原 FR-01/02/05/07、SEC-06/07/09/15；DELTA-003 是用户明确批准的名称变更，非 H2 或 gem 发布批准。
+- **验证：** Ruby 3.3.5 + Rails 8.1.4/7.2.3、Ruby 4.0.2 + Rails 8.1.4 均 83 tests / 665 assertions，eager load 通过；可选 RubyLLM 6 tests / 44 assertions 通过。打包后独立 host 安装和旧提交写入→新代码读取/重放的跨进程验证通过。具体边界见 RENAME_VALIDATION。
+- **人工复查：** 阅读 README 的安装/升级节和 ADR 005；运行 `bundle exec ruby scripts/package_smoke.rb` 与 `bundle exec ruby scripts/rename_smoke.rb`；已有 host 不重新运行 installer，检查 Engine partial overrides 和自定义序列化类名。
+- **风险与数据：** 无表/数据迁移、无新 runtime 依赖；授权/CSRF/日志脱敏/原生可访问控件行为不变。未重新做浏览器/a11y、PostgreSQL、live provider、OddlyDock 和远程 CI；未声明市场/发布/商标清理完成。
+- **文档：** 更新 README、CHANGELOG、baseline supplement、current/pre/post-flight、delta、acceptance、ADR 005、human status/changelog 和 operations。系统运行流程未变，无须修改流程图。历史 evidence 和原 Specs 不改。
+- **交付：** main 本地提交已授权；Andy 已指定创建 `yorzi/rails_tool_views` private，私有仓库已创建并配置 origin；本次提交后推送 main，最终结果以远端 SHA 核验为准。保持 private，后续开发完成后才讨论公开。未发布 gem。未启动任何长期服务；临时 host/数据库进程已结束并自动清理。

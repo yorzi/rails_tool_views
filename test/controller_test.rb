@@ -4,10 +4,10 @@ require_relative "test_helper"
 class ControllerTest < ActionDispatch::IntegrationTest
   include TestFixtures
   setup do
-    [ToolViews::AgentInteraction, ToolViews::ActionExecution, ToolViews::Presentation, ToolViews::Surface, DemoEffect].each(&:delete_all)
-    ToolViews.reset!
+    [RailsToolViews::AgentInteraction, RailsToolViews::ActionExecution, RailsToolViews::Presentation, RailsToolViews::Surface, DemoEffect].each(&:delete_all)
+    RailsToolViews.reset!
     register_card
-    ToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
+    RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
   end
   def body(surface, **extra)
     { action_name: "select_option", arguments: { key: "compare" }, base_revision: 1, idempotency_key: "browser-1" }.merge(extra)
@@ -25,7 +25,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_select "turbo-stream[action=replace][target='#{surface.dom_id}']"
     assert_includes response.body, "Saved revision 2"
     assert_equal 1, DemoEffect.count
-    assert_equal 1, ToolViews::ActionExecution.count
+    assert_equal 1, RailsToolViews::ActionExecution.count
   end
   test "policy injection source forgery and target escape reject without writes" do
     surface = present_card
@@ -44,7 +44,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
   end
   test "cross tenant read action and continuation are unavailable" do
     surface = present_card
-    ToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope("bob") } }
+    RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope("bob") } }
     get "/tool_views/surfaces/#{surface.id}", as: :json
     assert_response :not_found
     refute_includes response.body, "Choose a workflow"
@@ -82,9 +82,9 @@ class ControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "host-managed async delivery shows pending state after committed selection" do
-    ToolViews.reset!
+    RailsToolViews.reset!
     register_card(agent: true)
-    ToolViews.configure do |config|
+    RailsToolViews.configure do |config|
       config.scope_resolver = ->(_controller) { scope }
       config.agent_adapter = ->(_payload, delivery_key:) { }
       config.auto_deliver = false
@@ -95,19 +95,19 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_equal "pending", response.parsed_body["status"]
     assert_equal 2, response.parsed_body["revision"]
     interaction_id = response.parsed_body["interaction_id"]
-    assert_equal "pending", ToolViews::AgentInteraction.find(interaction_id).status
+    assert_equal "pending", RailsToolViews::AgentInteraction.find(interaction_id).status
     get "/tool_views/surfaces/#{surface.id}"
     assert_includes response.body, "AI follow-up pending"
-    ToolViews.deliver(interaction_id, scope: scope)
+    RailsToolViews.deliver(interaction_id, scope: scope)
     assert_equal 2, surface.reload.revision
     assert_equal 1, DemoEffect.count
   end
 
   test "a native form for a zero-argument action posts no arguments field and still commits" do
-    ToolViews.register(:toggle_card, description: "Open details", schema: PROPS_SCHEMA, partial: "choices/card", policy: ->(access) { access.actor == "alice" },
+    RailsToolViews.register(:toggle_card, description: "Open details", schema: PROPS_SCHEMA, partial: "choices/card", policy: ->(access) { access.actor == "alice" },
       actions: { open: { schema: { type: "object", additionalProperties: false, properties: {} }, policy: ->(access) { access.actor == "alice" },
-        handler: ->(_access) { ToolViews::Transition.new(state: { message: "Details opened." }) } } })
-    surface = ToolViews.present(:toggle_card, props: props, scope: scope)
+        handler: ->(_access) { RailsToolViews::Transition.new(state: { message: "Details opened." }) } } })
+    surface = RailsToolViews.present(:toggle_card, props: props, scope: scope)
     post path(surface), params: { action_name: "open", base_revision: 1, idempotency_key: "form-open" }, headers: { "Accept" => "text/vnd.turbo-stream.html" }
     assert_response :success
     assert_includes response.body, "Details opened."
@@ -122,10 +122,10 @@ class ControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "Rails submit helper names are accepted while other unknown fields still reject" do
-    ToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
+    RailsToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
       actions: { select_option: { schema: PARAMS_SCHEMA, policy: ->(access) { access.actor == "alice" },
-        handler: ->(access) { ToolViews::Transition.new(state: { selected: access.arguments.fetch("key"), message: "Saved by a ViewComponent." }) } } })
-    surface = ToolViews.present(:interactive_vc, props: props, scope: scope)
+        handler: ->(access) { RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key"), message: "Saved by a ViewComponent." }) } } })
+    surface = RailsToolViews.present(:interactive_vc, props: props, scope: scope)
     get "/tool_views/surfaces/#{surface.id}"
     form = Nokogiri::HTML(response.body).at_css("form")
     assert_equal "commit", form.at_css("input[type=submit]")["name"]
@@ -158,7 +158,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
 
   test "missing host identity resolver denies even authenticated-looking input" do
     surface = present_card
-    ToolViews.configure { |config| config.scope_resolver = nil }
+    RailsToolViews.configure { |config| config.scope_resolver = nil }
     get "/tool_views/surfaces/#{surface.id}", as: :json
     assert_response :forbidden
   end

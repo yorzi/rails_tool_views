@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   class AgentInteraction < ActiveRecord::Base
     self.table_name = "tool_views_agent_interactions"
     belongs_to :surface

@@ -5,7 +5,7 @@ require "stringio"
 
 class PrivacyTest < ActiveSupport::TestCase
   test "core load excludes RubyLLM even when separately installed" do
-    program = 'require "toolviews"; abort if defined?(RubyLLM); begin; require "ruby_llm"; abort; rescue LoadError; puts "isolated"; end'
+    program = 'require "rails_tool_views"; abort if defined?(RubyLLM); begin; require "ruby_llm"; abort; rescue LoadError; puts "isolated"; end'
     output, errors, status = Open3.capture3(RbConfig.ruby, "-Ilib", "-e", program)
     assert status.success?, errors
     assert_equal "isolated\n", output
@@ -18,7 +18,7 @@ class PrivacyTest < ActiveSupport::TestCase
     assert_equal %i[component component_digest id props revision state], surface.snapshot.keys.sort
     refute_includes JSON.generate(events), "Choose a workflow"
     refute_includes JSON.generate(events), "alice"
-    inspected = surface.reload.inspect + ToolViews::ActionExecution.first.inspect
+    inspected = surface.reload.inspect + RailsToolViews::ActionExecution.first.inspect
     assert_includes inspected, "props: [FILTERED]"
     assert_includes inspected, "state: [FILTERED]"
     assert_includes inspected, "result: [FILTERED]"
@@ -27,8 +27,8 @@ class PrivacyTest < ActiveSupport::TestCase
     ActiveSupport::Notifications.unsubscribe(token) if token
   end
   test "SQL bind logging redacts presentation state and continuation payloads" do
-    ToolViews.reset!
-    register_card(agent: true) { |_access| ToolViews::Transition.new(state: { selected: "private-state-sentinel" }, agent: true) }
+    RailsToolViews.reset!
+    register_card(agent: true) { |_access| RailsToolViews::Transition.new(state: { selected: "private-state-sentinel" }, agent: true) }
     stream = StringIO.new
     original_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = ActiveSupport::Logger.new(stream)
@@ -39,7 +39,7 @@ class PrivacyTest < ActiveSupport::TestCase
     refute_includes stream.string, '\"type\":\"agent_interaction\"'
     assert_includes stream.string, "[FILTERED]"
     assert_equal "private-state-sentinel", surface.reload.state["selected"]
-    assert_equal "agent_interaction", ToolViews::AgentInteraction.first.payload["type"]
+    assert_equal "agent_interaction", RailsToolViews::AgentInteraction.first.payload["type"]
   ensure
     ActiveRecord::Base.logger = original_logger
   end
@@ -59,15 +59,15 @@ class PrivacyTest < ActiveSupport::TestCase
     ActiveRecord::Base.connection.drop_table(:privacy_probe_orders, if_exists: true)
   end
   test "host retention deletion removes namespaced receipts and interactions" do
-    ToolViews.reset!; register_card(agent: true)
+    RailsToolViews.reset!; register_card(agent: true)
     surface = present_card(correlation: { adapter: "test", call_id: "1", context: "chat" })
     act(surface)
     assert_raises(ActiveRecord::StaleObjectError) { surface.destroy! }
     surface.reload.destroy!
-    assert_equal 0, ToolViews::Surface.count
-    assert_equal 0, ToolViews::ActionExecution.count
-    assert_equal 0, ToolViews::AgentInteraction.count
-    assert_equal 0, ToolViews::Presentation.count
+    assert_equal 0, RailsToolViews::Surface.count
+    assert_equal 0, RailsToolViews::ActionExecution.count
+    assert_equal 0, RailsToolViews::AgentInteraction.count
+    assert_equal 0, RailsToolViews::Presentation.count
     assert_equal 1, DemoEffect.count # host domain history is a separate authority
   end
 end
@@ -75,10 +75,10 @@ end
 class RequestLogPrivacyTest < ActionDispatch::IntegrationTest
   include TestFixtures
   setup do
-    [ToolViews::AgentInteraction, ToolViews::ActionExecution, ToolViews::Presentation, ToolViews::Surface, DemoEffect].each(&:delete_all)
-    ToolViews.reset!
+    [RailsToolViews::AgentInteraction, RailsToolViews::ActionExecution, RailsToolViews::Presentation, RailsToolViews::Surface, DemoEffect].each(&:delete_all)
+    RailsToolViews.reset!
     register_card
-    ToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
+    RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
     @stream = StringIO.new
     @original_logger = ActionController::Base.logger
     ActionController::Base.logger = ActiveSupport::Logger.new(@stream)

@@ -8,7 +8,7 @@ module DemoV1
         staff && Access.scope_for(staff)
       else
         actor = controller.session[:demo_actor]
-        actor && ToolViews::Scope.new(actor: actor, tenant: "local-demo")
+        actor && RailsToolViews::Scope.new(actor: actor, tenant: "local-demo")
       end
     end
   end

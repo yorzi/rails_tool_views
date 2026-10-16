@@ -9,13 +9,13 @@ command, id, key = ARGV
 if command == 'submit'
   puts 'ready'; STDOUT.flush; STDIN.gets
   begin
-    result = ToolViews.dispatch(id, scope: scope, action: 'submit_form', arguments: { name: 'Concurrent customer', email: 'parallel@example.test' }, base_revision: 1, idempotency_key: key)
+    result = RailsToolViews.dispatch(id, scope: scope, action: 'submit_form', arguments: { name: 'Concurrent customer', email: 'parallel@example.test' }, base_revision: 1, idempotency_key: key)
     puts JSON.generate(result)
-  rescue ToolViews::Error => error
+  rescue RailsToolViews::Error => error
     puts JSON.generate(error.to_h)
   end
 else
-  surface = ToolViews.restore(id, scope: scope)
+  surface = RailsToolViews.restore(id, scope: scope)
   artifact = DemoV1::Access.artifact(scope, surface.props.fetch('artifact_id'))
   puts JSON.generate(surface: surface.snapshot, current_version: artifact.current_version, accepted_version: artifact.accepted_version,
     body: artifact.current.body, export_count: DemoExport.where(artifact: artifact).count, receipt_count: DemoAgentReceipt.count)

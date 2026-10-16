@@ -9,5 +9,5 @@ Rails.application.routes.draw do
   post "v1/review/new", to: "v1/demo#new_artifact", as: :v1_new_artifact
   post "v1/identity", to: "v1/demo#identity", as: :v1_identity
   get "v1/exports/:id", to: "v1/exports#show", as: :v1_export
-  mount ToolViews::Engine => "/tool_views", as: :tool_views
+  mount RailsToolViews::Engine => "/tool_views", as: :tool_views
 end

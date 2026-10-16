@@ -2,10 +2,10 @@
 module V1
   class DemoController < BaseController
     def customer
-      raise ToolViews::Error.new("NOT_ALLOWED", status: 403) unless @staff.role == "lead"
-      @surface = ToolViews::Surface.where(actor_ref: @scope.actor, tenant_ref: @scope.tenant, component_key: "customer_form").order(:created_at).last
+      raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless @staff.role == "lead"
+      @surface = RailsToolViews::Surface.where(actor_ref: @scope.actor, tenant_ref: @scope.tenant, component_key: "customer_form").order(:created_at).last
       @surface ||= present(:customer_form, { values: { name: "Proposed Customer", email: "proposed@example.test" } }, call_id: "initial-customer")
-      @surface = ToolViews.restore(@surface.id, scope: @scope)
+      @surface = RailsToolViews.restore(@surface.id, scope: @scope)
       render "v1/customer"
     end
     def new_customer
@@ -38,7 +38,7 @@ module V1
     end
     def identity
       unless %w[north-lead north-agent south-lead south-agent].include?(params[:code])
-        raise ToolViews::Error.new("NOT_ALLOWED", status: 403)
+        raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403)
       end
       session[:v1_identity] = params[:code]
       redirect_to v1_support_path, status: :see_other

@@ -15,3 +15,12 @@
 - [x] Commit: one local commit on main with `Work-ID: WORK-20261013-01`, requested by Andy on 2026-10-13 after both summaries. Staged ledger linkage and whitespace were checked first. No remote is configured; nothing was pushed. Both rounds are one commit because they change the same files and only the final tree was verified as a whole.
 
 Alignment: IMPLEMENTATION_BUG repairs plus ADR-recorded technical choices. No baseline edit, formal gate, license, push, publication, provider call or external contact. MySQL, remote CI and a full accessibility audit remain NOT_RUN; PostgreSQL is LOCAL only. Open findings that were not implemented are listed in ../human/01_PROJECT_STATUS.md.
+
+## WORK-20261016-01 — rename verification
+
+- [x] Owner-authorized RailsToolViews identity implemented with old constant/requires/helpers/mount compatibility and stable persisted identifiers.
+- [x] 83 tests / 665 assertions and eager load on three local Ruby/Rails combinations; six optional-adapter tests; built-gem fresh-host install; actual old-code/new-code database replay PASS. See RENAME_VALIDATION.
+- [x] No migration, dependency coupling, provider call or authentication/policy change. Original Specs snapshot unchanged (59 exact matches).
+- [x] README upgrade steps, ADR 005, Spec supplement/DELTA-003, acceptance, status, operations and ledger updated. Runtime flow is unchanged; no diagram rewrite needed.
+- [x] No task-owned long-lived processes started; temporary package and upgrade probes cleaned up automatically.
+- [ ] Ledger-linked commit and push completion. Commit on main authorized; push target is owner-approved private `yorzi/rails_tool_views`, now configured as origin. No gem release or formal gate approval claimed.

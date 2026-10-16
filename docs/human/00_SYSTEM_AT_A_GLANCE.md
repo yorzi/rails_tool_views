@@ -1,4 +1,4 @@
-# ToolViews 一眼看懂
+# RailsToolViews 一眼看懂
 
 把已有 Rails Partial/ViewComponent 注册为可信、可持久化、可交互的展示能力。普通 Rails 代码可以使用；RubyLLM 是可选适配器。v0 的 ChoiceCard 继续可用；v1 增加客户表单、客服工单和版本化结果审阅，业务记录与权限仍由主应用决定。
 

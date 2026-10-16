@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   # Preserve the host's authentication methods, filters and view helpers.
-  class SurfacesController < ToolViews.parent_controller
+  class SurfacesController < RailsToolViews.parent_controller
     # Request logs for these routes keep routing metadata only. Everything else,
     # including unknown injected fields, is masked here rather than in the host's
     # global filter list, which would also redact the host's own parameters.
@@ -13,39 +13,39 @@ module ToolViews
     protect_from_forgery with: :exception
     wrap_parameters false
     before_action :limit_payload
-    helper ToolViews::SurfacesHelper
-    rescue_from ToolViews::Error, with: :reject_request
+    helper RailsToolViews::SurfacesHelper
+    rescue_from RailsToolViews::Error, with: :reject_request
     rescue_from ActionController::InvalidAuthenticityToken do
       reject_request(Error.new("INVALID_CSRF", status: 403))
     end
 
     def show
-      surface = ToolViews.restore(params[:id], scope: current_scope)
+      surface = RailsToolViews.restore(params[:id], scope: current_scope)
       respond_to do |format|
         format.json { render json: surface.snapshot }
-        format.html { render html: ToolViews.render(surface, view_context: view_context, scope: current_scope) }
+        format.html { render html: RailsToolViews.render(surface, view_context: view_context, scope: current_scope) }
       end
     end
 
     def act
       reject_unknown_fields(%w[action action_name arguments base_revision idempotency_key source_component target])
-      result = ToolViews.dispatch(params[:id], scope: current_scope, action: input["action"] || input["action_name"],
+      result = RailsToolViews.dispatch(params[:id], scope: current_scope, action: input["action"] || input["action_name"],
         # A native form for an action without arguments cannot post an empty object.
         arguments: input.fetch("arguments", {}),
         base_revision: parse_revision(input["base_revision"]), idempotency_key: input["idempotency_key"],
         source_component: input["source_component"], target: input["target"])
-      if result[:interaction_id] && ToolViews.configuration.agent_adapter && ToolViews.configuration.auto_deliver
-        ToolViews.deliver(result[:interaction_id], scope: current_scope)
+      if result[:interaction_id] && RailsToolViews.configuration.agent_adapter && RailsToolViews.configuration.auto_deliver
+        RailsToolViews.deliver(result[:interaction_id], scope: current_scope)
       end
       respond_with_surface(result)
     end
 
     def retry_agent
       reject_unknown_fields(%w[])
-      surface = ToolViews.restore(params[:id], scope: current_scope)
+      surface = RailsToolViews.restore(params[:id], scope: current_scope)
       interaction = surface.agent_interactions.find_by(id: params[:interaction_id])
       raise Error.new("NOT_FOUND", status: 404) unless interaction
-      ToolViews.deliver(interaction.id, scope: current_scope, retry_failed: true)
+      RailsToolViews.deliver(interaction.id, scope: current_scope, retry_failed: true)
       respond_with_surface(status: "completed", surface_id: surface.id, revision: surface.revision, interaction_id: interaction.id)
     end
 
@@ -56,12 +56,12 @@ module ToolViews
       super
     end
     def current_scope
-      @current_scope ||= ToolViews.configuration.scope_resolver&.call(self)
+      @current_scope ||= RailsToolViews.configuration.scope_resolver&.call(self)
       raise Error.new("NOT_ALLOWED", status: 403) unless @current_scope.is_a?(Scope)
       @current_scope
     end
     def limit_payload
-      raise Error.new("PAYLOAD_TOO_LARGE", status: 413) if request.content_length.to_i > ToolViews.configuration.max_payload_bytes || request.raw_post.to_s.bytesize > ToolViews.configuration.max_payload_bytes
+      raise Error.new("PAYLOAD_TOO_LARGE", status: 413) if request.content_length.to_i > RailsToolViews.configuration.max_payload_bytes || request.raw_post.to_s.bytesize > RailsToolViews.configuration.max_payload_bytes
     end
     def reject_unknown_fields(allowed)
       extra = input.keys - allowed - FORM_FURNITURE
@@ -77,7 +77,7 @@ module ToolViews
       value.to_i
     end
     def respond_with_surface(result)
-      surface = ToolViews.restore(result[:surface_id], scope: current_scope)
+      surface = RailsToolViews.restore(result[:surface_id], scope: current_scope)
       interaction = result[:interaction_id] && surface.agent_interactions.find_by(id: result[:interaction_id])
       response = result.merge(current_revision: surface.revision)
       response[:agent_status] = interaction.status if interaction
@@ -85,7 +85,7 @@ module ToolViews
       status = response[:status] == "pending" ? 202 : 200
       respond_to do |format|
         format.json { render json: response, status: status }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, ToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, RailsToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
         # Without Turbo, return to the page that embeds the Surface; it re-renders saved state.
         format.html { redirect_back_or_to tool_views.surface_path(surface), allow_other_host: false, status: :see_other }
       end
@@ -96,19 +96,19 @@ module ToolViews
         format.turbo_stream do
           # Failed authorization never renders props, and supplied targets never reach Turbo.
           begin
-            surface = ToolViews.restore(params[:id], scope: current_scope)
-            html = ToolViews.render(surface, view_context: view_context, scope: current_scope, error: error)
+            surface = RailsToolViews.restore(params[:id], scope: current_scope)
+            html = RailsToolViews.render(surface, view_context: view_context, scope: current_scope, error: error)
             render turbo_stream: turbo_stream.replace(surface.dom_id, html), status: error.status
-          rescue ToolViews::Error
+          rescue RailsToolViews::Error
             render plain: error.message, status: error.status
           end
         end
         format.html do
           begin
-            surface = ToolViews.restore(params[:id], scope: current_scope)
-            render html: ToolViews.render(surface, view_context: view_context, scope: current_scope, error: error), status: error.status
-          rescue ToolViews::Error
-            render partial: "tool_views/surfaces/error", locals: { error: error }, status: error.status
+            surface = RailsToolViews.restore(params[:id], scope: current_scope)
+            render html: RailsToolViews.render(surface, view_context: view_context, scope: current_scope, error: error), status: error.status
+          rescue RailsToolViews::Error
+            render partial: "rails_tool_views/surfaces/error", locals: { error: error }, status: error.status
           end
         end
       end

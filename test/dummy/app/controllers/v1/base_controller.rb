@@ -4,8 +4,8 @@ module V1
     protect_from_forgery with: :exception
     before_action :resolve_demo_identity
     helper V1Helper
-    rescue_from ToolViews::Error do |error|
-      render partial: "tool_views/surfaces/error", locals: { error: error }, status: error.status
+    rescue_from RailsToolViews::Error do |error|
+      render partial: "rails_tool_views/surfaces/error", locals: { error: error }, status: error.status
     end
     rescue_from ActionController::InvalidAuthenticityToken do
       render plain: "The request was rejected (INVALID_CSRF).", status: :forbidden
@@ -18,7 +18,7 @@ module V1
       @scope = DemoV1::Access.scope_for(@staff)
     end
     def present(key, props, call_id:)
-      ToolViews.present(key, props: props, scope: @scope, context: "v1:#{key}",
+      RailsToolViews.present(key, props: props, scope: @scope, context: "v1:#{key}",
         correlation: { adapter: "rails-demo", call_id: call_id, context: "v1:#{key}" })
     end
   end

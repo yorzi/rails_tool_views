@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 Rails.application.config.to_prepare do
   unless Rails.env.test?
-    ToolViews.reset!
-    ToolViews.configure do |config|
+    RailsToolViews.reset!
+    RailsToolViews.configure do |config|
       config.scope_resolver = DemoV1::Session.method(:scope)
       # A deterministic host callback, never a simulated live provider claim.
       config.agent_adapter = ->(payload, delivery_key:) {
@@ -28,10 +28,10 @@ Rails.application.config.to_prepare do
       handler: ->(access) {
         DemoEffect.create!(surface_id: access.surface.id, value: access.arguments.fetch("key"))
         key = access.arguments.fetch("key")
-        ToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: access.surface.context_ref == "demo-chat")
+        RailsToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: access.surface.context_ref == "demo-chat")
       } }
-    ToolViews.register(:choice_card, description: "Select a workflow", schema: schema, partial: "choices/card", policy: policy, expose_to: [:agent], actions: { select_option: selection })
-    ToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoChoiceComponent, policy: policy, actions: { select_option: selection })
+    RailsToolViews.register(:choice_card, description: "Select a workflow", schema: schema, partial: "choices/card", policy: policy, expose_to: [:agent], actions: { select_option: selection })
+    RailsToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoChoiceComponent, policy: policy, actions: { select_option: selection })
     DemoV1::Registration.call
   end
 end

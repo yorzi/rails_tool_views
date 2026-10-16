@@ -1,6 +1,6 @@
-# ToolViews
+# RailsToolViews
 
-Trusted Rails components as persistent, interactive presentation tools. **Local v1 implementation complete; unpublished.** The core works without RubyLLM, API keys or a provider. ToolViews does not generate executable UI code.
+Trusted Rails components as persistent, interactive presentation tools. **Local v1 implementation complete; unpublished.** The core works without RubyLLM, API keys or a provider. RailsToolViews does not generate executable UI code.
 
 ## Try the offline demo
 
@@ -33,45 +33,45 @@ The gem is not published. Build it with `bundle exec ruby scripts/package_smoke.
 
 ```ruby
 # Gemfile
- gem "toolviews", path: "/path/to/tool_views", require: "tool_views"
+ gem "rails_tool_views", path: "/path/to/tool_views", require: "rails_tool_views"
 # Optional renderer only; omit when using Partials:
  gem "view_component", "~> 4.0"
 ```
 
 ```sh
 bundle install
-bin/rails generate tool_views:install
+bin/rails generate rails_tool_views:install
 bin/rails db:migrate
 ```
 
-The installer adds four namespaced tables, a fail-closed initializer and a named Engine mount. The host owns the database, authentication, tenant resolution, policies, existing components and business services. The mount can use a different path; keep `as: :tool_views`.
+The installer adds four namespaced tables, a fail-closed initializer and a named Engine mount. The host owns the database, authentication, tenant resolution, policies, existing components and business services. The mount can use a different path; use `as: :rails_tool_views` (the legacy `:tool_views` mount remains supported).
 
 Engine controllers inherit the host's `ApplicationController`, preserving its authentication methods, filters and view helpers. When authentication lives on a subclass, name it with `config.parent_controller = "AuthenticatedController"`; it must descend from `ActionController::Base`. Review inherited filters for the mounted routes and resolve identity from authenticated server state; request arguments must never choose actor/tenant.
 
 ## Register an existing Partial
 
-Registration uses explicit keyword arguments. No reflection or model-selected constants are involved. The props schema and every nested object must be closed (`additionalProperties: false`). Every nested value must also say what it accepts: declare `type`, `enum` or `const`, or be an `anyOf`/`oneOf`/`allOf` of branches that do, and give every array an `items` schema. An untyped or empty subschema is rejected at registration because it would accept any JSON. Supported JSON Schema keywords are listed in `ToolViews::Schema::KEYWORDS`; remote/local `$ref` resolution is disabled. Limits default to 32 KiB, 16 nesting levels, 20 catalog components and 60 committed actions per Surface per minute.
+Registration uses explicit keyword arguments. No reflection or model-selected constants are involved. The props schema and every nested object must be closed (`additionalProperties: false`). Every nested value must also say what it accepts: declare `type`, `enum` or `const`, or be an `anyOf`/`oneOf`/`allOf` of branches that do, and give every array an `items` schema. An untyped or empty subschema is rejected at registration because it would accept any JSON. Supported JSON Schema keywords are listed in `RailsToolViews::Schema::KEYWORDS`; remote/local `$ref` resolution is disabled. Limits default to 32 KiB, 16 nesting levels, 20 catalog components and 60 committed actions per Surface per minute.
 
 ```ruby
-ToolViews.configure do |config|
+RailsToolViews.configure do |config|
   config.scope_resolver = ->(controller) {
     user = controller.current_user
     account = controller.current_account
-    user && account && ToolViews::Scope.new(actor: user.id.to_s, tenant: account.id.to_s)
+    user && account && RailsToolViews::Scope.new(actor: user.id.to_s, tenant: account.id.to_s)
   }
 end
 
 Rails.application.config.to_prepare do
   # Keep registry definitions reload-safe in development.
-  ToolViews.reset_registry!
+  RailsToolViews.reset_registry!
   # Register the host components here.
 end
 ```
 
-Use `ToolViews.reset_registry!` inside `to_prepare`, then register the components. Configuration remains intact. A complete ChoiceCard registration is in [the dummy initializer](test/dummy/config/initializers/tool_views.rb), and its existing ERB component is in [choices/card](test/dummy/app/views/choices/_card.html.erb). The essential action shape is:
+Use `RailsToolViews.reset_registry!` inside `to_prepare`, then register the components. Configuration remains intact. A complete ChoiceCard registration is in [the dummy initializer](test/dummy/config/initializers/tool_views.rb), and its existing ERB component is in [choices/card](test/dummy/app/views/choices/_card.html.erb). The essential action shape is:
 
 ```ruby
-ToolViews.register :choice_card,
+RailsToolViews.register :choice_card,
   description: "Choose an allowed workflow", version: "1",
   schema: ChoicePropsSchema, partial: "choices/card",
   policy: ->(access) { HostPolicy.can_present_or_read?(access) },
@@ -83,7 +83,7 @@ ToolViews.register :choice_card,
       handler: ->(access) {
         ChoiceSelection.call(actor: access.actor, tenant: access.tenant,
           key: access.arguments.fetch("key"))
-        ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") })
+        RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key") })
       }
     }
   }
@@ -91,12 +91,12 @@ ToolViews.register :choice_card,
 
 `Access` contains `actor`, `tenant`, `operation`, `props`, `surface`, `action`, `arguments` and `context_ref`. Component policy receives `:discover`, `:present` or `:read`; action policy receives `:action`. Missing policies deny. Recompute permission from trusted host data, including authorized domain records and allowed option keys. **Membership in model-proposed props is not permission.** For database atomicity, handlers must use the same database/transaction as Surface. External side effects need host idempotency or an outbox.
 
-The component's own template posts the action. `tool_views_action_form` yields a Rails form builder whose fields are named `arguments[...]`, keeps ids unique when several Surfaces share a page, and fills in the action name, current revision, a fresh idempotency key and the source component:
+The component's own template posts the action. `rails_tool_views_action_form` yields a Rails form builder whose fields are named `arguments[...]`, keeps ids unique when several Surfaces share a page, and fills in the action name, current revision, a fresh idempotency key and the source component:
 
 ```erb
 <%# app/views/choices/_card.html.erb %>
 <h2><%= props.fetch("title") %></h2>
-<%= tool_views_action_form(surface, :select_option) do |form| %>
+<%= rails_tool_views_action_form(surface, :select_option) do |form| %>
   <% props.fetch("options").each do |option| %>
     <%= form.radio_button :key, option.fetch("key"), checked: state["selected"] == option["key"] %>
     <%= form.label :key, option.fetch("label"), value: option.fetch("key") %>
@@ -105,16 +105,16 @@ The component's own template posts the action. `tool_views_action_form` yields a
 <% end %>
 ```
 
-`tool_views_action_button(surface, :accept, "Accept", arguments: { version: 3 })` renders a one-button form for an action whose arguments are fixed. `tool_views_action_fields(surface, :accept)` returns only the routing fields for a form you build yourself. A mistyped action name fails when the template renders, with the name in the error.
+`rails_tool_views_action_button(surface, :accept, "Accept", arguments: { version: 3 })` renders a one-button form for an action whose arguments are fixed. `rails_tool_views_action_fields(surface, :accept)` returns only the routing fields for a form you build yourself. A mistyped action name fails when the template renders, with the name in the error.
 
-Partial locals are `props`, `state`, `surface` and `error`. A trusted ViewComponent registration uses `component: MyComponent` and receives validated props as keyword arguments. A component whose initializer also names `surface:`, `state:` or `error:` receives those as well, so it can be interactive; `include ToolViews::SurfacesHelper` in it to use the form helpers ([example](test/dummy/app/components/demo_choice_component.rb)). A component that names none of them is called exactly as before. Registration rejects a props schema that declares a property with a context name the component accepts. Both renderers inherit host escaping/style; avoid `raw`/`html_safe` on untrusted props. A string at `state["message"]` is announced in the Surface's polite status region; without one the Engine says “View ready.” or, after a committed action, “Changes saved.”
+Partial locals are `props`, `state`, `surface` and `error`. A trusted ViewComponent registration uses `component: MyComponent` and receives validated props as keyword arguments. A component whose initializer also names `surface:`, `state:` or `error:` receives those as well, so it can be interactive; `include RailsToolViews::SurfacesHelper` in it to use the form helpers ([example](test/dummy/app/components/demo_choice_component.rb)). A component that names none of them is called exactly as before. Registration rejects a props schema that declares a property with a context name the component accepts. Both renderers inherit host escaping/style; avoid `raw`/`html_safe` on untrusted props. A string at `state["message"]` is announced in the Surface's polite status region; without one the Engine says “View ready.” or, after a committed action, “Changes saved.”
 
-A renderer that raises is replaced by a visible `RENDER_FAILED` message with saved state intact. The exception goes to `Rails.error` (handled, source `tool_views`) and the Rails log, and a metadata-only `surface.render_failed.tool_views` event fires. A `ToolViews::Error` raised by the renderer itself, such as a host permission check, is shown as that error and is not reported as a failure.
+A renderer that raises is replaced by a visible `RENDER_FAILED` message with saved state intact. The exception goes to `Rails.error` (handled, source `tool_views`) and the Rails log, and a metadata-only `surface.render_failed.tool_views` event fires. A `RailsToolViews::Error` raised by the renderer itself, such as a host permission check, is shown as that error and is not reported as a failure.
 
 For domain validation, a handler may raise:
 
 ```ruby
-raise ToolViews::ValidationError.new(
+raise RailsToolViews::ValidationError.new(
   fields: { email: "must be a valid email address" },
   values: access.arguments.slice("name", "email"))
 ```
@@ -122,22 +122,22 @@ raise ToolViews::ValidationError.new(
 A handler can also reject with a host-defined code. Supply the wording directly or translate `tool_views.errors.<downcased code>`; built-in codes translate the same way:
 
 ```ruby
-raise ToolViews::Error.new("OUT_OF_STOCK", status: 422, message: "Only two left.")
+raise RailsToolViews::Error.new("OUT_OF_STOCK", status: 422, message: "Only two left.")
 # or config/locales/*.yml -> en.tool_views.errors.out_of_stock
 ```
 
-Engine-owned wording (status, revision line, AI follow-up states, saving/failed announcements) lives in `ToolViews::SurfacesHelper::TEXT`; override any key under `tool_views.surface.<key>`.
+Engine-owned wording (status, revision line, AI follow-up states, saving/failed announcements) lives in `RailsToolViews::SurfacesHelper::TEXT`; override any key under `tool_views.surface.<key>`.
 
 JSON receives `VALIDATION_FAILED`, `fields` and `values` with HTTP 422. Authorized HTML/Turbo re-render the trusted component with this `error`; the component maps fields to labeled controls and escapes retained values. The rejected request commits neither domain writes nor a new Surface revision/receipt. Return only approved, schema-validated form values, never private records or exception dumps. The [customer component](test/dummy/app/views/v1/_customer_form.html.erb) and [host workflows](test/dummy/app/services/demo_v1/workflows.rb) demonstrate this contract.
 
 ## Present, render and restore without AI
 
 ```ruby
-scope = ToolViews::Scope.new(actor: current_user.id.to_s, tenant: current_account.id.to_s)
-surface = ToolViews.present(:choice_card, props: approved_props, scope: scope, context: "project:123")
+scope = RailsToolViews::Scope.new(actor: current_user.id.to_s, tenant: current_account.id.to_s)
+surface = RailsToolViews.present(:choice_card, props: approved_props, scope: scope, context: "project:123")
 # ERB:
-# <%= tool_views_surface(surface, scope: scope) %>
-restored = ToolViews.restore(surface.id, scope: scope)
+# <%= rails_tool_views_surface(surface, scope: scope) %>
+restored = RailsToolViews.restore(surface.id, scope: scope)
 ```
 
 Surfaces use UUIDs and persist contract digest, props, UI state, revision and optional opaque context reference. A changed schema/renderer/action signature or version fails visibly; old state is preserved for host migration. Bump `version` when changing renderer/handler semantics not represented by the schema. Business records and agent transcripts are separate authorities.
@@ -159,20 +159,20 @@ Register the optional Stimulus factory from `tool_views_controller.js` in your o
 Keep RubyLLM in the host Gemfile. Core never loads it:
 
 ```ruby
-require "tool_views/adapters/ruby_llm"
-presenter = ToolViews::Adapters::RubyLLM::PresentUI.new(
+require "rails_tool_views/adapters/ruby_llm"
+presenter = RailsToolViews::Adapters::RubyLLM::PresentUI.new(
   keys: [:choice_card], scope: scope, context: "chat:456")
 chat.with_tools(presenter).ask("Help me choose a workflow")
-# RubyLLM supplies the real ToolCall ID. ToolViews deduplicates per actor,
+# RubyLLM supplies the real ToolCall ID. RailsToolViews deduplicates per actor,
 # tenant, adapter and context; the model gets status/surface_id/revision.
 # Host UI separately restores and renders presenter.references.
 ```
 
-The bounded schema exposes an enum of approved components and a union of their props schemas; the server validates the exact selected component again. Reference collection is request-local convenience; durable presentation links are in `ToolViews::Presentation`, scoped to actor/tenant/context. Never render arbitrary model text as a component or monkeypatch chat internals.
+The bounded schema exposes an enum of approved components and a union of their props schemas; the server validates the exact selected component again. Reference collection is request-local convenience; durable presentation links are in `RailsToolViews::Presentation`, scoped to actor/tenant/context. Never render arbitrary model text as a component or monkeypatch chat internals.
 
-An action can return `Transition.new(state: ..., agent: true)`. `ToolViews.deliver` invokes an optional host adapter **after** action commit. No adapter means the selection succeeds and continuation is skipped. Failure preserves selection and provides explicit retry; the adapter's exception is reported to `Rails.error` and the Rails log with a metadata-only `agent_failed.tool_views` event, while the interaction stores only `AGENT_UNAVAILABLE`; forwarding claims a durable lease (`config.delivery_lease`, 300 seconds by default) and uses a stable delivery key. An expired lease may retry, so the host delivery backend must deduplicate that key across crashes. Exactly-once remote delivery is not promised.
+An action can return `Transition.new(state: ..., agent: true)`. `RailsToolViews.deliver` invokes an optional host adapter **after** action commit. No adapter means the selection succeeds and continuation is skipped. Failure preserves selection and provides explicit retry; the adapter's exception is reported to `Rails.error` and the Rails log with a metadata-only `agent_failed.tool_views` event, while the interaction stores only `AGENT_UNAVAILABLE`; forwarding claims a durable lease (`config.delivery_lease`, 300 seconds by default) and uses a stable delivery key. An expired lease may retry, so the host delivery backend must deduplicate that key across crashes. Exactly-once remote delivery is not promised.
 
-`ToolViews::Adapters::RubyLLM::Continuation` takes `chat_resolver:` (authorized durable chat lookup) and `delivery:` (host durable deduplication around the supplied block). It uses `Chat#ask` for a new user turn; RubyLLM rejects pending tool calls. Core never fabricates tool messages. For slow work, set `auto_deliver = false`, keep `agent_adapter` configured, enqueue `ToolViews.deliver` from a host Active Job, and use the saved interaction ID. HTTP reports 202/pending while the action remains committed. The gem does not run a queue or poll your provider.
+`RailsToolViews::Adapters::RubyLLM::Continuation` takes `chat_resolver:` (authorized durable chat lookup) and `delivery:` (host durable deduplication around the supplied block). It uses `Chat#ask` for a new user turn; RubyLLM rejects pending tool calls. Core never fabricates tool messages. For slow work, set `auto_deliver = false`, keep `agent_adapter` configured, enqueue `RailsToolViews.deliver` from a host Active Job, and use the saved interaction ID. HTTP reports 202/pending while the action remains committed. The gem does not run a queue or poll your provider.
 
 The V1 host callback puts its business write and `DemoAgentReceipt` in one transaction keyed by `delivery_key`. A retry after a committed domain write but uncertain core acknowledgment does not create another version/reply. It rechecks current permissions and the domain version before applying an unseen request. This local receipt does not establish exactly-once delivery to an external provider. [TicketsQueryTool](examples/tickets_query_tool.rb) demonstrates a separate scoped RubyLLM query tool returning bounded display-safe references; query and presentation/action policies each authorize independently.
 
@@ -199,3 +199,15 @@ A deadlock, serialization failure or lock timeout rolls the whole action back an
 A separately opt-in billable smoke is in `examples/provider_smoke.rb`; prepare the development DB first and load `OPENAI_API_KEY` from a secret manager or protected env file. Never put credentials in command arguments or inline exports. Run it only with explicit intent using `TOOLVIEWS_LIVE_SMOKE=1`; no live-provider success is claimed here.
 
 See [v0 acceptance](docs/agent/06_ACCEPTANCE_MATRIX.md), [v1 acceptance](docs/agent/08_V1_ACCEPTANCE.md), [v1 validation evidence](docs/evidence/V1_VALIDATION.md), [operations](docs/operations/01_RUNBOOK.md), [security](SECURITY.md) and [release checklist](docs/operations/02_RELEASE_CHECKLIST.md). Name/license clearance, formal human review and external setup trials remain open. See `LICENSE_PENDING.md`; no publication is authorized.
+
+## Upgrade from the unpublished ToolViews package
+
+Replace `gem "toolviews"` with `gem "rails_tool_views"` and use `require "rails_tool_views"` and `RailsToolViews`. `ToolViews` is a compatibility alias to the same module; legacy `toolviews`, `tool_views`, `tool_views/core` and `tool_views/adapters/ruby_llm` requires remain available. Existing `tool_views_*` helpers and mounts named `:tool_views` keep working; new hosts can use `rails_tool_views_*` helpers and `:rails_tool_views`.
+
+Do not rerun the installer on an existing host. Keep its initializer, mount and migration history. Database tables remain `tool_views_*`; migration class/file names, component keys/versions/digests, Surface IDs, DOM IDs, delivery keys, notification names, translations and Stimulus identifiers remain stable. There is no data migration. Custom Engine partial overrides move to `app/views/rails_tool_views/`; review host code that serializes Ruby class names. Do not rename host component classes or partials as part of this upgrade: renderer identity participates in the contract digest. The existing incompatibility guard still rejects changed contracts.
+
+OddlyDock is the planned primary reference host, not a runtime dependency. Its real integration gates TV-02/03 remain unverified; the independent host smoke verifies the gem without OddlyDock or RubyLLM. See [rename decision and compatibility evidence](docs/adr/005-rails-tool-views-identity.md).
+
+## Rails trademark notice
+
+RailsToolViews is an unofficial community project. The Rails marks belong to David Heinemeier Hansson, with exclusive licensing to the Rails Foundation. Framework names here identify compatibility only; neither the trademark owner nor the Foundation endorses or is affiliated with this project. See the [Rails trademark policy](https://rubyonrails.org/trademarks) for the trademark owner's required notice and terms.

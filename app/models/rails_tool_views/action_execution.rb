@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   class ActionExecution < ActiveRecord::Base
     self.table_name = "tool_views_action_executions"
     belongs_to :surface

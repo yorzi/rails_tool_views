@@ -2,7 +2,7 @@
 
 | 契约 | 实现 | 入口 |
 |---|---|---|
-| FR-01 Registry/schema | IMPLEMENTED | lib/tool_views/core.rb |
+| FR-01 Registry/schema | IMPLEMENTED | lib/rails_tool_views/core.rb |
 | FR-02 present/render | IMPLEMENTED | runtime.rb、SurfacesHelper |
 | FR-03 可选工具 | IMPLEMENTED；仅离线 provider 夹具 | adapters/ruby_llm.rb |
 | FR-04 持久化/恢复 | IMPLEMENTED；SQLite | Surface、Presentation |
@@ -18,7 +18,7 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 | UC-02 | 提议字段、人工修正、校验反馈、事务内创建一次 | DemoV1::Workflows.customer、v1/customer_form |
 | UC-03/05 Demo B | 有界查询、记录 resolver、角色/租户、账户查看、分配、草拟/审阅/确认本地 outbox | DemoV1::TicketsQuery、Access、Workflows.ticket、Agent |
 | UC-04 Demo C | 不可变版本、人工编辑、接受锁定、显式再生成、失败重试、授权下载 | DemoV1::Workflows.artifact、Exports、V1::ExportsController |
-| 通用表单反馈 | 有界 ValidationError；422 JSON/HTML/Turbo 保留批准字段 | lib/tool_views/core.rb、SurfacesController |
+| 通用表单反馈 | 有界 ValidationError；422 JSON/HTML/Turbo 保留批准字段 | lib/rails_tool_views/core.rb、SurfacesController |
 | 主应用控制器集成 | 继承认证方法、过滤器与 helper | SurfacesController < ::ApplicationController |
 | 续接业务去重 | 同事务写业务结果与 delivery_key receipt | DemoAgentReceipt、DemoV1::Agent |
 

@@ -21,7 +21,7 @@ module DemoV1
       definitions.each do |name, definition|
         definition[:policy] = ->(access) { Access.allowed?(access, component: key, action: name.to_s) }
       end
-      ToolViews.register(key, description: description, schema: props, partial: "v1/#{key}", version: "1",
+      RailsToolViews.register(key, description: description, schema: props, partial: "v1/#{key}", version: "1",
         policy: ->(access) { Access.allowed?(access, component: key) }, expose_to: [:agent], actions: definitions)
     end
     def call

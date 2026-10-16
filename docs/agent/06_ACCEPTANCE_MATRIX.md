@@ -65,4 +65,8 @@ V0 evidence is retained as the original milestone record. The full suite now inc
 
 ## Evidence gates outside local v0
 
-Gate V remains PARTIAL: actual upstream loader/catalog and package probes ran, and ToolViews controls pass, but no complete DSPy/A2UI runtime security comparison, neutral-core upstream extraction or measured extension comparator exists. SP-06 schema byte sizes are local measurements, not live model reliability/token benchmarks. SP-07 maintainer contact and external developer trials were not authorized/performed. Gate H2/R remains OPEN. No acceptance row turns those limits into a PASS.
+Gate V remains PARTIAL: actual upstream loader/catalog and package probes ran, and RailsToolViews controls pass, but no complete DSPy/A2UI runtime security comparison, neutral-core upstream extraction or measured extension comparator exists. SP-06 schema byte sizes are local measurements, not live model reliability/token benchmarks. SP-07 maintainer contact and external developer trials were not authorized/performed. Gate H2/R remains OPEN. No acceptance row turns those limits into a PASS.
+
+## Identity upgrade — WORK-20261016-01
+
+Supplemental TV-01/04/05, existing FR-01/02/05/07 and SEC-06/07/09/15: canonical namespace, compatibility requires/helpers, real pre-rename database replay, independent packaged-host install and original authorization/digest rejection checks. See ADR 005 and `docs/evidence/RENAME_VALIDATION.md`. This is local evidence; OddlyDock TV-02/03, remote CI and gem release remain unverified.

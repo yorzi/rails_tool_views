@@ -4,7 +4,7 @@ module DemoV1
     module_function
     def call(scope:, query: "")
       Access.staff(scope)
-      raise ToolViews::Error.new("INVALID_ARGUMENTS") unless query.is_a?(String) && query.length <= 80
+      raise RailsToolViews::Error.new("INVALID_ARGUMENTS") unless query.is_a?(String) && query.length <= 80
       pattern = "%#{DemoTicket.sanitize_sql_like(query)}%"
       DemoTicket.joins(:customer).where(tenant_ref: scope.tenant, demo_customers: { tenant_ref: scope.tenant })
         .where("demo_tickets.subject LIKE ?", pattern).order(:id).limit(5).map do |record|

@@ -4,8 +4,8 @@ require "active_record/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
 Bundler.require(:default)
-require "tool_views"
-module ToolViewsDemo
+require "rails_tool_views"
+module RailsToolViewsDemo
   class Application < Rails::Application
     config.root = File.expand_path("..", __dir__)
     config.load_defaults 7.2

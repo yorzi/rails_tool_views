@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   # JSON column type whose database bind hides itself from SQL logs. Rails
   # filters binds by attribute name alone, so listing `state` or `result` in the
   # host-wide filter would also redact every host column that shares the name.

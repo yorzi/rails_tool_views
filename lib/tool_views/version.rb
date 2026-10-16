@@ -1,4 +1,3 @@
 # frozen_string_literal: true
-module ToolViews
-  VERSION = "0.2.0.pre.v1"
-end
+require "rails_tool_views/version"
+ToolViews = RailsToolViews unless defined?(ToolViews)

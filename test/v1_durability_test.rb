@@ -10,7 +10,7 @@ class V1DurabilityTest < ActiveSupport::TestCase
     DemoV1::Access.scope_for(DemoStaff.find_by!(code: 'north-lead'))
   end
   test 'independent customer submit workers create one authoritative record and durable receipt' do
-    surface = ToolViews.present(:customer_form, props: { values: { name: '', email: '' } }, scope: v1_scope)
+    surface = RailsToolViews.present(:customer_form, props: { values: { name: '', email: '' } }, scope: v1_scope)
     before = DemoCustomer.count
     workers = 2.times.map { Open3.popen3(RbConfig.ruby, 'test/fixtures/v1_worker.rb', 'submit', surface.id, 'create-once') }
     workers.each { |_input, output, _error, _thread| assert_equal "ready\n", output.gets }
@@ -24,22 +24,22 @@ class V1DurabilityTest < ActiveSupport::TestCase
     assert results.all? { |result| result['status'] == 'completed' || result['code'] == 'CONFLICT' }
     # Other processes wrote the database; bypass the parent's earlier count cache.
     assert_equal before + 1, DemoCustomer.uncached { DemoCustomer.count }
-    assert_equal 1, ToolViews::ActionExecution.count
+    assert_equal 1, RailsToolViews::ActionExecution.count
     assert_equal 2, surface.reload.revision
-    result = ToolViews.dispatch(surface.id, scope: v1_scope, action: 'submit_form', arguments: { name: 'Concurrent customer', email: 'parallel@example.test' }, base_revision: 1, idempotency_key: 'create-once')
+    result = RailsToolViews.dispatch(surface.id, scope: v1_scope, action: 'submit_form', arguments: { name: 'Concurrent customer', email: 'parallel@example.test' }, base_revision: 1, idempotency_key: 'create-once')
     assert_equal 2, result[:revision]
   ensure
     workers&.each { |input, output, error, thread| [input, output, error].each { |io| io.close unless io.closed? }; Process.kill('TERM', thread.pid) if thread.alive? }
   end
   test 'separate boot restores regenerated accepted exported artifact and its host receipt' do
     artifact = DemoArtifact.find_by!(code: 'north-artifact')
-    surface = ToolViews.present(:result_review, props: { artifact_id: artifact.id.to_s }, scope: v1_scope)
-    ToolViews.configuration.agent_adapter = DemoV1::Agent.new
+    surface = RailsToolViews.present(:result_review, props: { artifact_id: artifact.id.to_s }, scope: v1_scope)
+    RailsToolViews.configuration.agent_adapter = DemoV1::Agent.new
     args = { feedback: 'Concise', artifact_version: '1' }
-    result = ToolViews.dispatch(surface.id, scope: v1_scope, action: 'regenerate', arguments: args, base_revision: 1, idempotency_key: 'regenerate')
-    ToolViews.deliver(result.fetch(:interaction_id), scope: v1_scope)
-    ToolViews.dispatch(surface.id, scope: v1_scope, action: 'accept', arguments: { artifact_version: '2' }, base_revision: 2, idempotency_key: 'accept')
-    ToolViews.dispatch(surface.id, scope: v1_scope, action: 'export', arguments: { artifact_version: '2' }, base_revision: 3, idempotency_key: 'export')
+    result = RailsToolViews.dispatch(surface.id, scope: v1_scope, action: 'regenerate', arguments: args, base_revision: 1, idempotency_key: 'regenerate')
+    RailsToolViews.deliver(result.fetch(:interaction_id), scope: v1_scope)
+    RailsToolViews.dispatch(surface.id, scope: v1_scope, action: 'accept', arguments: { artifact_version: '2' }, base_revision: 2, idempotency_key: 'accept')
+    RailsToolViews.dispatch(surface.id, scope: v1_scope, action: 'export', arguments: { artifact_version: '2' }, base_revision: 3, idempotency_key: 'export')
     output, error, status = Open3.capture3(RbConfig.ruby, 'test/fixtures/v1_worker.rb', 'restore', surface.id)
     assert status.success?, error
     restored = JSON.parse(output)

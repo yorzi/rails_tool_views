@@ -1,2 +1,2 @@
 # frozen_string_literal: true
-require_relative "tool_views"
+require_relative "rails_tool_views"

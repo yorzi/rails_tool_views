@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   class Surface < ActiveRecord::Base
     self.table_name = "tool_views_surfaces"
     self.filter_attributes += %i[props state]

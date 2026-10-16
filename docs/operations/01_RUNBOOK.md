@@ -15,7 +15,7 @@ Failure exercise: stop normal Puma, run `TOOLVIEWS_DEMO_AGENT_FAILURE=1 bin/demo
 | CONFLICT | Reload snapshot; retry an uncertain request with the same key and original arguments. Also returned when the database rolls the action back (deadlock, serialization failure, lock timeout) |
 | IDEMPOTENCY_CONFLICT | Investigate key reuse; do not replay a different action with the same key |
 | INCOMPATIBLE_COMPONENT | Preserve snapshot; restore the old contract or perform explicit host migration/re-presentation |
-| RENDER_FAILED | Read the `ToolViews surface.render_failed handled …` log line or the `Rails.error` report for the exception and template line; saved state remains |
+| RENDER_FAILED | Read the `RailsToolViews surface.render_failed handled …` log line or the `Rails.error` report for the exception and template line; saved state remains |
 | VALIDATION_FAILED | Correct returned approved fields; no domain/Surface mutation committed; retain native field labels/error association |
 | REVIEW_REQUIRED | Review current reply/version first; privileged actions still need current role and explicit confirmation |
 | ALREADY_SUBMITTED/ALREADY_ACCEPTED | Use a new draft; completed records/accepted versions are preserved |
@@ -28,3 +28,7 @@ Observe metadata-only `*.tool_views` ActiveSupport notifications, including `sur
 V1's accepted text download checks role/tenant again and uses the exact persisted accepted version. Failed export generation rolls back its record and Surface action; retry the original key/arguments. Surface revision conflict and business version conflict both require reloading current data; do not silently substitute a newer approved version. `bin/check` runs suites sequentially because they share the dummy test DB.
 
 Before uninstall, back up/export using the host's approved procedure, remove mounts/helpers/jobs/adapter code, then remove the gem. Drop namespaced tables only after an explicit owner-approved retention decision. The gem does not silently delete data or manage credentials/backups.
+
+## Rename upgrade (0.2.0.pre.v2)
+
+Use `rails_tool_views` / `RailsToolViews` for new hosts. Existing hosts replace the Gemfile dependency and bundle; retain the installed migration, initializer and mount. Do not rerun the installer. The four `tool_views_*` tables and runtime wire identifiers deliberately remain unchanged; backup/restore and rollback procedures still address those tables. Old requires/constants/helpers/mounts remain supported. Engine partial overrides, if any, move to `app/views/rails_tool_views/`; review custom code that stores Ruby class names. See README upgrade section and ADR 005. No schema migration is required.

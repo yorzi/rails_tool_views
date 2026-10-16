@@ -14,7 +14,7 @@ class DemoTicketsQueryTool < RubyLLM::Tool
   end
   def execute(query:)
     { tickets: DemoV1::TicketsQuery.call(scope: @scope, query: query) }
-  rescue ToolViews::Error => error
+  rescue RailsToolViews::Error => error
     error.to_h
   end
 end

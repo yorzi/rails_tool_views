@@ -9,41 +9,41 @@ class RenderingTest < ActiveSupport::TestCase
     controller.view_context
   end
   test "partial rendering escapes model props and restores checked choice" do
-    surface = ToolViews.present(:choice_card, props: props.merge(title: '<script>alert("x")</script>'), scope: scope)
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    surface = RailsToolViews.present(:choice_card, props: props.merge(title: '<script>alert("x")</script>'), scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "&lt;script&gt;"
     refute_includes html, "<script>"
     assert_includes html, "/tool_views/surfaces/#{surface.id}/actions"
     assert_includes html, "Choose a workflow"
     act(surface)
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, 'checked="checked"'
     assert_includes html, "Saved revision 2"
     assert_includes html, "Selection saved"
   end
   test "trusted ViewComponent receives validated props" do
-    ToolViews.register(:vc_card, description: "Existing component", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
-    surface = ToolViews.present(:vc_card, props: props, scope: scope)
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    RailsToolViews.register(:vc_card, description: "Existing component", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
+    surface = RailsToolViews.present(:vc_card, props: props, scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "Trusted ViewComponent"
     assert_includes html, "Choose a workflow"
   end
   test "renderer errors and denied access visibly preserve state without leaking props" do
     surface = present_card
-    html = ToolViews.render(surface, view_context: view, scope: scope("bob"))
+    html = RailsToolViews.render(surface, view_context: view, scope: scope("bob"))
     assert_includes html, "This view is unavailable"
     refute_includes html, "Choose a workflow"
-    ToolViews.reset!
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    RailsToolViews.reset!
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "contract changed"
-    assert_equal 1, ToolViews::Surface.count
-    ToolViews.register(:missing, description: "Missing renderer", schema: PROPS_SCHEMA, partial: "choices/missing", policy: ->(_access) { true })
-    missing = ToolViews.present(:missing, props: props, scope: scope)
-    assert_includes ToolViews.render(missing, view_context: view, scope: scope), "cannot be rendered"
+    assert_equal 1, RailsToolViews::Surface.count
+    RailsToolViews.register(:missing, description: "Missing renderer", schema: PROPS_SCHEMA, partial: "choices/missing", policy: ->(_access) { true })
+    missing = RailsToolViews.present(:missing, props: props, scope: scope)
+    assert_includes RailsToolViews.render(missing, view_context: view, scope: scope), "cannot be rendered"
   end
   test "empty options state has no submit controls" do
-    surface = ToolViews.present(:choice_card, props: props.merge(options: []), scope: scope)
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    surface = RailsToolViews.present(:choice_card, props: props.merge(options: []), scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "No options are available"
     refute_includes html, "type=\"submit\""
   end
@@ -60,10 +60,10 @@ class RenderingTest < ActiveSupport::TestCase
     ActiveSupport::Notifications.unsubscribe(token)
   end
   test "a broken host renderer is reported instead of failing silently" do
-    ToolViews.register(:missing, description: "Missing renderer", schema: PROPS_SCHEMA, partial: "choices/missing", policy: ->(_access) { true })
-    missing = ToolViews.present(:missing, props: props.merge(title: "private-title-sentinel"), scope: scope)
+    RailsToolViews.register(:missing, description: "Missing renderer", schema: PROPS_SCHEMA, partial: "choices/missing", policy: ->(_access) { true })
+    missing = RailsToolViews.present(:missing, props: props.merge(title: "private-title-sentinel"), scope: scope)
     html = nil
-    reports, events = observe { html = ToolViews.render(missing, view_context: view, scope: scope) }
+    reports, events = observe { html = RailsToolViews.render(missing, view_context: view, scope: scope) }
     assert_includes html, "cannot be rendered"
     assert_equal 1, reports.length
     error, details = reports.first
@@ -75,30 +75,30 @@ class RenderingTest < ActiveSupport::TestCase
   end
   test "a successful render is announced once and a host renderer rejection is shown as itself" do
     surface = present_card
-    reports, events = observe { ToolViews.render(surface, view_context: view, scope: scope) }
+    reports, events = observe { RailsToolViews.render(surface, view_context: view, scope: scope) }
     assert_empty reports
     assert_equal ["surface.rendered.tool_views"], events.map(&:first)
-    ToolViews.register(:guarded, description: "Host guarded renderer", partial: "v1/ticket_card", policy: ->(_access) { true },
+    RailsToolViews.register(:guarded, description: "Host guarded renderer", partial: "v1/ticket_card", policy: ->(_access) { true },
       schema: { type: "object", additionalProperties: false, properties: { ticket_id: { type: "string" } } })
-    guarded = ToolViews.present(:guarded, props: { ticket_id: "1" }, scope: scope)
+    guarded = RailsToolViews.present(:guarded, props: { ticket_id: "1" }, scope: scope)
     html = nil
-    reports, events = observe { html = ToolViews.render(guarded, view_context: view, scope: scope) }
+    reports, events = observe { html = RailsToolViews.render(guarded, view_context: view, scope: scope) }
     assert_includes html, "You do not have permission to use this view."
     refute_includes html, "cannot be rendered"
     assert_empty reports
     assert_empty events
   end
   test "status copy is generic by default and host translations replace engine wording" do
-    ToolViews.reset!
-    register_card { |access| ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) }
+    RailsToolViews.reset!
+    register_card { |access| RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) }
     surface = present_card
-    assert_includes ToolViews.render(surface, view_context: view, scope: scope), "View ready."
+    assert_includes RailsToolViews.render(surface, view_context: view, scope: scope), "View ready."
     act(surface)
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "Changes saved."
     refute_includes html, "Selection saved"
     I18n.backend.store_translations(:en, tool_views: { surface: { saved: "已保存更改。", revision: "第 %{revision} 版", saving: "正在保存…" } })
-    html = ToolViews.render(surface, view_context: view, scope: scope)
+    html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "已保存更改。"
     assert_includes html, "第 2 版"
     assert_includes html, 'data-tool-views-saving-value="正在保存…"'
@@ -110,7 +110,7 @@ class RenderingTest < ActiveSupport::TestCase
   test "action form helper scopes fields keeps ids unique per Surface and fills routing fields" do
     first, second = present_card, present_card
     act(second)
-    documents = [first, second].map { |surface| Nokogiri::HTML(ToolViews.render(surface, view_context: view, scope: scope)) }
+    documents = [first, second].map { |surface| Nokogiri::HTML(RailsToolViews.render(surface, view_context: view, scope: scope)) }
     ids = documents.flat_map { |document| document.css("[id]").map { |node| node["id"] } }
     assert_equal ids.uniq, ids
     documents.zip([first, second]).each do |document, surface|
@@ -134,19 +134,19 @@ class RenderingTest < ActiveSupport::TestCase
     assert_equal 'choice_card does not register the action "select_optoin"', error.message
   end
   test "a ViewComponent receives only the Surface context its initializer names" do
-    plain = ToolViews.register(:plain_vc, description: "Props only", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
+    plain = RailsToolViews.register(:plain_vc, description: "Props only", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
     assert_empty plain.context
-    interactive = ToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
+    interactive = RailsToolViews.register(:interactive_vc, description: "Interactive", schema: PROPS_SCHEMA, component: DemoChoiceComponent, policy: ->(access) { access.actor == "alice" },
       actions: { select_option: { schema: PARAMS_SCHEMA, policy: ->(access) { access.actor == "alice" },
-        handler: ->(access) { ToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) } } })
+        handler: ->(access) { RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) } } })
     assert_equal %i[surface state error], interactive.context
-    surface = ToolViews.present(:interactive_vc, props: props, scope: scope)
-    ToolViews.dispatch(surface.id, scope: scope, action: "select_option", arguments: { key: "continue" }, base_revision: 1, idempotency_key: "vc-1")
-    document = Nokogiri::HTML(ToolViews.render(surface, view_context: view, scope: scope))
+    surface = RailsToolViews.present(:interactive_vc, props: props, scope: scope)
+    RailsToolViews.dispatch(surface.id, scope: scope, action: "select_option", arguments: { key: "continue" }, base_revision: 1, idempotency_key: "vc-1")
+    document = Nokogiri::HTML(RailsToolViews.render(surface, view_context: view, scope: scope))
     assert_equal "/tool_views/surfaces/#{surface.id}/actions", document.at_css("form")["action"]
     assert_equal "2", document.at_css("input[name=base_revision]")["value"]
     assert_equal "continue", document.at_css("input[type=radio][checked]")["value"]
     ambiguous = { type: "object", additionalProperties: false, properties: { title: { type: "string" }, options: { type: "array", items: { type: "string" } }, state: { type: "string" } } }
-    assert_error("INVALID_COMPONENT") { ToolViews.register(:ambiguous_vc, description: "Ambiguous", schema: ambiguous, component: DemoChoiceComponent, policy: ->(_access) { true }) }
+    assert_error("INVALID_COMPONENT") { RailsToolViews.register(:ambiguous_vc, description: "Ambiguous", schema: ambiguous, component: DemoChoiceComponent, policy: ->(_access) { true }) }
   end
 end

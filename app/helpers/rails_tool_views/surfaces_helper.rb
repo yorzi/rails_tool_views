@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   module SurfacesHelper
     # Engine-owned copy. Translate or reword any of it under tool_views.surface.<key>.
     TEXT = {
@@ -11,7 +11,7 @@ module ToolViews
     }.freeze
 
     def tool_views_surface(surface, scope:, error: nil)
-      ToolViews.render(surface, view_context: self, scope: scope, error: error)
+      RailsToolViews.render(surface, view_context: self, scope: scope, error: error)
     end
 
     def tool_views_text(key, **values)
@@ -38,7 +38,7 @@ module ToolViews
     # The routing fields alone, for a form the host builds itself.
     def tool_views_action_fields(surface, action)
       key = action.to_s
-      unless ToolViews.registry.fetch(surface.component_key).actions.key?(key)
+      unless RailsToolViews.registry.fetch(surface.component_key).actions.key?(key)
         raise ArgumentError, "#{surface.component_key} does not register the action #{key.inspect}"
       end
       safe_join({ action_name: key, base_revision: surface.revision, idempotency_key: SecureRandom.uuid, source_component: surface.component_key }
@@ -52,20 +52,23 @@ module ToolViews
         context = { surface: surface, state: surface.state, error: error }.slice(*definition.context)
         render(definition.component.new(**surface.props.symbolize_keys, **context))
       end
-      ToolViews.notify("surface.rendered", surface_id: surface.id, component: definition.key, revision: surface.revision)
+      RailsToolViews.notify("surface.rendered", surface_id: surface.id, component: definition.key, revision: surface.revision)
       html
     rescue StandardError => failure
       # A host renderer may reject deliberately; anything else is a host bug to report.
-      rejection = [failure, failure.cause].find { |candidate| candidate.is_a?(ToolViews::Error) }
-      ToolViews.report(failure, "surface.render_failed", surface_id: surface.id, component: definition.key) unless rejection
-      render(partial: "tool_views/surfaces/error", formats: [:html], locals: { error: rejection || ToolViews::Error.new("RENDER_FAILED", status: 422) })
+      rejection = [failure, failure.cause].find { |candidate| candidate.is_a?(RailsToolViews::Error) }
+      RailsToolViews.report(failure, "surface.render_failed", surface_id: surface.id, component: definition.key) unless rejection
+      render(partial: "rails_tool_views/surfaces/error", formats: [:html], locals: { error: rejection || RailsToolViews::Error.new("RENDER_FAILED", status: 422) })
     end
 
     def tool_views_routes
-      # Rails' mounted helper honors a custom mount path; host must name mount :tool_views.
-      # A ViewComponent that includes this module reaches it through its view context.
-      view = respond_to?(:tool_views) || respond_to?(:main_app) ? self : helpers
-      view.respond_to?(:tool_views) ? view.tool_views : view.main_app.tool_views
+      view = respond_to?(:rails_tool_views) || respond_to?(:tool_views) || respond_to?(:main_app) ? self : helpers
+      routes = view.respond_to?(:rails_tool_views) || view.respond_to?(:tool_views) ? view : view.main_app
+      routes.respond_to?(:rails_tool_views) ? routes.rails_tool_views : routes.tool_views
+    end
+
+    %i[surface text action_form action_button action_fields body routes].each do |suffix|
+      alias_method "rails_tool_views_#{suffix}", "tool_views_#{suffix}"
     end
   end
 end

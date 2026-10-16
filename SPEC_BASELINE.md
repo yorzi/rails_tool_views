@@ -12,3 +12,7 @@ Initial v0 scope: Demo A, UC-01 and UC-10; S1 offline runtime, S2 optional RubyL
 ## V1 authorization
 
 After v0, Andy explicitly requested continuing through v1 before human inspection. Local scope now includes the pinned P1 UC-02..05 contracts and Demo B/C. This authorizes reversible local implementation and its verification; the external reference remains unchanged, and release/maintainer contact/live communication remains outside this task.
+
+## 2026-10-16 identity supplement and push authorization
+
+The owner now explicitly requests adopting **RailsToolViews**, updating the gem and related surfaces, then commit and push. This supersedes the earlier no-push scope for this work unit; RubyGems publication is not requested. Original Specs remain pinned above and unchanged. Additional naming/compatibility intent is read from OddlyNiche commit `c100a73d80b92de2246901922caa2b7bd819d889`, `toolviews/supporting/07_RAILS_NAME_AND_ODDLYDOCK_CONTRACT.md`. See ADR 005 and DELTA-003 for the implementation decision. OddlyDock remains a planned reference host, not a core dependency or a completed integration claim.

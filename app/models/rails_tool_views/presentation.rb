@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module ToolViews
+module RailsToolViews
   class Presentation < ActiveRecord::Base
     self.table_name = "tool_views_presentations"
     belongs_to :surface

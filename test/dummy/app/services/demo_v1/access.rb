@@ -3,27 +3,27 @@ module DemoV1
   module Access
     module_function
     def scope_for(staff)
-      ToolViews::Scope.new(actor: staff.actor_ref, tenant: staff.tenant_ref)
+      RailsToolViews::Scope.new(actor: staff.actor_ref, tenant: staff.tenant_ref)
     end
     def staff(scope)
-      raise ToolViews::Error.new("NOT_ALLOWED", status: 403) unless scope.actor.match?(/\Astaff:[1-9][0-9]*\z/)
+      raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless scope.actor.match?(/\Astaff:[1-9][0-9]*\z/)
       record = DemoStaff.find_by(id: scope.actor.delete_prefix("staff:"), tenant_ref: scope.tenant, active: true)
-      raise ToolViews::Error.new("NOT_ALLOWED", status: 403) unless record && %w[lead agent].include?(record.role)
+      raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless record && %w[lead agent].include?(record.role)
       record
     end
     def scope(access)
-      ToolViews::Scope.new(actor: access.actor, tenant: access.tenant)
+      RailsToolViews::Scope.new(actor: access.actor, tenant: access.tenant)
     end
     def ticket(scope, id)
       staff(scope)
       record = DemoTicket.find_by(id: id, tenant_ref: scope.tenant)
-      raise ToolViews::Error.new("NOT_ALLOWED", status: 403) unless record && record.customer.tenant_ref == scope.tenant
+      raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless record && record.customer.tenant_ref == scope.tenant
       record
     end
     def artifact(scope, id)
       staff(scope)
       record = DemoArtifact.find_by(id: id, tenant_ref: scope.tenant)
-      raise ToolViews::Error.new("NOT_ALLOWED", status: 403) unless record
+      raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless record
       record
     end
     def allowed?(access, component:, action: nil)
@@ -42,7 +42,7 @@ module DemoV1
         return false if %w[accept export].include?(action) && owner.role != "lead"
       end
       true
-    rescue ToolViews::Error, KeyError
+    rescue RailsToolViews::Error, KeyError
       false
     end
   end

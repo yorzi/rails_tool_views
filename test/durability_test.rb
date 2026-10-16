@@ -23,16 +23,16 @@ class DurabilityTest < ActiveSupport::TestCase
     snapshot = JSON.parse(output)
     assert_equal 2, snapshot["revision"]
     assert_equal "compare", snapshot["state"]["selected"]
-    assert_equal ToolViews::Data.normalize(surface.reload.snapshot), snapshot
+    assert_equal RailsToolViews::Data.normalize(surface.reload.snapshot), snapshot
   end
   test "the mounted controller inherits the host controller the configuration names" do
     surface = present_card
     output, errors, status = Open3.capture3(RbConfig.ruby, "test/fixtures/parent_controller_worker.rb")
     assert status.success?, errors
     assert_equal({ "superclass" => "SignedInController", "status" => 200, "revision" => 2 }, JSON.parse(output.lines.last))
-    assert_equal "::ApplicationController", ToolViews.configuration.parent_controller
-    ToolViews.configuration.parent_controller = "ActionController::API"
-    error = assert_raises(ArgumentError) { ToolViews.parent_controller }
+    assert_equal "::ApplicationController", RailsToolViews.configuration.parent_controller
+    RailsToolViews.configuration.parent_controller = "ActionController::API"
+    error = assert_raises(ArgumentError) { RailsToolViews.parent_controller }
     assert_includes error.message, "must inherit from ActionController::Base"
     assert_equal 1, surface.reload.revision
   end
@@ -42,7 +42,7 @@ class DurabilityTest < ActiveSupport::TestCase
     assert results.any? { |result| result["status"] == "completed" }
     assert results.all? { |result| result["status"] == "completed" || result["code"] == "CONFLICT" }
     assert_equal 1, DemoEffect.count
-    assert_equal 1, ToolViews::ActionExecution.count
+    assert_equal 1, RailsToolViews::ActionExecution.count
     assert_equal 2, surface.reload.revision
     assert_equal 2, act(surface, revision: 1, idempotency: "same-request")[:revision]
   end

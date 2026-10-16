@@ -18,3 +18,7 @@ Candidate: local 0.2.0.pre.v1 on main, 2026-10-11. No public repository or RubyG
 - [ ] Explicit owner approval for push/public repository/release.
 
 No gate is auto-approved by green local tests. Do not add CI publication credentials or a release workflow until authorized.
+
+## 2026-10-16 scope update
+
+Owner approved RailsToolViews identity and commit/push for WORK-20261016-01. Candidate is `rails_tool_views` 0.2.0.pre.v2. The older no-push authorization statement above is historical; the owner subsequently selected `yorzi/rails_tool_views` private; origin is configured. Gem publication remains unauthorized and gemspec `allowed_push_host` remains blocked. Name selection and exact-name HTTP 404 observations do not close legal/near-collision/license clearance. Independent packaged-host and old-data compatibility checks are recorded in RENAME_VALIDATION. OddlyDock TV-02/03 remains open.
