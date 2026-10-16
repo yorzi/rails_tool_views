@@ -11,3 +11,7 @@
 ## 2026-10-16 — RailsToolViews
 
 按 Andy 要求将 gem/API 正式改为 `rails_tool_views` / `RailsToolViews`，旧 `ToolViews` 作为同一模块的兼容入口。数据库、组件契约、回放标识不改；已有 host 不必重新运行安装器。新安装采用新名字和路由，旧 helper/mount 继续可用。OddlyDock 仍是计划中的参考集成，不是 gem 依赖。详见 ADR 005。
+
+## 2026-10-16 — Demo workbench and concise README
+
+The reference app now organizes its existing examples into Component playground, Customer intake, Support workspace and Content review. Shared navigation, visible tenant/role context and suggested test flows make the same host-owned workflows easier to demonstrate. The support inbox retains the search query when opening a ticket. README is an entry point; detailed usage belongs to the guides, including the new Demo Workbench walkthrough. No core trust boundary or data model changes.

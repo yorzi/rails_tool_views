@@ -1,10 +1,5 @@
-<header class="demo-header">
-  <p class="demo-eyebrow">RAILS COMPONENTS, TRUSTED ACTIONS</p>
-  <h1>RailsToolViews</h1>
-  <p class="demo-lead">Present a view. Make a choice. Pick up where you left off.</p>
-  <p class="demo-meta">Local v0 demo · no API key required · state saved in SQLite</p>
-</header>
-<p><%= link_to "Explore V1 business workflows", v1_support_path %></p>
+<header class="demo-header"><p class="demo-eyebrow">01 / COMPONENT PLAYGROUND</p><h1>Your Rails views.<br>A new way to interact.</h1><p class="demo-lead">Present a trusted component. Make a choice.<br>Come back to exactly where you left off.</p></header>
+<div class="playground-heading"><div><span class="section-kicker">PRESENT A COMPONENT</span><p>Choose a rendering scenario to add to your workspace.</p></div><span class="v1-badge"><%= pluralize(@surfaces.size, "saved view") %></span></div>
 <nav class="demo-toolbar" aria-label="Present a component">
   <%= button_to "Present ChoiceCard", demo_present_path, params: { mode: "page" }, data: { turbo: false } %>
   <%= button_to "Present in chat", demo_present_path, params: { mode: "chat" }, data: { turbo: false } %>
@@ -14,7 +9,7 @@
 <div class="demo-grid">
   <section aria-label="Persistent views">
     <% if @surfaces.empty? %>
-      <div class="demo-empty"><h2>Your first interactive view</h2><p>Present a ChoiceCard above. Select a workflow, then refresh to see the saved selection.</p></div>
+      <div class="demo-empty"><span class="empty-art" aria-hidden="true">▤</span><span class="section-kicker">YOUR CANVAS IS READY</span><h2>Small components. Real interactions.</h2><p>Start with “Present ChoiceCard” above. Make a selection and refresh: the same view keeps its saved state.</p></div>
     <% end %>
     <% @surfaces.each do |surface| %>
       <article class="demo-presentation">
@@ -24,11 +19,10 @@
     <% end %>
   </section>
   <aside class="demo-log" aria-label="Action log">
-    <h2>Action log</h2><p>Committed Rails actions, loaded on this page visit.</p>
-    <% if @effects.empty? %><p class="demo-muted">No selections loaded yet.</p><% end %>
+    <span class="section-kicker">OBSERVE THE RESULT</span><h2>Action log</h2><p>Committed Rails actions, loaded on this page visit.</p>
+    <% if @effects.empty? %><p class="demo-muted">Waiting for your first selection.</p><% end %>
     <%= link_to "Refresh action log", root_path, data: { turbo: false } %>
     <ol><% @effects.each do |effect| %><li><strong>Selection saved</strong><span><%= effect.value %></span></li><% end %></ol>
     <p class="demo-note">Chat mode forwards the choice to a deterministic host callback. This demo does not contact an AI provider.</p>
   </aside>
 </div>
-<footer>RailsToolViews <%= RailsToolViews::VERSION %> · unpublished implementation draft</footer>

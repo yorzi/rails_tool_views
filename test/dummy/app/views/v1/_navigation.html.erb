@@ -1,17 +1,16 @@
-<header class="demo-header">
-  <p class="demo-eyebrow">TOOLVIEWS · V1 REFERENCE WORKFLOWS</p>
-  <h1>Trusted views.<br>Real domain actions.</h1>
-  <p class="demo-lead">Correct a draft, review a reply, or accept a version. Rails remains in charge.</p>
-  <p class="demo-meta">Offline fixture · <%= @staff.tenant_ref.capitalize %> tenant · <%= @staff.role %> · no external messages</p>
-</header>
-<nav class="v1-navigation" aria-label="Reference workflows">
-  <% if @staff.role == "lead" %><%= link_to "Customer form", v1_customer_path %><% end %>
-  <%= link_to "Support tickets", v1_support_path %>
-  <%= link_to "Result review", v1_review_path %>
-  <%= link_to "V0 ChoiceCard", root_path %>
-</nav>
-<%= form_with url: v1_identity_path, method: :post, data: { turbo: false }, class: "v1-identity" do %>
-  <%= label_tag "demo_identity", "Demo identity" %>
-  <%= select_tag :code, options_for_select(DemoStaff.where(active: true).order(:code).map { |staff| [staff.name, staff.code] }, @staff.code), id: "demo_identity" %>
-  <button type="submit">Switch identity</button>
-<% end %>
+<% page = case action_name
+when "customer" then ["02 / CUSTOMER INTAKE", "A draft. A review. A real record.", "Correct proposed customer details and let the host validate every field.", "Try an invalid email first. Fix it, create the customer, then refresh to verify the saved result."]
+when "review" then ["04 / CONTENT REVIEW", "Keep a human in the loop.", "Edit, regenerate and accept content with a durable version history.", "Save an edit, request regeneration with feedback, then accept and export as a lead. Accepted versions are locked."]
+else ["03 / SUPPORT WORKSPACE", "From question to reviewed reply.", "Find a ticket, inspect its account and prepare a response with explicit approval.", "Open a ticket, request a draft and edit it. Approve the reply, then confirm the local queue as a lead."]
+end %>
+<header class="demo-header"><p class="demo-eyebrow"><%= page[0] %></p><h1><%= page[1] %></h1><p class="demo-lead"><%= page[2] %></p></header>
+<div class="identity-panel">
+  <div><span class="section-kicker">ACTIVE CONTEXT</span><p><strong><%= @staff.tenant_ref.capitalize %> workspace</strong><span class="v1-badge"><%= @staff.role.capitalize %></span></p></div>
+  <%= form_with url: v1_identity_path, method: :post, data: { turbo: false }, class: "v1-identity" do %>
+    <%= label_tag "demo_identity", "Demo identity" %>
+    <%= select_tag :code, options_for_select(DemoStaff.where(active: true).order(:code).map { |staff| [staff.name, staff.code] }, @staff.code), id: "demo_identity" %>
+    <button type="submit">Switch identity</button>
+  <% end %>
+  <p class="identity-note">Synthetic identities for testing tenant and role boundaries. Switching opens the support workspace.</p>
+</div>
+<aside class="try-panel"><strong>TRY THIS FLOW</strong><p><%= page[3] %></p></aside>

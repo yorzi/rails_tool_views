@@ -22,3 +22,9 @@ No RubyGems publication or OddlyDock implementation is included. Existing open a
 - [ ] Human review of guide content remains distinct from submission authorization.
 
 See docs/README.md and evidence/DOCS_VALIDATION.md for commands and boundaries.
+
+## WORK-20261016-04 — README and demo showcase
+
+- [x] Replace duplicated README reference material with focused guide links.
+- [x] Improve demo navigation, responsive layout and workflow guidance.
+- [x] Verify tests, docs and browser workflows; record evidence and stop preview.

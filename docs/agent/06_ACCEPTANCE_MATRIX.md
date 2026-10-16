@@ -74,3 +74,7 @@ Supplemental TV-01/04/05, existing FR-01/02/05/07 and SEC-06/07/09/15: canonical
 ## Documentation usability — WORK-20261016-03
 
 FR-02/03/05/07/08 documentation now has executable tutorial blocks, core/optional-adapter checks, a generated API reference and linked guides. Local build/link/preview evidence in DOCS_VALIDATION; no external onboarding or hosted-access evidence is inferred.
+
+## Demo presentation follow-up — WORK-20261016-04
+
+README and reference host presentation refreshed. Existing action/persistence/validation/tenant boundaries remain covered by 83 tests / 665 assertions. Browser checks exercised all four workspaces with an isolated fixture database. This is local showcase evidence, not a new production or human-approval gate. See [validation](../evidence/DEMO_SHOWCASE_VALIDATION.md).

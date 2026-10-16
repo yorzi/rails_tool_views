@@ -13,5 +13,26 @@
     app.register("tool-views", toolViewsController(Controller));
   <% end %>
 </head>
-<body><main><%= yield %></main></body>
+<body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+  <div class="app-shell">
+    <aside class="app-sidebar">
+      <%= link_to root_path, class: "app-brand" do %><span class="brand-mark" aria-hidden="true">▤</span><span>RailsToolViews<small>INTERACTIVE WORKBENCH</small></span><% end %>
+      <p class="nav-label">EXPLORE THE DEMO</p>
+      <nav class="app-nav" aria-label="Demo workflows">
+        <% [["01", "Component playground", root_path], ["02", "Customer intake", v1_customer_path], ["03", "Support workspace", v1_support_path], ["04", "Content review", v1_review_path]].each do |number, label, path| %>
+          <% next if path == v1_customer_path && @staff && @staff.role != "lead" %>
+          <%= link_to path, aria: { current: request.path == path ? "page" : nil } do %><span><%= number %></span><%= label %><% end %>
+        <% end %>
+      </nav>
+      <div class="sidebar-note"><span class="live-dot"></span> Runs entirely locally<p>Real Rails actions.<br>Persistent UI state.<br>No API keys needed.</p></div>
+      <p class="sidebar-version">v<%= RailsToolViews::VERSION %><br>Unpublished development preview</p>
+    </aside>
+    <div class="app-content">
+      <div class="app-topbar"><span>REFERENCE APPLICATION <span class="topbar-divider">/</span> DEMO</span><span class="offline-pill"><span class="live-dot"></span> Offline fixtures</span></div>
+      <main id="workspace"><%= yield %></main>
+      <footer class="app-footer">Built with trusted Rails components <span>Local fixtures · No external messages</span></footer>
+    </div>
+  </div>
+</body>
 </html>

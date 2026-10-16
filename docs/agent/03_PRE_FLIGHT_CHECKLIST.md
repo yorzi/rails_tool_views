@@ -25,3 +25,7 @@ Human comprehension impact: module-level. Update README, SECURITY, CHANGELOG, AD
 ## WORK-20261016-03 — user documentation site
 
 Owner invoked project-docs to create project documentation. Read skill and its writing/site/theme/maintenance references, entrypoint, current scope, README, public runtime, adapter, helpers and examples. Baseline 873643d; clean before this task. Scope: user guides, generated API, executable examples and build workflow. Implementation-aligned documentation, no product-intent delta. Existing Specs remain untouched; internal records stay outside generated site. Private repository publication stays disabled.
+
+## WORK-20261016-04 — README and demo
+
+Owner requests a concise README and a polished testing/showcase demo. Base 67e13fb, clean tree. Read entrypoint, baseline/current reality and maintenance contract. Scope: documentation and host demo presentation, preserving existing forms, policies, fixtures and state. No schema, core API, external delivery or product intent change. Verify full regression, docs build and actual browser interactions; stop the temporary server.

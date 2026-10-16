@@ -1,5 +1,6 @@
 <%= render "v1/navigation" %>
 <p class="v1-intro">The query returns display-safe records from this tenant. Every card and action resolves its domain record again.</p>
+<div class="support-grid"><section class="ticket-inbox" aria-label="Ticket inbox"><span class="section-kicker">TENANT INBOX</span>
 <%= form_with url: v1_support_path, method: :get, data: { turbo: false }, class: "v1-search" do %>
   <%= label_tag :q, "Find support tickets" %>
   <%= text_field_tag :q, @query, maxlength: 80 %>
@@ -7,10 +8,13 @@
 <% end %>
 <div class="v1-record-list">
   <% @tickets.each do |ticket| %>
-    <%= link_to v1_support_path(ticket_id: ticket.fetch("id")), class: "v1-record", data: { turbo: false } do %>
+    <%= link_to v1_support_path(ticket_id: ticket.fetch("id"), q: @query), class: "v1-record", data: { turbo: false } do %>
       <strong><%= ticket.fetch("subject") %></strong><span><%= ticket.fetch("status").capitalize %> · Open ticket</span>
     <% end %>
   <% end %>
   <% if @tickets.empty? %><p role="status">No matching tickets in this tenant.</p><% end %>
 </div>
-<%= tool_views_surface(@surface, scope: @scope) if @surface %>
+</section><section aria-label="Selected ticket">
+<% if @surface %><%= tool_views_surface(@surface, scope: @scope) %><% else %>
+<div class="demo-empty"><span class="empty-art" aria-hidden="true">↗</span><span class="section-kicker">REVIEW BEFORE YOU SEND</span><h2>Every reply starts with context.</h2><p>Open a ticket from the inbox to see its account, assignment and reply workflow.</p><p class="demo-note">The final confirmation queues a reply locally. This demo never contacts a customer.</p></div>
+<% end %></section></div>
