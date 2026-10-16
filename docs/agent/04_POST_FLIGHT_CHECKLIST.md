@@ -23,4 +23,4 @@ Alignment: IMPLEMENTATION_BUG repairs plus ADR-recorded technical choices. No ba
 - [x] No migration, dependency coupling, provider call or authentication/policy change. Original Specs snapshot unchanged (59 exact matches).
 - [x] README upgrade steps, ADR 005, Spec supplement/DELTA-003, acceptance, status, operations and ledger updated. Runtime flow is unchanged; no diagram rewrite needed.
 - [x] No task-owned long-lived processes started; temporary package and upgrade probes cleaned up automatically.
-- [ ] Ledger-linked commit and push completion. Commit on main authorized; push target is owner-approved private `yorzi/rails_tool_views`, now configured as origin. No gem release or formal gate approval claimed.
+- [x] Ledger-linked implementation commit 7e73e4e pushed to owner-approved private `yorzi/rails_tool_views`; remote SHA and PRIVATE visibility verified. No gem release or formal gate approval claimed. Remote CI was queued when checked.

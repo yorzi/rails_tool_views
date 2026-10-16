@@ -147,3 +147,9 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 - **风险与数据：** 无表/数据迁移、无新 runtime 依赖；授权/CSRF/日志脱敏/原生可访问控件行为不变。未重新做浏览器/a11y、PostgreSQL、live provider、OddlyDock 和远程 CI；未声明市场/发布/商标清理完成。
 - **文档：** 更新 README、CHANGELOG、baseline supplement、current/pre/post-flight、delta、acceptance、ADR 005、human status/changelog 和 operations。系统运行流程未变，无须修改流程图。历史 evidence 和原 Specs 不改。
 - **交付：** main 本地提交已授权；Andy 已指定创建 `yorzi/rails_tool_views` private，私有仓库已创建并配置 origin；本次提交后推送 main，最终结果以远端 SHA 核验为准。保持 private，后续开发完成后才讨论公开。未发布 gem。未启动任何长期服务；临时 host/数据库进程已结束并自动清理。
+
+### WORK-20261016-02 — 记录私有仓库交付证据
+
+2026-10-16。实施提交 `7e73e4e` 已成功推送 `yorzi/rails_tool_views` 的 main；远端 SHA 完全匹配，GitHub 可见性 PRIVATE。按用户要求保持私有，开发完成前不公开。
+
+本提交仅将 current work、post-flight、human status 和 RENAME_VALIDATION 更新为实际交付状态，修正推送前的待办表述；无运行时/数据/安全/可访问性变化，无需重复测试或流程图。实施验证沿用 WORK-20261016-01，提交关联检查通过；远程 CI 已触发但检查时仍排队，不冒充通过。人工可查看仓库 main、可见性与 Actions；下一步是等待 CI 结果及继续原有人工检查/未完成开发，不发布 gem。未启动长期进程。
