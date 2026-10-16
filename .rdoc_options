@@ -1,0 +1,19 @@
+---
+title: "RailsToolViews"
+exclude:
+  - lib/tool_views/
+  - lib/tool_views.rb
+  - lib/toolviews.rb
+  - lib/rails_tool_views/engine.rb
+  - app/models/rails_tool_views/redacted_json.rb
+  - lib/tasks/
+  - lib/generators/
+  - \.json$
+footer_content:
+  Documentation:
+    Guides: https://yorzi.github.io/rails_tool_views/
+    Upgrading: https://yorzi.github.io/rails_tool_views/upgrading/
+  Resources:
+    GitHub: https://github.com/yorzi/rails_tool_views
+    Issues: https://github.com/yorzi/rails_tool_views/issues
+    Releases: https://github.com/yorzi/rails_tool_views/releases

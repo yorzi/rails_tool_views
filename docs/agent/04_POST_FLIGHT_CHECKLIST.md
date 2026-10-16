@@ -24,3 +24,9 @@ Alignment: IMPLEMENTATION_BUG repairs plus ADR-recorded technical choices. No ba
 - [x] README upgrade steps, ADR 005, Spec supplement/DELTA-003, acceptance, status, operations and ledger updated. Runtime flow is unchanged; no diagram rewrite needed.
 - [x] No task-owned long-lived processes started; temporary package and upgrade probes cleaned up automatically.
 - [x] Ledger-linked implementation commit 7e73e4e pushed to owner-approved private `yorzi/rails_tool_views`; remote SHA and PRIVATE visibility verified. No gem release or formal gate approval claimed. Remote CI was queued when checked.
+
+## WORK-20261016-03 — documentation site
+
+Local draft complete. Four collections and 14 pages plus homepage; generated Ruby API, Markdown and llms output. Style check: zero errors/warnings. Build, tutorial core/adapter examples, 83-test regression with 665 assertions, eager load and generated local link checks pass. Browser search, guide navigation, API entry, narrow layout and light/dark mode checked. No deployment, data migration or runtime behavior change. Source comments/CI doc checks added. Existing internal records and Specs excluded. Temporary Jekyll PID 53838 on 127.0.0.1:4000 stopped; browser tab closed. Exact evidence and limits: evidence/DOCS_VALIDATION.md.
+
+Submission follow-up: owner explicitly requested commit/push and local folder rename. Keep Pages disabled and repository private. Prior remote CI passed. Source-only PR paths and missing-build detection tightened before this ledger-linked submission.

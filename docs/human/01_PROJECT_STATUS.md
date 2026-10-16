@@ -1,5 +1,7 @@
 # 项目状态
 
+2026-10-16 文档更新：四组使用指南、生成式 RDoc API、搜索和 llms 文档已在 `docs/site` 完成本地草稿与验证。入口为 `docs/README.md`，证据为 `evidence/DOCS_VALIDATION.md`。Andy 随后要求提交与推送这些改动，并将本地目录改为 `rails_tool_views`。文档部署保持关闭，private 状态及产品验收结论不变。
+
 2026-10-16：**RENAME_LOCAL_VERIFIED / PUSHED_PRIVATE / GEM_UNPUBLISHED**。Andy 明确要求改名、commit 和 push；WORK-20261016-01 将 gem 更新为 `rails_tool_views` 0.2.0.pre.v2，namespace 为 `RailsToolViews`。旧 API、四张表、组件契约和回放标识保留；原始 Specs 不改，新增命名合同作为补充来源。验证见 `../evidence/RENAME_VALIDATION.md`；设计见 ADR 005。Andy 随后指定 `yorzi/rails_tool_views` private；私有仓库已创建，实施提交 `7e73e4e` 已推送 main，远端 SHA 与 PRIVATE 可见性均已核验。远程 CI 已触发，检查时排队中，尚无远程 PASS 结论。保持 private。RubyGems 发布、正式 H2 和 OddlyDock 集成仍未完成。下面是此前各工作单元的历史状态，不代表当前禁止 push。
 
 2026-10-13：**AUDIT_HARDENING_LOCAL_COMPLETE / COMMITTED_LOCAL / UNPUSHED / HUMAN_REVIEW_PENDING**。应 Andy 要求对 v1 做了审阅与审计（WORK-20261013-01，ADR 003）。复现并修复六个问题：嵌套 schema 未闭合、日志过滤波及主应用、渲染/续接失败被吞掉、主应用无法为自己的错误码写文案、无参数表单被拒、测试结果依赖执行顺序。应 Andy 要求已在 main 本地提交，未推送（仓库没有 remote）。证据见 ../evidence/AUDIT_VALIDATION.md。

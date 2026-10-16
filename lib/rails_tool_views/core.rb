@@ -5,7 +5,9 @@ require "securerandom"
 require "json_schemer"
 require_relative "version"
 
+# Registers trusted Rails views and orchestrates persistent, authorized interactions.
 module RailsToolViews
+  # A recoverable rejection with a stable code and HTTP status.
   class Error < StandardError
     attr_reader :code, :status
     MESSAGES = {
@@ -23,16 +25,18 @@ module RailsToolViews
       fallback = MESSAGES.fetch(code) { "The request was rejected (#{code})." }
       defined?(::I18n) ? ::I18n.t(code.downcase, scope: %i[tool_views errors], default: fallback) : fallback
     end
+    # Creates a rejection; message overrides the default or translated wording.
     def initialize(code, status: 400, message: nil)
       @code, @status = code, status
       super(message || self.class.message_for(code))
     end
+    # Returns a bounded rejection payload for the caller.
     def to_h
       { status: "rejected", code: code, message: message }
     end
   end
 
-  module Data
+  module Data # :nodoc:
     module_function
     def normalize(value, depth = 0)
       raise Error.new("PAYLOAD_TOO_DEEP") if depth > RailsToolViews.configuration.max_depth
@@ -86,8 +90,10 @@ module RailsToolViews
 
   # Host-owned validation feedback. Only return approved, schema-validated form
   # values; rejected requests do not change Surface or domain persistence.
+  # A rejected form with field messages and explicitly safe retained values.
   class ValidationError < Error
     attr_reader :fields, :values
+    # Creates field feedback with only the values the host approves for redisplay.
     def initialize(fields:, values: {}, message: nil)
       @fields, @values = Data.bounded(fields), Data.bounded(values)
       unless @fields.is_a?(Hash) && @values.is_a?(Hash) && @fields.all? { |key, text| key.match?(/\A[a-z][a-z0-9_]*\z/) && text.is_a?(String) && text.length <= 500 }
@@ -97,16 +103,19 @@ module RailsToolViews
       Data.freeze_deep(@values)
       super("VALIDATION_FAILED", status: 422, message: message)
     end
+    # Returns a bounded rejection payload for the caller.
     def to_h
       super.merge(fields: fields, values: values)
     end
   end
 
+  # Validates a bounded, closed JSON contract.
   class Schema
     KEYWORDS = %w[type properties required additionalProperties items enum const minimum maximum minLength maxLength pattern minItems maxItems uniqueItems description title anyOf oneOf allOf].freeze
     TYPES = %w[object array string number integer boolean null].freeze
     COMBINATORS = %w[anyOf oneOf allOf].freeze
     attr_reader :json
+    # Builds a closed schema; rejects unsupported or unbounded nested contracts.
     def initialize(schema)
       @json = Data.bounded(schema)
       inspect_schema!(@json)
@@ -117,6 +126,7 @@ module RailsToolViews
     rescue JSONSchemer::UnknownRef, ArgumentError
       raise Error.new("INVALID_SCHEMA")
     end
+    # Returns normalized validated data, or raises Error with the supplied code.
     def validate!(value, code: "INVALID_PROPS")
       data = Data.bounded(value)
       raise Error.new(code) unless @validator.valid?(data)
@@ -127,7 +137,7 @@ module RailsToolViews
     # accepts: an untyped or empty schema admits any JSON, which would reopen a
     # closed object from the inside. `bounded` is true only for a combinator
     # branch whose enclosing schema already constrains the same value.
-    def inspect_schema!(schema, bounded: false)
+    def inspect_schema!(schema, bounded: false) # :nodoc:
       raise Error.new("INVALID_SCHEMA") unless schema.is_a?(Hash) && (schema.keys - KEYWORDS).empty?
       types = Array(schema["type"])
       combinators = COMBINATORS.select { |key| schema.key?(key) }
@@ -146,22 +156,28 @@ module RailsToolViews
     end
   end
 
+  # Immutable actor and tenant references resolved by the host.
   class Scope
     attr_reader :actor, :tenant
+    # Creates frozen, nonempty string references for an authenticated identity.
     def initialize(actor:, tenant:)
       @actor, @tenant = Data.reference(actor), Data.reference(tenant)
       freeze
     end
   end
 
+  # Policy and handler context populated by the runtime.
   Access = Struct.new(:actor, :tenant, :operation, :props, :surface, :action, :arguments, :context_ref, keyword_init: true)
+  # Handler result containing the next UI state and an optional agent flag.
   Transition = Struct.new(:state, :agent, keyword_init: true)
   Action = Struct.new(:key, :schema, :policy, :handler, keyword_init: true)
 
+  # An immutable renderer, schema, version, and authorization contract.
   class Component
     # A ViewComponent opts into these by naming them as initializer keywords.
     CONTEXT = %i[surface state error].freeze
     attr_reader :key, :description, :schema, :partial, :component, :policy, :actions, :expose_to, :digest, :version, :context
+    # Builds an immutable component with exactly one trusted renderer.
     def initialize(key, description:, schema:, partial: nil, component: nil, policy: nil, actions: {}, expose_to: [], version: "1")
       @key = key.to_s.freeze
       raise Error.new("INVALID_COMPONENT") unless @key.match?(/\A[a-z][a-z0-9_]{0,63}\z/)
@@ -185,16 +201,19 @@ module RailsToolViews
         actions: @actions.transform_values { |action| action.schema.json }, contract_version: 1).freeze
       freeze
     end
-    def authorize!(access)
+    def authorize!(access) # :nodoc:
       raise Error.new("NOT_ALLOWED", status: 403) unless policy&.call(access) == true
     end
   end
 
+  # Stores explicit component definitions and filters discoverable catalogs.
   class Registry
+    # Creates an empty, process-local registry.
     def initialize
       @components = {}
       @mutex = Mutex.new
     end
+    # Registers a component; duplicate keys raise DUPLICATE_COMPONENT.
     def register(key, **options)
       component = Component.new(key, **options)
       @mutex.synchronize do
@@ -203,9 +222,11 @@ module RailsToolViews
       end
       component
     end
+    # Returns the named component, or raises UNKNOWN_COMPONENT.
     def fetch(key)
       @components.fetch(key.to_s) { raise Error.new("UNKNOWN_COMPONENT", status: 404) }
     end
+    # Returns explicitly exposed components allowed by discovery policy for scope.
     def catalog(keys:, scope:, exposure: :agent)
       raise Error.new("INVALID_SCOPE", status: 403) unless scope.is_a?(Scope)
       raise Error.new("CATALOG_TOO_LARGE") unless keys.is_a?(Array) && keys.length.between?(1, RailsToolViews.configuration.max_catalog_components) && keys.map(&:to_s).uniq.length == keys.length
@@ -215,9 +236,11 @@ module RailsToolViews
     end
   end
 
+  # Process-local host hooks, request limits, and delivery settings.
   class Configuration
     attr_accessor :scope_resolver, :agent_adapter, :max_payload_bytes, :max_depth, :max_catalog_components, :max_actions_per_minute, :auto_deliver,
       :parent_controller, :delivery_lease
+    # Initializes conservative request limits with no host identity or agent adapter.
     def initialize
       @max_payload_bytes, @max_depth, @max_catalog_components, @max_actions_per_minute = 32_768, 16, 20, 60
       @auto_deliver = true
@@ -227,21 +250,27 @@ module RailsToolViews
   end
 
   class << self
+    # Returns the process-local component registry.
     def registry
       @registry ||= Registry.new
     end
+    # Returns the process-local configuration.
     def configuration
       @configuration ||= Configuration.new
     end
+    # Yields configuration to the host initializer.
     def configure
       yield configuration
     end
+    # Registers a component; duplicate keys raise DUPLICATE_COMPONENT.
     def register(key, **options)
       registry.register(key, **options)
     end
+    # Clears definitions while retaining configuration; use in Rails reload hooks.
     def reset_registry!
       @registry = Registry.new
     end
+    # Clears definitions and configuration; intended for isolated tests.
     def reset!
       @registry, @configuration = Registry.new, Configuration.new
     end

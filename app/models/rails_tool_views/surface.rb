@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 module RailsToolViews
+  # A persisted UI snapshot whose read and action access is checked by RailsToolViews.
   class Surface < ActiveRecord::Base
     self.table_name = "tool_views_surfaces"
     self.filter_attributes += %i[props state]
@@ -10,9 +11,11 @@ module RailsToolViews
     has_many :agent_interactions, dependent: :destroy
     before_create { self.id ||= SecureRandom.uuid }
     validates :actor_ref, :tenant_ref, :component_key, :component_digest, presence: true
+    # Returns the stable browser target identifier.
     def dom_id
       "tool_views_surface_#{id}"
     end
+    # Returns the UI projection; it is not a permission grant.
     def snapshot
       { id: id, component: component_key, component_digest: component_digest, props: props, state: state, revision: revision }
     end

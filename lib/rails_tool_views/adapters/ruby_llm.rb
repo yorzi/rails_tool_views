@@ -6,12 +6,15 @@ require "ruby_llm"
 module RailsToolViews
   module Adapters
     module RubyLLM
+      # Optional RubyLLM tool exposing a scoped, approved component catalog.
       class PresentUI < ::RubyLLM::Tool
         description "Present one trusted interactive Rails component to the user."
+        # Returns the stable provider-facing tool name.
         def self.tool_name
           "present_ui"
         end
         attr_reader :references
+        # Captures an authorized catalog and server-owned correlation context.
         def initialize(keys:, scope:, context:, adapter_key: "ruby_llm")
           @scope = scope
           @context = Data.reference(context, code: "INVALID_CONTEXT")
@@ -20,11 +23,13 @@ module RailsToolViews
           raise Error.new("EMPTY_CATALOG") if @components.empty?
           @references = []
         end
+        # Returns the bounded schema presented to the provider.
         def parameters_schema
           { "type" => "object", "additionalProperties" => false, "required" => %w[component props],
             "properties" => { "component" => { "type" => "string", "enum" => @components.map(&:key) },
               "props" => { "anyOf" => @components.map { |component| component.schema.json }.uniq } } }
         end
+        # Presents a component using a real RubyLLM ToolCall; returns an acknowledgment or rejection.
         def execute(component:, props:, tool_call: nil)
           definition = @components.find { |item| item.key == component.to_s }
           raise Error.new("NOT_ALLOWED", status: 403) unless definition
@@ -48,9 +53,11 @@ module RailsToolViews
       # Host owns durable chat lookup and delivery deduplication. This adapter
       # only starts a supported user turn; RubyLLM prevents pending-tool mixing.
       class Continuation
+        # Accepts authorized chat resolution and durable host delivery deduplication.
         def initialize(chat_resolver:, delivery:)
           @chat_resolver, @delivery = chat_resolver, delivery
         end
+        # Starts a user turn within the host delivery deduplication block.
         def call(payload, delivery_key:)
           @delivery.call(delivery_key) do
             chat = @chat_resolver.call(payload.fetch("context_ref"))

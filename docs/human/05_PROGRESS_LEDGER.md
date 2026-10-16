@@ -153,3 +153,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 2026-10-16。实施提交 `7e73e4e` 已成功推送 `yorzi/rails_tool_views` 的 main；远端 SHA 完全匹配，GitHub 可见性 PRIVATE。按用户要求保持私有，开发完成前不公开。
 
 本提交仅将 current work、post-flight、human status 和 RENAME_VALIDATION 更新为实际交付状态，修正推送前的待办表述；无运行时/数据/安全/可访问性变化，无需重复测试或流程图。实施验证沿用 WORK-20261016-01，提交关联检查通过；远程 CI 已触发但检查时仍排队，不冒充通过。人工可查看仓库 main、可见性与 Actions；下一步是等待 CI 结果及继续原有人工检查/未完成开发，不发布 gem。未启动长期进程。
+
+### WORK-20261016-03 — 创建并提交 RailsToolViews 使用文档站
+
+2026-10-16。用户明确调用 project-docs 创建项目文档。采用 Jekyll + jekyll-vitepress-theme，站点源码独立放在 docs/site，保留内部规格、架构、审计与历史。四组 14 篇页面和首页覆盖安装、组件、Surface、动作、验证、RubyLLM、续接、生产边界、升级与 API。补充公共源码注释、RDoc/Markdown API、llms、搜索、版本构建与 CI 检查。
+
+对应 FR-02/03/05/07/08 的使用说明和维护需求，IMPLEMENTATION_ALIGNED，无新增产品意图。人工可按 docs/README.md 运行本地预览、教程检查并审阅升级指南。验证：样例 core/adapter 均执行通过，83 tests / 665 assertions、eager load、站点构建、样式与链接检查通过；浏览器搜索、API、窄屏与深浅色预览完成。详见 DOCS_VALIDATION。
+
+无数据库迁移、provider 调用或权限变化；原 Specs 不改，内部文档不进入站点。Pages 需明确开启且仓库 public，目前保持关闭/private。Andy 随后明确要求提交/推送并重命名本地项目目录；本次提交使用本节 Work-ID，站点仍不部署。目录目标为 `/Users/andy/Workspace/OpenSource/rails_tool_views`，安装示例同步新路径。提交前补齐 API-only PR 的文档构建触发，并让缺失站点输出的检查失败。临时 127.0.0.1:4000 预览和 watcher 已停止，标签页已关闭。架构运行流程不变，无需修改图。下一步人工阅读指南，公开发布继续按既有开发完成条件处理。

@@ -70,3 +70,7 @@ Gate V remains PARTIAL: actual upstream loader/catalog and package probes ran, a
 ## Identity upgrade — WORK-20261016-01
 
 Supplemental TV-01/04/05, existing FR-01/02/05/07 and SEC-06/07/09/15: canonical namespace, compatibility requires/helpers, real pre-rename database replay, independent packaged-host install and original authorization/digest rejection checks. See ADR 005 and `docs/evidence/RENAME_VALIDATION.md`. This is local evidence; OddlyDock TV-02/03, remote CI and gem release remain unverified.
+
+## Documentation usability — WORK-20261016-03
+
+FR-02/03/05/07/08 documentation now has executable tutorial blocks, core/optional-adapter checks, a generated API reference and linked guides. Local build/link/preview evidence in DOCS_VALIDATION; no external onboarding or hosted-access evidence is inferred.

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module RailsToolViews
+  # Rails view helpers for authorized rendering and action forms.
+  # Canonical rails_tool_views_* names alias the legacy tool_views_* methods.
   module SurfacesHelper
     # Engine-owned copy. Translate or reword any of it under tool_views.surface.<key>.
     TEXT = {
@@ -10,6 +12,7 @@ module RailsToolViews
       agent_unavailable: "AI follow-up unavailable.", agent_retry: "Retry AI follow-up"
     }.freeze
 
+    # Renders the Surface with a fresh scope and optional field feedback.
     def tool_views_surface(surface, scope:, error: nil)
       RailsToolViews.render(surface, view_context: self, scope: scope, error: error)
     end
@@ -19,7 +22,7 @@ module RailsToolViews
     end
 
     # Form for one registered action of this Surface. Fields built from the
-    # yielded builder are named arguments[...], ids are unique per Surface, and
+    # yielded builder are named +arguments[...]+, ids are unique per Surface, and
     # the action, revision, replay key and source fields are filled in.
     def tool_views_action_form(surface, action, **options, &block)
       fields = tool_views_action_fields(surface, action)
@@ -45,7 +48,7 @@ module RailsToolViews
         .map { |name, value| hidden_field_tag(name, value, id: nil) })
     end
 
-    def tool_views_body(surface, definition, error: nil)
+    def tool_views_body(surface, definition, error: nil) # :nodoc:
       html = if definition.partial
         render(partial: definition.partial, locals: { props: surface.props, state: surface.state, surface: surface, error: error })
       else
@@ -61,7 +64,7 @@ module RailsToolViews
       render(partial: "rails_tool_views/surfaces/error", formats: [:html], locals: { error: rejection || RailsToolViews::Error.new("RENDER_FAILED", status: 422) })
     end
 
-    def tool_views_routes
+    def tool_views_routes # :nodoc:
       view = respond_to?(:rails_tool_views) || respond_to?(:tool_views) || respond_to?(:main_app) ? self : helpers
       routes = view.respond_to?(:rails_tool_views) || view.respond_to?(:tool_views) ? view : view.main_app
       routes.respond_to?(:rails_tool_views) ? routes.rails_tool_views : routes.tool_views

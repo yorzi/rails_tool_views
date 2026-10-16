@@ -2,6 +2,10 @@
 
 Trusted Rails components as persistent, interactive presentation tools. **Local v1 implementation complete; unpublished.** The core works without RubyLLM, API keys or a provider. RailsToolViews does not generate executable UI code.
 
+## Documentation
+
+The [documentation site source and build instructions](docs/README.md) cover installation, components, Surfaces, actions, validation, optional RubyLLM, continuation, production boundaries, upgrading, and the generated Ruby API. Run `docs/bin/serve.sh` for a loopback-only preview. The site is not deployed while the repository remains private.
+
 ## Try the offline demo
 
 Ruby 3.3+ and Bundler:
@@ -33,7 +37,7 @@ The gem is not published. Build it with `bundle exec ruby scripts/package_smoke.
 
 ```ruby
 # Gemfile
- gem "rails_tool_views", path: "/path/to/tool_views", require: "rails_tool_views"
+ gem "rails_tool_views", path: "/path/to/rails_tool_views", require: "rails_tool_views"
 # Optional renderer only; omit when using Partials:
  gem "view_component", "~> 4.0"
 ```

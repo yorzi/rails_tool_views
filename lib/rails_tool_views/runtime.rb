@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module RailsToolViews
   class << self
+    # Validates and authorizes props, then returns a persisted Surface. Correlation replays the original presentation.
     def present(key, props:, scope:, context: nil, correlation: nil)
       check_scope!(scope)
       component = registry.fetch(key)
@@ -33,6 +34,7 @@ module RailsToolViews
       raise
     end
 
+    # Returns a compatible Surface after checking scope and current read policy.
     def restore(id, scope:)
       check_scope!(scope)
       surface = Surface.find_by(id: id, actor_ref: scope.actor, tenant_ref: scope.tenant)
@@ -42,6 +44,7 @@ module RailsToolViews
       surface
     end
 
+    # Commits an authorized action and returns its receipt. Matching retries replay without executing the handler.
     def dispatch(id, scope:, action:, arguments:, base_revision:, idempotency_key:, source_component: nil, target: nil)
       surface = restore(id, scope: scope)
       raise Error.new("INVALID_SOURCE") if source_component && source_component.to_s != surface.component_key
@@ -99,6 +102,7 @@ module RailsToolViews
 
     # The adapter must deduplicate by delivery_key. A crash after remote acceptance
     # can leave a lease in delivering state; retry is explicit and keeps the key.
+    # Delivers a saved interaction after authorization; retry_failed explicitly retries failed delivery.
     def deliver(id, scope:, adapter: configuration.agent_adapter, retry_failed: false)
       interaction = AgentInteraction.find_by(id: id)
       raise Error.new("NOT_FOUND", status: 404) unless interaction
@@ -135,6 +139,7 @@ module RailsToolViews
       interaction.reload
     end
 
+    # Renders the trusted component after a fresh restore and authorization check.
     def render(surface, view_context:, scope:, error: nil)
       # Never trust an already-loaded object as an authorization decision.
       surface = restore(surface.id, scope: scope)
@@ -144,7 +149,7 @@ module RailsToolViews
       view_context.render(partial: "rails_tool_views/surfaces/error", formats: [:html], locals: { error: failure })
     end
 
-    def compatible_component!(surface)
+    def compatible_component!(surface) # :nodoc:
       component = registry.fetch(surface.component_key)
       raise Error.new("INCOMPATIBLE_COMPONENT", status: 422) unless surface.contract_version == 1 && component.digest == surface.component_digest
       component.schema.validate!(surface.props)
@@ -155,23 +160,23 @@ module RailsToolViews
     end
 
     # The mounted controller needs CSRF protection, helpers and HTML rendering.
-    def parent_controller
+    def parent_controller # :nodoc:
       parent = configuration.parent_controller.to_s.constantize
       return parent if parent <= ::ActionController::Base
       raise ArgumentError, "RailsToolViews parent_controller must inherit from ActionController::Base; #{parent} does not"
     end
 
-    def access(scope, operation, **attributes)
+    def access(scope, operation, **attributes) # :nodoc:
       Access.new(actor: scope.actor, tenant: scope.tenant, operation: operation, **attributes).freeze
     end
 
-    def notify(event, **payload)
+    def notify(event, **payload) # :nodoc:
       ActiveSupport::Notifications.instrument("#{event}.tool_views", payload)
     end
 
     # Host renderer or adapter code failed behind a rescue. Surface it the way
     # Rails surfaces handled errors; the event itself stays metadata-only.
-    def report(error, event, **payload)
+    def report(error, event, **payload) # :nodoc:
       notify(event, **payload, error_class: error.class.name)
       Rails.error.report(error, handled: true, severity: :error, context: payload, source: "tool_views")
       Rails.logger&.error("RailsToolViews #{event} handled #{error.class} (#{error.message}) - #{error.backtrace&.first}")
