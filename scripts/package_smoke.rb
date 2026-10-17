@@ -80,6 +80,9 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-1" }, as: :json)
     raise "Installed action controller failed: #{client.response.body}" unless client.response.status == 200
     raise "Installed persistence failed" unless RailsToolViews.restore(surface.id, scope: scope).state["selected"] == "a"
+    # Without Turbo and without a referrer, the action returns to the Surface under the installer's mount.
+    client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action_name: "select_option", arguments: { key: "a" }, base_revision: 2, idempotency_key: "packaged-2" }, headers: { "Accept" => "text/html" })
+    raise "Installed HTML fallback failed: #{client.response.status} #{client.response.location}" unless client.response.status == 303 && client.response.location == "http://www.example.com/rails_tool_views/surfaces/#{surface.id}"
     RailsToolViews.register(:invalid_form, description: "Validation feedback", schema: schema, partial: "choices/card", policy: ->(_access) { true },
       actions: { submit_form: { schema: params_schema, policy: ->(_access) { true }, handler: ->(access) {
         raise RailsToolViews::ValidationError.new(fields: { key: "needs correction" }, values: access.arguments)
@@ -90,7 +93,7 @@ Dir.mktmpdir("toolviews-package-") do |temporary|
     raise "Installed validation feedback failed" unless client.response.status == 422 && feedback["fields"] == { "key" => "needs correction" } && feedback["values"] == { "key" => "a" }
     raise "Rejected form changed persistence" unless invalid.reload.revision == 1
     Rails::ZeitwerkChecker.check
-    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> validation feedback -> durable restore -> eager load"
+    puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> no-Turbo HTML redirect -> validation feedback -> durable restore -> eager load"
   CODE
   program = File.join(temporary, "probe.rb")
   File.write(program, probe)

@@ -22,6 +22,17 @@ Start with the complete [ChoiceCard registration]({% link _getting_started/getti
 
 Keys use lowercase letters, digits, and underscores, start with a letter, and contain at most 64 characters. Register each key once per registry. Use `version:` to distinguish semantic changes.
 
+The description tells a model what the component does. It also names the rendered Surface for assistive technology. To show a localized name, translate it under `tool_views.components.<key>`:
+
+```yaml
+fr:
+  tool_views:
+    components:
+      choice_card: "Choisir un flux de travail"
+```
+
+The name is looked up on every render, so it follows the request's locale. Keep `I18n.t` out of the description itself: Rails runs `to_prepare` before it applies `config.i18n` at boot, so a registration-time lookup uses the wrong locale.
+
 Every object schema is closed with `additionalProperties: false`. Every array declares `items`. Nested values must declare a type, enum, const, or constrained schema combination. `$ref` and unsupported keywords are rejected. Unknown props are rejected rather than silently discarded.
 
 ## Reuse a Renderer
@@ -29,6 +40,12 @@ Every object schema is closed with `additionalProperties: false`. Every array de
 A Partial receives `props`, `state`, `surface`, and `error` locals. A ViewComponent receives validated props as keyword arguments. It can opt into runtime context by explicitly naming `surface:`, `state:`, or `error:` in its initializer. Include `RailsToolViews::SurfacesHelper` to use the action helpers.
 
 The props schema cannot declare a property that conflicts with an opted-in context keyword. Use Rails escaping for user-provided values; do not use `raw` or `html_safe` to render them.
+
+An action response renders your renderer inside the Engine's controller, not the controller of the page that embeds it. There, a route helper without a receiver resolves against the Engine's routes. Call your application's routes through `main_app`:
+
+```erb
+<%= link_to "Open order", main_app.order_path(props["order_id"]) %>
+```
 
 ## Check Policy at Each Operation
 

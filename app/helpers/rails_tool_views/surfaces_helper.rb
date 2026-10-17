@@ -21,6 +21,13 @@ module RailsToolViews
       t(key, scope: %i[tool_views surface], default: TEXT.fetch(key), **values)
     end
 
+    # The accessible name of a registered component: the translation under
+    # tool_views.components.<key>, or its registered description. Looked up
+    # per render, so it follows the request's locale.
+    def tool_views_component_name(key)
+      t(key.to_s, scope: %i[tool_views components], default: RailsToolViews.registry.fetch(key).description)
+    end
+
     # Form for one registered action of this Surface. Fields built from the
     # yielded builder are named +arguments[...]+, ids are unique per Surface, and
     # the action, revision, replay key and source fields are filled in.
@@ -70,7 +77,7 @@ module RailsToolViews
       routes.respond_to?(:rails_tool_views) ? routes.rails_tool_views : routes.tool_views
     end
 
-    %i[surface text action_form action_button action_fields body routes].each do |suffix|
+    %i[surface text component_name action_form action_button action_fields body routes].each do |suffix|
       alias_method "rails_tool_views_#{suffix}", "tool_views_#{suffix}"
     end
   end

@@ -15,3 +15,7 @@
 ## 2026-10-16 — Demo workbench and concise README
 
 The reference app now organizes its existing examples into Component playground, Customer intake, Support workspace and Content review. Shared navigation, visible tenant/role context and suggested test flows make the same host-owned workflows easier to demonstrate. The support inbox retains the search query when opening a ticket. README is an entry point; detailed usage belongs to the guides, including the new Demo Workbench walkthrough. No core trust boundary or data model changes.
+
+## 2026-10-17 — First real host integration (OddlyDock)
+
+OddlyDock is the first real application to install the gem through the installer, and it found two issues the dummy app could not show. First, without JavaScript a committed action redirected through a hard-coded `tool_views` route name; hosts mounted under the installer's `rails_tool_views` name got a 500. The dummy app mounts under the old name, so the packaged-install smoke test now checks this path in a fresh host. Second, a Surface's accessible name could not be translated, because component registration runs before Rails applies its locale settings. The name is now looked up per render under `tool_views.components.<key>`. The guides also say plainly that partials and controller filters run inside the Engine's controller, so host links must go through `main_app`.

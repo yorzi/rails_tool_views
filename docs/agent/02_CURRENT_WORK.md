@@ -28,3 +28,13 @@ See docs/README.md and evidence/DOCS_VALIDATION.md for commands and boundaries.
 - [x] Replace duplicated README reference material with focused guide links.
 - [x] Improve demo navigation, responsive layout and workflow guidance.
 - [x] Verify tests, docs and browser workflows; record evidence and stop preview.
+
+## WORK-20261017-01 — fixes from the OddlyDock integration
+
+Owner authorized fixing gem issues found while integrating OddlyDock in dev mode (2026-10-17).
+
+- [x] No-Turbo HTML action redirect works under any mount name; regression checked in the packaged fresh-host smoke (fails before the fix with 500).
+- [x] Surface accessible name translatable per render under `tool_views.components.<key>`; rendering test added.
+- [x] Guides: renderers and parent-controller filters call host routes through `main_app`; translation scopes updated.
+
+Delivery: pushed to private `yorzi/rails_tool_views` main so OddlyDock's lock can pin the fix (owner's dev-mode instruction); the remote SHA is the evidence. No gem release.

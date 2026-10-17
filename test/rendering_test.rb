@@ -107,6 +107,15 @@ class RenderingTest < ActiveSupport::TestCase
     I18n.backend.reload!
   end
 
+  test "the Surface's accessible name is the description unless the host translates it" do
+    surface = present_card
+    assert_includes RailsToolViews.render(surface, view_context: view, scope: scope), %(aria-label="#{RailsToolViews.registry.fetch(:choice_card).description}")
+    I18n.backend.store_translations(:en, tool_views: { components: { choice_card: "工作流选择" } })
+    assert_includes RailsToolViews.render(surface, view_context: view, scope: scope), 'aria-label="工作流选择"'
+  ensure
+    I18n.backend.reload!
+  end
+
   test "action form helper scopes fields keeps ids unique per Surface and fills routing fields" do
     first, second = present_card, present_card
     act(second)

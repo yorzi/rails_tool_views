@@ -14,6 +14,13 @@ Host-owned customer form, scoped support workflows and versioned result review r
 
 Strict registry and trusted Partial/ViewComponent rendering; scoped ActiveRecord Surfaces; atomic authorized actions with revision/replay receipts; JSON/Turbo controller and optional Stimulus focus/loading support; optional RubyLLM present_ui and structured continuation; installer and offline ChoiceCard demo. Local integration/security/concurrency/package/browser verification is recorded in docs/evidence/VALIDATION.md. Release and adoption gates remain open.
 
+## Unreleased — first host integration fixes (2026-10-17)
+
+- Fix: without Turbo and without a same-host referrer, a committed HTML action redirected through a hard-coded `tool_views` route proxy. Under the installer's `rails_tool_views` mount it raised `NameError` (500). It now uses the Engine's own route helper and keeps any mount path and name.
+- Add: `rails_tool_views_component_name` / `tool_views_component_name`. The Surface's accessible name is looked up under `tool_views.components.<key>` on every render and falls back to the registered description.
+- Docs: renderers and parent-controller filters run inside the Engine's controller and call host routes through `main_app`.
+- No database change.
+
 ## Unreleased — RailsToolViews identity (2026-10-16)
 
 - Rename the package to `rails_tool_views` and the canonical namespace to `RailsToolViews`.

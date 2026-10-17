@@ -87,7 +87,8 @@ module RailsToolViews
         format.json { render json: response, status: status }
         format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, RailsToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
         # Without Turbo, return to the page that embeds the Surface; it re-renders saved state.
-        format.html { redirect_back_or_to tool_views.surface_path(surface), allow_other_host: false, status: :see_other }
+        # The Engine's own helper keeps whatever mount path and name the host chose.
+        format.html { redirect_back_or_to surface_path(surface), allow_other_host: false, status: :see_other }
       end
     end
     def reject_request(error)

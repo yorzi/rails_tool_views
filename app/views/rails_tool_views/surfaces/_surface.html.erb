@@ -1,4 +1,4 @@
-<section id="<%= surface.dom_id %>" class="tool-views-surface" data-controller="tool-views" data-tool-views-revision-value="<%= surface.revision %>" data-tool-views-saving-value="<%= tool_views_text(:saving) %>" data-tool-views-failed-value="<%= tool_views_text(:save_failed) %>" aria-label="<%= definition.description %>" aria-describedby="<%= surface.dom_id %>_status">
+<section id="<%= surface.dom_id %>" class="tool-views-surface" data-controller="tool-views" data-tool-views-revision-value="<%= surface.revision %>" data-tool-views-saving-value="<%= tool_views_text(:saving) %>" data-tool-views-failed-value="<%= tool_views_text(:save_failed) %>" aria-label="<%= tool_views_component_name(definition.key) %>" aria-describedby="<%= surface.dom_id %>_status">
   <%= tool_views_body(surface, definition, error: error) %>
   <% if error %>
     <p id="<%= surface.dom_id %>_error" role="alert" tabindex="-1" data-tool-views-target="error"><%= error.message %></p>

@@ -171,3 +171,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 - 风险与数据：仅 dummy host 展示和文档；无迁移、核心 API、授权策略或依赖变更，无外部消息/模型调用。临时数据库与正常演示数据隔离。
 - 文档：README、演示指南、验证证据、验收补充、human changelog、pre/post-flight 和当前任务已同步；架构/运行时权责未变，无需重画图。
 - 清理与下一步：任务服务 PID 59386（127.0.0.1:3197）已停止，预览标签关闭；原有 3100 服务未动。按既有授权提交并推送，保持 private；等待人工体验反馈，不声明生产发布。
+
+### WORK-20261017-01 — OddlyDock 首次真实接入发现的修复
+
+- **内容与原因：** Andy 2026-10-17 指示 OddlyDock 以开发模式接入本 gem，发现问题可直接修 gem。OddlyDock 通过安装器挂载为 `rails_tool_views`，暴露两个 dummy 应用测不到的问题：(1) 无 Turbo 且无同源 Referer 时，HTML 动作回跳写死了 `tool_views` 路由代理，在安装器默认挂载名下抛 `NameError` 返回 500，改为 Engine 自己的 `surface_path`，任何挂载路径/名称都正确；(2) Surface 的无障碍名称直接用注册时的 description，而 `to_prepare` 在 Rails 应用 `config.i18n` 之前执行，注册时调用 `I18n.t` 会取到错误语言。新增 `rails_tool_views_component_name`（及旧前缀别名），每次渲染按 `tool_views.components.<key>` 查翻译，回退到 description。指南补充：渲染器和父控制器过滤器运行在 Engine 控制器内，主应用路由需经 `main_app`。
+- **映射：** IMPLEMENTATION_BUG（安装器挂载名下的回跳）和公共 API 的向后兼容新增（翻译 scope、helper），无产品意图变化，无新 delta。
+- **验证：** `bundle exec rake test zeitwerk:check` 84 tests / 669 assertions 通过、eager load 通过（Ruby 3.3.5 + Rails 8.1.4）；`rake test:adapter`（RubyLLM 2.1.0）6 tests / 44 assertions 通过；`scripts/package_smoke.rb` 新增无 Turbo HTML 回跳检查，修复前失败（500）、修复后通过；docs_examples、文档站构建、15 篇指南风格检查（0 错误 0 警告）、1,075 个本地链接无断链。曾尝试进程内 `with_routing` 测试，因 Rails 挂载 helper 和 Engine script name 是进程级全局状态而污染后续测试，已放弃，改用独立进程的安装烟测。Rails 7.2 矩阵、PostgreSQL 和浏览器本次未重跑：改动只涉及一个路由 helper 调用和一个翻译查找。
+- **人工复查：** 阅读 `surfaces_controller.rb` 的回跳一行和 `surfaces_helper.rb` 的新 helper；运行 `bundle exec ruby scripts/package_smoke.rb`；在 components 指南中确认 `main_app` 和翻译说明的措辞。
+- **风险与数据：** 无迁移、无依赖变化；授权、CSRF、回跳同源限制不变（`allow_other_host: false` 保留）。旧挂载名 `tool_views` 继续工作。
+- **文档：** CHANGELOG、components/configuration/validation/production/whats-new 指南、human changelog、current work。运行流程未变，无需改图。
+- **交付：** 在 main 提交并推送到 private `yorzi/rails_tool_views`，供 OddlyDock 的 Gemfile.lock 固定到该提交；不发布 gem。未启动长期进程。

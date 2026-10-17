@@ -34,6 +34,14 @@ end
 
 Engine controllers inherit `ApplicationController`. Set `parent_controller` to your authenticated controller class name if required. It must inherit from `ActionController::Base`.
 
+Your filters then run inside the Engine's controller, where route helpers without a receiver resolve against the Engine's routes. A filter that redirects, such as a sign-in check, calls your routes through `main_app`:
+
+```ruby
+def request_authentication
+  redirect_to main_app.new_session_path
+end
+```
+
 ## Bound Requests and Delivery
 
 Limits bound payloads, nesting, catalogs, and accepted action throughput. They do not replace host rate limiting or a provider budget. Configuration is process-local, so configure every application process consistently.

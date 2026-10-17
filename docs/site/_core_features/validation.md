@@ -30,7 +30,7 @@ error.message
 # => "Only two left."
 ```
 
-Translate error codes under `tool_views.errors.<downcased_code>`. Engine status copy uses `tool_views.surface.<key>`. The old translation namespace stays stable after the rename.
+Translate error codes under `tool_views.errors.<downcased_code>`. Engine status copy uses `tool_views.surface.<key>`, and a Surface's accessible name uses `tool_views.components.<key>`. The old translation namespace stays stable after the rename.
 
 Renderer failures show `RENDER_FAILED` without deleting state and are reported through Rails error reporting. A deliberate `RailsToolViews::Error` from a renderer is shown as that error. A changed component contract yields `INCOMPATIBLE_COMPONENT`; do not bypass it by silently rewriting props.
 
