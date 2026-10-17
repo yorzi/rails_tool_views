@@ -82,9 +82,19 @@ module RailsToolViews
     def digest(value)
       "sha256:#{Digest::SHA256.hexdigest(JSON.generate(canonical(bounded(value))))}"
     end
-    def reference(value, code: "INVALID_SCOPE")
-      raise Error.new(code) unless value.is_a?(String) && !value.strip.empty? && value.bytesize <= 255
+    # Actor, tenant, context, adapter, call and replay references are persisted
+    # in string columns that carry multi-column indexes. Cap them in bytes so a
+    # value can never overflow a byte-limited column and every unique key fits
+    # utf8mb4's 3072-byte index limit on MySQL/InnoDB. A byte cap also bounds the
+    # character count, which is what a varchar length actually limits.
+    IDENTIFIER_BYTES = 150
+    def reference(value, code: "INVALID_SCOPE", limit: 255)
+      raise Error.new(code) unless value.is_a?(String) && !value.strip.empty? && value.bytesize <= limit
       value.dup.freeze
+    end
+    # A bounded reference for a stored, indexed identifier.
+    def identifier(value, code: "INVALID_SCOPE")
+      reference(value, code: code, limit: IDENTIFIER_BYTES)
     end
   end
 
@@ -161,7 +171,7 @@ module RailsToolViews
     attr_reader :actor, :tenant
     # Creates frozen, nonempty string references for an authenticated identity.
     def initialize(actor:, tenant:)
-      @actor, @tenant = Data.reference(actor), Data.reference(tenant)
+      @actor, @tenant = Data.identifier(actor), Data.identifier(tenant)
       freeze
     end
   end

@@ -35,7 +35,7 @@ V0 evidence is retained as the original milestone record. The full suite now inc
 | NFR-01-AC-01 | registry_test.rb; rendering_test.rb; controller_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-02-AC-01 | durability_test.rb; runtime_test.rb; controller_test.rb | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-02-AC-02 | durability_test.rb; runtime_test.rb; controller_test.rb | LOCAL_PASS; Fresh process and concurrent workers pass. Channels N/A while absent. |
-| NFR-03-AC-01 | local Ruby/Rails matrix; .github/workflows/ci.yml | LOCAL_PARTIAL / RELEASE_OPEN; Three exact local combinations pass on SQLite and one on PostgreSQL 17.11 (../evidence/AUDIT_VALIDATION.md); MySQL NOT_RUN; remote Linux CI is configured but NOT_RUN. |
+| NFR-03-AC-01 | local Ruby/Rails matrix; .github/workflows/ci.yml | LOCAL_PARTIAL / RELEASE_OPEN; Three exact local combinations pass on SQLite and one on PostgreSQL 17.11 (../evidence/AUDIT_VALIDATION.md); MySQL NOT_RUN, but every index key is now asserted inside utf8mb4's 3072-byte limit (WORK-20261017-02); remote Linux CI is configured but NOT_RUN. |
 | NFR-04-AC-01 | privacy_test.rb; offline network guard; package smoke | LOCAL_PASS; Offline positive/negative behavior covered. |
 | NFR-05-AC-01 | privacy_test.rb; SECURITY.md; host projection/retention contract | LOCAL_PASS; No transcript/credentials/raw domain dump is persisted by core; accepted display fields require host projection. |
 | NFR-06-AC-01 | manual browser evidence; rendering_test.rb | LOCAL_PASS; Desktop/360px no-overflow, restored choice and focus; assistive-technology audit still a release review. |
@@ -78,3 +78,7 @@ FR-02/03/05/07/08 documentation now has executable tutorial blocks, core/optiona
 ## Demo presentation follow-up — WORK-20261016-04
 
 README and reference host presentation refreshed. Existing action/persistence/validation/tenant boundaries remain covered by 83 tests / 665 assertions. Browser checks exercised all four workspaces with an isolated fixture database. This is local showcase evidence, not a new production or human-approval gate. See [validation](../evidence/DEMO_SHOWCASE_VALIDATION.md).
+
+## Audit hardening — WORK-20261017-02
+
+SEC-04, SEC-07, SEC-08, SEC-18 and NFR-02/03 gain executable coverage: the suite now asserts that every index key stays inside utf8mb4's 3072-byte limit (closing the MySQL `CREATE TABLE` failure recorded under NFR-03), that stored identifiers are byte-capped, and that a lookup only a non-binary collation could match is refused for a Surface, a correlation and an idempotency key. 88 tests / 702 assertions pass on SQLite and PostgreSQL 17.11. MySQL stays NOT_RUN: the fix is proven by column introspection and arithmetic, not a real MySQL migration. See [AUDIT_V2_VALIDATION.md](../evidence/AUDIT_V2_VALIDATION.md).

@@ -25,6 +25,17 @@ class RegistryTest < ActiveSupport::TestCase
     assert_error("NOT_ALLOWED") { RailsToolViews.present(:private_card, props: props, scope: scope) }
     assert_error("NOT_ALLOWED") { RailsToolViews.present(:choice_card, props: props, scope: scope("bob")) }
     assert_error("INVALID_SCOPE") { RailsToolViews::Scope.new(actor: nil, tenant: "acme") }
+    # Stored, indexed identifiers are capped in bytes so they always fit their
+    # byte-limited columns and multi-column index keys.
+    assert_equal 150, RailsToolViews::Data::IDENTIFIER_BYTES
+    assert_equal "a" * 150, RailsToolViews::Data.identifier("a" * 150)
+    assert_error("INVALID_SCOPE") { RailsToolViews::Data.identifier("a" * 151) }
+    assert_equal "é" * 75, RailsToolViews::Data.identifier("é" * 75)
+    assert_error("INVALID_SCOPE") { RailsToolViews::Data.identifier("é" * 76) }
+    assert_error("INVALID_SCOPE") { RailsToolViews::Scope.new(actor: "a" * 151, tenant: "acme") }
+    # Descriptions and versions are not indexed and keep the wider 255-byte cap.
+    assert_equal "d" * 255, RailsToolViews::Data.reference("d" * 255)
+    assert_error("INVALID_SCOPE") { RailsToolViews::Data.reference("d" * 256) }
     assert_error("PAYLOAD_TOO_LARGE") { RailsToolViews.present(:choice_card, props: props.merge(title: "x" * 40_000), scope: scope) }
     nested = {}; cursor = nested
     20.times { cursor["nested"] = {}; cursor = cursor["nested"] }

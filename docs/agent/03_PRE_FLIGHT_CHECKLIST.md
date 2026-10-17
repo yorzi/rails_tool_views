@@ -29,3 +29,15 @@ Owner invoked project-docs to create project documentation. Read skill and its w
 ## WORK-20261016-04 — README and demo
 
 Owner requests a concise README and a polished testing/showcase demo. Base 67e13fb, clean tree. Read entrypoint, baseline/current reality and maintenance contract. Scope: documentation and host demo presentation, preserving existing forms, policies, fixtures and state. No schema, core API, external delivery or product intent change. Verify full regression, docs build and actual browser interactions; stop the temporary server.
+
+## WORK-20261017-02 — review and audit hardening
+
+Owner asked in this session for a full review and audit and for real problems to be fixed; that instruction is the authorization. Base `a1a9b26`, clean tree. Read entrypoint, SPEC_BASELINE, current work, Spec Delta Protocol, runtime/controller/adapter, migration and installer, tests, guides and evidence.
+
+- [x] Baseline before change: 84 tests / 669 assertions pass on Ruby 3.3.5 / Rails 8.1.4 (SQLite); PostgreSQL 17.11 also passes on a fresh schema.
+- [x] Probed suspected defects rather than assuming: top-level JSON null/array/string bodies return a bounded 400; NUL inside props round-trips on PostgreSQL `json`; the form helpers emit no stray `utf8`/`_method` fields; the tree holds no stray build output. None is a defect.
+- [x] Confirmed defects: the unbounded presentation index exceeds utf8mb4's 3072-byte limit (5100 bytes, so MySQL `CREATE TABLE` fails), and identity lookups rely on database equality so a non-binary collation can resolve another scope, correlation or key.
+- [x] Classification: IMPLEMENTATION_BUG. No product-intent change; no new delta. The `action.replayed` idea is recorded as a recommendation because it would change the pinned notification catalog.
+- [x] Scope limit: no new table, column, dependency or data migration; authorization, transaction, idempotency and transport semantics preserved; descriptions and versions keep the 255-byte cap.
+- [x] Tests precede the completion claim; each fix is verified by reverting it alone.
+- [x] Owner decision recorded in current work; docs updated for the public behavior change (identifiers over 150 bytes now rejected).

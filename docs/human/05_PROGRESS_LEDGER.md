@@ -181,3 +181,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 - **风险与数据：** 无迁移、无依赖变化；授权、CSRF、回跳同源限制不变（`allow_other_host: false` 保留）。旧挂载名 `tool_views` 继续工作。
 - **文档：** CHANGELOG、components/configuration/validation/production/whats-new 指南、human changelog、current work。运行流程未变，无需改图。
 - **交付：** 在 main 提交并推送到 private `yorzi/rails_tool_views`，供 OddlyDock 的 Gemfile.lock 固定到该提交；不发布 gem。未启动长期进程。
+
+### WORK-20261017-02 — 全面审阅与审计后的加固修复
+
+- **内容与原因：** Andy 在本次会话要求对整个项目做 review/audit，验证正确性与最佳实践，并修复真实问题。基 `a1a9b26`。复现并修复两个真实缺陷：(1) 安装器迁移把 Presentation 的五列唯一索引建在无长度限制的 `varchar(255)` 上，utf8mb4 下 MySQL/InnoDB 按 5×255×4=5100 字节算，超过 3072 字节上限，建表直接失败；现在标识符列统一 `limit: 150`，最宽索引 5×150×4=3000 字节。(2) 身份匹配只做等值查询且上限 255 字节；在非二进制排序规则（MySQL 默认 utf8mb4、PostgreSQL 的 ICU/libc locale）下，仅"比较相等"的值可能解析到其它 scope 的 Surface、其它 correlation 的 presentation、其它动作回执或其它幂等 key。现在 `Data.identifier` 把被存储、被索引的标识符按字节限制到 150（description/version 仍用 255 的 `reference`），每次查找后再做字节级精确比对：`restore` 必须 actor/tenant/id 完全一致，`correlated_presentation` 与适配器回执在近似匹配时抛 `IDEMPOTENCY_CONFLICT`/`INVALID_CORRELATION`，`dispatch` 回放前必须幂等 key 完全相等。
+- **映射：** IMPLEMENTATION_BUG（MySQL 建表失败、跨身份匹配）+ 安全面收紧；无产品意图变化，无新 delta。未改动原始 Specs。原“两份迁移无一致性测试”的发现已过时——`test/identity_test.rb` 早已断言两者逐字节相同。
+- **验证：** `bundle exec rake test zeitwerk:check` 88 tests / 702 assertions 通过、eager load 通过（Ruby 3.3.5 + Rails 8.1.4，SQLite）；本地 PostgreSQL 17.11 同样 88/702（需先重建 probe schema）；`rake test:adapter`（RubyLLM 2.1.0）7/45 通过；`scripts/package_smoke.rb` 通过；docs_examples 通过；文档站构建后 1,075 个本地链接 0 断链、内部记录不外泄；15 篇指南风格检查 0 错误 0 警告。五个新测试逐一做了破坏验证：把守卫/长度限制改回旧实现后对应测试即失败（restore、correlation、幂等 key、适配器回执四个 collation 测试，以及迁移限制 5100 字节断言）。另外探测并推翻的疑似问题（顶层 JSON null/数组/字符串返回有界 400、props 内 NUL 在 PG `json` 上可往返、表单 helper 不产生多余 utf8/_method 字段）不记为缺陷。
+- **人工复查：** 读 `lib/rails_tool_views/runtime.rb` 的 `exact_match?`/`correlated_presentation` 与 `restore` 的守卫；读迁移里 150 字节的注释与 `lib/rails_tool_views/core.rb` 的 `Data.identifier`；运行 `bundle exec rake test`。已有 host 无需数据迁移：旧列保留、限制在代码里执行；新 host 或 MySQL 才需要新的列定义。
+- **风险与数据：** 无新表/新列/数据迁移，无依赖变化。行为变化：超过 150 字节的标识符现在被拒绝（`INVALID_SCOPE`/`INVALID_CONTEXT`/`INVALID_CORRELATION`/`INVALID_IDEMPOTENCY_KEY`），而不是截断或写入超长值——这对既有 host 是收紧，需在升级指南告知。授权、事务与幂等语义不变。MySQL 本身仍未运行；未重做真实 provider、浏览器/无障碍与远程 CI。
+- **文档：** CHANGELOG、production/upgrading/whats-new 指南、agent current work 与验收表、human 状态/变更记录、本 ledger；新增 evidence/AUDIT_V2_VALIDATION.md。运行流程未变，无需改图。
+- **交付：** 在 main 本地提交，未推送（用户未要求推送）。遗留一条需 owner 决定的建议：回放动作目前与首次执行同样发 `action.executed`，若要新增 `action.replayed` 会改变固定规格里列出的通知目录，故本次不改。未启动长期进程。

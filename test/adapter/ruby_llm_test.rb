@@ -60,6 +60,19 @@ class RubyLLMAdapterTest < ActiveSupport::TestCase
     assert_equal 0, RailsToolViews::Surface.count
     assert_empty presenter.references
   end
+  test "a receipt only a non-binary collation could match is refused" do
+    presenter = tool
+    call = tool_call
+    presenter.call(tool_call: call, **call.arguments)
+    receipt = RailsToolViews::Presentation.first
+    decoy = Struct.new(:adapter, :call_id, :context_ref).new(receipt.adapter, "CALL-1", receipt.context_ref)
+    # The correlation replay resolves the real receipt; the adapter's own
+    # receipt lookup is handed a row a collation could have matched instead.
+    lookup = ->(*positional, **keywords) { keywords.empty? ? receipt : decoy }
+    RailsToolViews::Presentation.stub(:find_by, lookup) do
+      assert_equal "INVALID_CORRELATION", presenter.call(tool_call: call, **call.arguments)[:code]
+    end
+  end
   test "catalog schemas stay bounded at 1 5 and 20 components" do
     [1, 5, 20].each do |size|
       RailsToolViews.reset!

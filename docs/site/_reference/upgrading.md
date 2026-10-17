@@ -14,7 +14,7 @@ After reading this guide, you will know:
 
 * Change the dependency and public namespace.
 * Retain installed migrations and replay identifiers.
-* Review custom rendering and contract changes.
+* Review bounded identifiers and custom rendering.
 
 ## Update the Package
 
@@ -27,6 +27,12 @@ Legacy `require "toolviews"`, `require "tool_views"`, `require "tool_views/core"
 Do not run the installer again on an existing host. Retain its initializer, migration history, and mount. Existing `:tool_views` mounts and `tool_views_*` helpers still work. New hosts may use `:rails_tool_views` and `rails_tool_views_*`.
 
 The four `tool_views_*` tables, migration names, component keys/versions/digests, Surface IDs, DOM/Stimulus identifiers, translations, notification names, and continuation delivery keys remain unchanged. No schema or data migration accompanies the rename.
+
+## Review Bounded Identifiers
+
+The runtime bounds the actor, tenant, context, adapter, call and idempotency references to 150 bytes and stores them in byte-limited columns. A longer value is rejected with `INVALID_SCOPE`, `INVALID_CONTEXT`, `INVALID_CORRELATION` or `INVALID_IDEMPOTENCY_KEY` instead of being truncated. The bound keeps every index key inside utf8mb4's 3072-byte limit on MySQL and InnoDB, where the unbounded five-column presentation index would not fit.
+
+If you already installed the migration, no change is required: the columns exist and the runtime still bounds values in code. Run the installer's migration only on a new host, or on MySQL where the original migration does not apply. The runtime also matches stored Surfaces, presentations, action receipts and correlations byte for byte after a lookup, so a non-binary database collation cannot resolve another actor's or tenant's row.
 
 ## Review Host Overrides
 

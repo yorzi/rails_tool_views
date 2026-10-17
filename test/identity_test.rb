@@ -46,4 +46,22 @@ class IdentityTest < ActiveSupport::TestCase
     assert_equal File.read(File.join(root, "db/migrate/20261010000000_create_tool_views.rb")),
       File.read(File.join(root, "lib/generators/rails_tool_views/install/templates/create_tool_views.rb"))
   end
+
+  # MySQL/InnoDB refuses a table whose index keys exceed 3072 bytes under
+  # utf8mb4 (4 bytes per character). Rails maps `limit:` to varchar(n) on every
+  # adapter, so checking each index's worst-case width here keeps the generated
+  # migration installable on MySQL as well as SQLite.
+  test "every index key stays within the MySQL utf8mb4 byte limit" do
+    connection = RailsToolViews::Surface.connection
+    tables = %w[tool_views_surfaces tool_views_presentations tool_views_action_executions tool_views_agent_interactions]
+    indexes = tables.flat_map { |table| connection.indexes(table).map { |index| [table, index] } }
+    assert_not_empty indexes
+    indexes.each do |table, index|
+      bytes = index.columns.sum do |name|
+        column = connection.columns(table).find { |candidate| candidate.name == name }
+        %i[integer bigint datetime date].include?(column.type) ? 8 : (column.limit || 255) * 4
+      end
+      assert_operator bytes, :<=, 3072, "#{table}.#{index.name} needs #{bytes} bytes under utf8mb4"
+    end
+  end
 end

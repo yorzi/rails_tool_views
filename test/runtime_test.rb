@@ -125,4 +125,41 @@ class RuntimeTest < ActiveSupport::TestCase
     assert_equal "skipped", RailsToolViews::AgentInteraction.first.status
     assert_equal 2, surface.reload.revision
   end
+
+  # A database collation that is not binary (MySQL's default utf8mb4 collation,
+  # for example) can return a row that only compares equal to the requested
+  # value. These tests hand the runtime such a row and prove the guards reject
+  # it, so a case difference can never cross an actor, tenant or correlation
+  # boundary. A byte-exact match must still resolve normally.
+  test "a surface only a non-binary collation could match is refused" do
+    surface = present_card
+    RailsToolViews::Surface.stub(:find_by, surface) do
+      assert_error("NOT_FOUND") { RailsToolViews.restore(surface.id, scope: scope("alice", "ACME")) }
+      assert_error("NOT_FOUND") { RailsToolViews.restore(surface.id, scope: scope("Alice", "acme")) }
+      assert_equal surface, RailsToolViews.restore(surface.id, scope: scope("alice", "acme"))
+    end
+  end
+
+  test "a correlation only a non-binary collation could match is a conflict not a replay" do
+    correlation = { adapter: "test", call_id: "call-1", context: "chat-1" }
+    present_card(correlation: correlation)
+    prior = RailsToolViews::Presentation.first
+    RailsToolViews::Presentation.stub(:find_by, prior) do
+      assert_error("IDEMPOTENCY_CONFLICT") { present_card(correlation: correlation.merge(call_id: "CALL-1")) }
+    end
+    assert_equal 1, RailsToolViews::Surface.count
+  end
+
+  test "an idempotency key only a non-binary collation could match is a conflict" do
+    surface = present_card
+    act(surface, idempotency: "request-1")
+    prior = RailsToolViews::ActionExecution.first
+    RailsToolViews::ActionExecution.stub(:find_by, prior) do
+      # Same action, arguments and revision, so only the byte difference in the
+      # key can raise the conflict.
+      assert_error("IDEMPOTENCY_CONFLICT") { act(surface, revision: 1, idempotency: "REQUEST-1") }
+    end
+    assert_equal 1, RailsToolViews::ActionExecution.count
+    assert_equal 1, DemoEffect.count
+  end
 end

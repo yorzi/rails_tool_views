@@ -34,3 +34,19 @@ Submission follow-up: owner explicitly requested commit/push and local folder re
 ## WORK-20261016-04 — demo showcase
 
 README shortened to adoption/demo/docs entry points. Shared responsive workbench shell, page-specific guidance, role-aware navigation, context panel, ticket inbox/detail and empty states added to the dummy host. Search query retained on ticket selection. No core API, schema, migration, policy or fixture changes. Regression: 83 tests / 665 assertions and eager load pass. Docs: 15 guides, zero lint warnings/errors, build and 1,075 local links pass. Browser checks cover saved selection, validation recovery, local reply queue, version acceptance/export availability and tenant switch; physical mobile/full accessibility audit not run. See evidence/DEMO_SHOWCASE_VALIDATION.md. Human changelog and acceptance updated; architecture/runtime diagrams unchanged because authority and transitions are unchanged. Loopback demo PID 59386 on port 3197 stopped; temporary browser tab closed. Existing app on 3100 untouched. Implementation-aligned presentation change, no Spec delta. Submission follows the owner's existing commit/push authorization; repository remains private, publication disabled.
+
+## WORK-20261017-02 — review and audit hardening
+
+Base `a1a9b26`. Owner asked in this session for a full review and audit and for real problems to be fixed.
+
+- [x] Defect 1 reproduced from the migration: the presentation's five-column unique index on unbounded `varchar(255)` needs 5100 bytes under utf8mb4 and would not create on MySQL/InnoDB. Identifier columns now carry `limit: 150`; the widest index needs 3000 bytes.
+- [x] Defect 2 fixed: identity lookups now confirm a byte-exact match, so a non-binary collation cannot resolve another actor's or tenant's Surface, another correlation's presentation, another action receipt or another idempotency key.
+- [x] `Data.identifier` caps stored, indexed identifiers at 150 bytes; `Data.reference` keeps 255 for descriptions and versions.
+- [x] Every fix has a test that fails when that fix alone is reverted: three collation tests, the adapter receipt guard and the 5100-byte index-width assertion. The `registry_test` cap assertions fail if the bound is widened.
+- [x] Full suite 88 tests / 702 assertions and eager load pass on SQLite and on a fresh PostgreSQL 17.11 schema; adapter suite 7 tests / 45 assertions; packaged install, docs examples, docs build, 1,075 local links and 15-guide style check all pass.
+- [x] No new table, column or dependency. No data migration; existing host columns stay and the bound is enforced in code. Behavior change recorded in the upgrade guide: identifiers longer than 150 bytes are now rejected.
+- [x] Docs updated: CHANGELOG, production/upgrading/whats-new guides, runbook, acceptance addendum, current work, human status and changelog. New evidence file AUDIT_V2_VALIDATION.md. Architecture and flow unchanged; no diagram rewrite.
+- [x] Uncommitted recommendation for the owner: a distinct `action.replayed` event would change the notification catalog the pinned specification lists, so it is not implemented here.
+- [x] Committed on main with `Work-ID: WORK-20261017-02`; not pushed (owner did not ask). No long-lived process started.
+
+Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no live provider, browser, remote CI or assistive-technology run. Local-only evidence. See ../evidence/AUDIT_V2_VALIDATION.md.

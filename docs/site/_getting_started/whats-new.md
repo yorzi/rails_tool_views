@@ -23,7 +23,7 @@ The current unreleased candidate is {{ site.version }}. Its package is `rails_to
 
 `ToolViews` remains an alias to the same module. Legacy requires, helpers, and mount names remain supported. Database tables, component contracts, replay receipts, and delivery identifiers stay stable. No database migration is required for the rename.
 
-The engine also provides field-validation feedback, host controller inheritance, action form helpers, and optional durable agent continuation. A Surface's accessible name can be translated under `tool_views.components.<key>`. Without Turbo, a committed action now redirects correctly under any mount name, including the installer's `rails_tool_views`. The reference host demonstrates customer forms, support workflows, and artifact review with offline data.
+The engine also provides field-validation feedback, host controller inheritance, action form helpers, and optional durable agent continuation. A Surface's accessible name can be translated under `tool_views.components.<key>`. Without Turbo, a committed action now redirects correctly under any mount name, including the installer's `rails_tool_views`. Actor, tenant, context, adapter, call and idempotency identifiers are bounded to 150 bytes so every index key fits MySQL's utf8mb4 limit, and stored identities are matched byte for byte regardless of database collation. The reference host demonstrates customer forms, support workflows, and artifact review with offline data.
 
 ## Next Steps
 

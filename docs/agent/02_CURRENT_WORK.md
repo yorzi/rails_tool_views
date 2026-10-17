@@ -38,3 +38,15 @@ Owner authorized fixing gem issues found while integrating OddlyDock in dev mode
 - [x] Guides: renderers and parent-controller filters call host routes through `main_app`; translation scopes updated.
 
 Delivery: pushed to private `yorzi/rails_tool_views` main so OddlyDock's lock can pin the fix (owner's dev-mode instruction); the remote SHA is the evidence. No gem release.
+
+## WORK-20261017-02 — review and audit fixes
+
+Andy asked in this session for a review and audit of the whole project and for real problems to be fixed (2026-10-17). Base `a1a9b26`.
+
+- [x] Reproduce the MySQL/InnoDB index-length failure and fix it by bounding identifier columns to 150 bytes; add an index-width regression test.
+- [x] Stop a non-binary database collation from resolving another actor, tenant, correlation or idempotency key; confirm every identity lookup byte for byte.
+- [x] Cap stored identifiers in `Data.identifier` while keeping the 255-byte cap for descriptions and versions.
+- [x] Docs: production and upgrading notes, CHANGELOG, whats-new; refresh the stale findings in human/01_PROJECT_STATUS.md.
+- [x] Verify on SQLite and PostgreSQL 17.11, adapter suite, packaged install, docs examples, docs site build and style checks.
+
+Delivery: committed on main; not pushed. Full evidence and boundaries in [AUDIT_V2_VALIDATION.md](../evidence/AUDIT_V2_VALIDATION.md). MySQL itself stays NOT_RUN. One recommendation (a distinct `action.replayed` event) is left for an owner decision because it changes the notification catalog.

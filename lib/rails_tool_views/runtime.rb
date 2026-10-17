@@ -6,12 +6,12 @@ module RailsToolViews
       check_scope!(scope)
       component = registry.fetch(key)
       props = component.schema.validate!(props)
-      context = Data.reference(context, code: "INVALID_CONTEXT") if context
+      context = Data.identifier(context, code: "INVALID_CONTEXT") if context
       component.authorize!(access(scope, :present, props: props, context_ref: context))
       correlation = normalize_correlation(correlation) if correlation
       request_digest = Data.digest(component: component.key, digest: component.digest, props: props, context: context)
       lookup = correlation&.merge(actor_ref: scope.actor, tenant_ref: scope.tenant)
-      if lookup && (prior = Presentation.find_by(lookup))
+      if lookup && (prior = correlated_presentation(lookup))
         return correlated_surface(prior, request_digest, scope)
       end
       surface = nil
@@ -26,7 +26,7 @@ module RailsToolViews
       notify("presentation.accepted", surface_id: surface.id, component: component.key, revision: surface.revision)
       surface
     rescue ActiveRecord::RecordNotUnique
-      prior = lookup && Presentation.find_by(lookup)
+      prior = lookup && correlated_presentation(lookup)
       raise unless prior
       correlated_surface(prior, request_digest, scope)
     rescue Error => error
@@ -38,7 +38,12 @@ module RailsToolViews
     def restore(id, scope:)
       check_scope!(scope)
       surface = Surface.find_by(id: id, actor_ref: scope.actor, tenant_ref: scope.tenant)
-      raise Error.new("NOT_FOUND", status: 404) unless surface
+      # A database collation that is not binary (for example a case-insensitive
+      # MySQL or PostgreSQL collation) can match a stored actor, tenant or id
+      # that merely compares equal to the requested one. Only a byte-exact
+      # match may stand in for this scope's Surface, or a lookup could disclose
+      # another actor's or tenant's record.
+      raise Error.new("NOT_FOUND", status: 404) unless surface && exact_match?(surface, id: id.to_s, actor_ref: scope.actor, tenant_ref: scope.tenant)
       component = compatible_component!(surface)
       component.authorize!(access(scope, :read, surface: surface, props: surface.props, context_ref: surface.context_ref))
       surface
@@ -53,7 +58,7 @@ module RailsToolViews
       definition = component.actions.fetch(action.to_s) { raise Error.new("UNKNOWN_ACTION") }
       arguments = definition.schema.validate!(arguments, code: "INVALID_ARGUMENTS")
       raise Error.new("INVALID_REVISION") unless base_revision.is_a?(Integer) && base_revision.positive?
-      idempotency_key = Data.reference(idempotency_key, code: "INVALID_IDEMPOTENCY_KEY")
+      idempotency_key = Data.identifier(idempotency_key, code: "INVALID_IDEMPOTENCY_KEY")
       request_digest = Data.digest(action: definition.key, arguments: arguments, base_revision: base_revision)
       result = nil
       surface.with_lock do
@@ -63,7 +68,9 @@ module RailsToolViews
         raise Error.new("NOT_ALLOWED", status: 403) unless definition.policy&.call(request) == true
         prior = ActionExecution.find_by(surface_id: surface.id, idempotency_key: idempotency_key)
         if prior
-          raise Error.new("IDEMPOTENCY_CONFLICT", status: 409) unless prior.request_digest == request_digest
+          # A non-binary collation could match a different key; only replay the
+          # exact key, and keep the digest check as the second gate.
+          raise Error.new("IDEMPOTENCY_CONFLICT", status: 409) unless prior.idempotency_key == idempotency_key && prior.request_digest == request_digest
           result = prior.result.symbolize_keys
           next
         end
@@ -186,11 +193,25 @@ module RailsToolViews
     def check_scope!(scope)
       raise Error.new("INVALID_SCOPE", status: 403) unless scope.is_a?(Scope)
     end
+    # True only when every attribute equals the requested value byte for byte,
+    # regardless of the database collation used to find the row.
+    def exact_match?(record, **expected)
+      expected.all? { |attribute, value| record.public_send(attribute) == value }
+    end
+    # Returns the durable presentation for this exact correlation, or nil. A row
+    # that a non-binary collation matched but that is not byte-identical is a
+    # conflict, never a replay of another correlation.
+    def correlated_presentation(lookup)
+      prior = Presentation.find_by(lookup)
+      return nil unless prior
+      return prior if exact_match?(prior, **lookup)
+      raise Error.new("IDEMPOTENCY_CONFLICT", status: 409)
+    end
     def normalize_correlation(value)
       raise Error.new("INVALID_CORRELATION") unless value.is_a?(Hash) && (value.keys - %i[adapter call_id context]).empty? && value.keys.sort == %i[adapter call_id context].sort
-      { adapter: Data.reference(value[:adapter], code: "INVALID_CORRELATION"),
-        call_id: Data.reference(value[:call_id], code: "INVALID_CORRELATION"),
-        context_ref: Data.reference(value[:context], code: "INVALID_CORRELATION") }
+      { adapter: Data.identifier(value[:adapter], code: "INVALID_CORRELATION"),
+        call_id: Data.identifier(value[:call_id], code: "INVALID_CORRELATION"),
+        context_ref: Data.identifier(value[:context], code: "INVALID_CORRELATION") }
     end
     def correlated_surface(prior, digest, scope)
       raise Error.new("IDEMPOTENCY_CONFLICT", status: 409) unless prior.request_digest == digest

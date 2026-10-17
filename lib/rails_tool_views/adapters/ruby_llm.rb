@@ -17,8 +17,8 @@ module RailsToolViews
         # Captures an authorized catalog and server-owned correlation context.
         def initialize(keys:, scope:, context:, adapter_key: "ruby_llm")
           @scope = scope
-          @context = Data.reference(context, code: "INVALID_CONTEXT")
-          @adapter_key = Data.reference(adapter_key, code: "INVALID_CORRELATION")
+          @context = Data.identifier(context, code: "INVALID_CONTEXT")
+          @adapter_key = Data.identifier(adapter_key, code: "INVALID_CORRELATION")
           @components = RailsToolViews.registry.catalog(keys: keys, scope: scope)
           raise Error.new("EMPTY_CATALOG") if @components.empty?
           @references = []
@@ -43,7 +43,12 @@ module RailsToolViews
           @references << reference.freeze unless @references.include?(reference)
           RailsToolViews.notify("adapter.tool_called", surface_id: surface.id, revision: surface.revision)
           # The persisted presentation receipt preserves the original tool result.
-          presentation = RailsToolViews::Presentation.find_by!(surface_id: surface.id, adapter: @adapter_key, call_id: tool_call.id, context_ref: @context)
+          # Match the receipt byte for byte; a non-binary collation must not return
+          # another call's acknowledgment.
+          presentation = RailsToolViews::Presentation.find_by(surface_id: surface.id, adapter: @adapter_key, call_id: tool_call.id, context_ref: @context)
+          unless presentation && presentation.adapter == @adapter_key && presentation.call_id == tool_call.id && presentation.context_ref == @context
+            raise Error.new("INVALID_CORRELATION")
+          end
           presentation.result.symbolize_keys
         rescue Error => error
           error.to_h

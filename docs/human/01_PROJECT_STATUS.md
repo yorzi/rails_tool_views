@@ -8,14 +8,18 @@
 
 同一天应 Andy “继续”的要求，又做了降低接入成本的改动和 PostgreSQL 验证（ADR 004）：三个动作表单 helper；Rails 自带的 `form.submit`/`form.button` 不再被拒；ViewComponent 可以拿到 surface/state/error 并发起动作；`parent_controller` 与 `delivery_lease` 可配置；没有 Turbo 时提交后回到嵌入页面；数据库回滚（死锁等）返回可重试的 CONFLICT。完整套件 78 tests 在 SQLite 三个组合和本地 PostgreSQL 17.11 上通过，demo 在两种数据库上经 HTTP 验证。
 
+2026-10-17：**AUDIT_V2_LOCAL_COMPLETE / COMMITTED_LOCAL / UNPUSHED / HUMAN_REVIEW_PENDING**。Andy 在本次会话要求全面 review/audit 并修复真实问题（WORK-20261017-02，基 `a1a9b26`）。复现并修复两个真实缺陷：MySQL 下 Presentation 五列唯一索引超过 utf8mb4 长度上限导致建表失败；非二进制排序规则下的身份匹配可能解析到其它 actor/tenant/correlation/幂等 key。修复方式是标识符列 `limit: 150`、`Data.identifier` 按字节封顶、每次查找后字节级精确比对。88 tests / 702 assertions 在 SQLite 与本地 PostgreSQL 17.11 通过；四个新测试逐一破坏验证。证据见 `../evidence/AUDIT_V2_VALIDATION.md`。MySQL 本身仍未运行；未推送，未发布 gem。遗留一条需 owner 决定的建议：是否让回放动作发独立的 `action.replayed` 事件（会改变固定规格的通知目录）。
+
 仍然**没有实现**的发现，等待决定：
 
 - ActionExecution/Presentation/AgentInteraction 只增不减，没有保留期或清理接口。
-- MySQL 未验证；Presentation 的五列字符串唯一索引在 utf8mb4 下按计算会超过索引长度上限。
+- MySQL 未验证。索引长度问题已修（标识符列 150 字节，最宽索引 3000 字节，并有测试保证），但从未在真实 MySQL 上迁移过。
 - 没有 Turbo 且动作被拒时，仍然渲染没有 layout 的片段页（成功路径已改为回到嵌入页面）。
 - 状态文案存在 `state["message"]` 里，刷新后仍显示上一次动作的提示。
-- 迁移文件在 `db/migrate` 和安装器模板各有一份，目前内容相同，但没有测试保证两者一致。
+- 回放动作与首次执行都发 `action.executed`，遥测无法区分；新增 `action.replayed` 会改变规格里的通知目录，需 owner 决定（见 AUDIT_V2_VALIDATION 末尾）。
 - 还没有组件生成器（`rails g tool_views:component`）；等有外部开发者试过 helper 之后再决定。
+
+已解决（保留备查）：迁移文件两份一致已由 `test/identity_test.rb` 逐字节断言覆盖。
 
 价值判断（审计结论，不是市场证据）：技术上有明确空位。RubyLLM 自带的工具 partial 和 generative_ui 都只做展示，不做持久化状态、授权动作、幂等和回传；RubyGems 上 `toolviews`/`tool_views` 目前都未被占用。最大的风险不在代码而在采用成本：注册一个组件仍要写 schema、两层 policy 和 handler（表单字段现在由 helper 生成），还没有外部开发者试过。HYP-01/02 仍未验证，下一步最有价值的是找一位外部 Rails 开发者按 README 接入一次并计时。
 
