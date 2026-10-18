@@ -178,14 +178,14 @@ module RailsToolViews
     end
 
     def notify(event, **payload) # :nodoc:
-      ActiveSupport::Notifications.instrument("#{event}.tool_views", payload)
+      ActiveSupport::Notifications.instrument("#{event}.rails_tool_views", payload)
     end
 
     # Host renderer or adapter code failed behind a rescue. Surface it the way
     # Rails surfaces handled errors; the event itself stays metadata-only.
     def report(error, event, **payload) # :nodoc:
       notify(event, **payload, error_class: error.class.name)
-      Rails.error.report(error, handled: true, severity: :error, context: payload, source: "tool_views")
+      Rails.error.report(error, handled: true, severity: :error, context: payload, source: "rails_tool_views")
       Rails.logger&.error("RailsToolViews #{event} handled #{error.class} (#{error.message}) - #{error.backtrace&.first}")
     end
 

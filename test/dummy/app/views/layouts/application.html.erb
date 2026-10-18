@@ -8,9 +8,9 @@
   <%= javascript_include_tag "turbo", type: "module" %>
   <%= javascript_tag type: "module", nonce: true do %>
     import { Application, Controller } from "<%= asset_path('stimulus.js') %>";
-    import toolViewsController from "<%= asset_path('tool_views_controller.js') %>";
+    import railsToolViewsController from "<%= asset_path('rails_tool_views_controller.js') %>";
     const app = Application.start();
-    app.register("tool-views", toolViewsController(Controller));
+    app.register("rails-tool-views", railsToolViewsController(Controller));
   <% end %>
 </head>
 <body>

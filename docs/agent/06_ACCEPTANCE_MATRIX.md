@@ -71,6 +71,10 @@ Gate V remains PARTIAL: actual upstream loader/catalog and package probes ran, a
 
 Supplemental TV-01/04/05, existing FR-01/02/05/07 and SEC-06/07/09/15: canonical namespace, compatibility requires/helpers, real pre-rename database replay, independent packaged-host install and original authorization/digest rejection checks. See ADR 005 and `docs/evidence/RENAME_VALIDATION.md`. This is local evidence; OddlyDock TV-02/03, remote CI and gem release remain unverified.
 
+## Single identity — WORK-20261018-01
+
+Supplemental TV-05 now takes its explicit-migration branch: a 0.2 host renames indexes and tables with one reversible migration, and saved Surfaces restore and replay under the new names (OddlyDock development database). `test/identity_test.rb` asserts the legacy constant, entrypoints, generator and helpers are absent and that every index name fits PostgreSQL's 63 bytes. Core suite on Rails 8.1 and 7.2, optional adapter, packaged install and docs examples pass. Ruby 4 and PostgreSQL were NOT RUN locally (see IDENTITY_V3_VALIDATION). ADR 006, DELTA-004.
+
 ## Documentation usability — WORK-20261016-03
 
 FR-02/03/05/07/08 documentation now has executable tutorial blocks, core/optional-adapter checks, a generated API reference and linked guides. Local build/link/preview evidence in DOCS_VALIDATION; no external onboarding or hosted-access evidence is inferred.

@@ -50,3 +50,15 @@ Andy asked in this session for a review and audit of the whole project and for r
 - [x] Verify on SQLite and PostgreSQL 17.11, adapter suite, packaged install, docs examples, docs site build and style checks.
 
 Delivery: committed on main; not pushed. Full evidence and boundaries in [AUDIT_V2_VALIDATION.md](../evidence/AUDIT_V2_VALIDATION.md). MySQL itself stays NOT_RUN. One recommendation (a distinct `action.replayed` event) is left for an owner decision because it changes the notification catalog.
+
+## WORK-20261018-01 — single public identity
+
+Andy kept the gem name and chose "Full single identity" in this session (2026-10-18). Base `33b1dca`.
+
+- [x] Remove the `ToolViews` constant, legacy entrypoints, `tool_views:install`, `tool_views_*` helpers and the `:tool_views` route-proxy fallback.
+- [x] Rename tables/indexes, I18n, notifications, `Rails.error` source, DOM/CSS/Stimulus identifiers and delivery keys to the `rails_tool_views` prefix; version 0.3.0.pre.v3.
+- [x] Rewrite identity tests; add the Stimulus identifier regression test after a real browser failure in OddlyDock.
+- [x] Upgrading guide with the host migration; ADR 006, DELTA-004, CHANGELOG, status and evidence.
+- [x] Verify Rails 8.1/7.2, Ruby 4.0.2, adapter, packaged install, docs and the upgrade on OddlyDock's development database.
+
+Delivery: committed on main; not pushed. OddlyDock's matching change pins this commit through its local override, so push this repository before OddlyDock's CI resolves the lock.

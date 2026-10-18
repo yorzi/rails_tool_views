@@ -20,23 +20,23 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Create customer"
     id = surface.id
     args = { name: "Human corrected name", email: "not-an-email" }
-    post "/tool_views/surfaces/#{id}/actions", params: payload("submit_form", args), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("submit_form", args), as: :json
     assert_response :unprocessable_entity
     assert_equal "VALIDATION_FAILED", response.parsed_body["code"]
     assert_equal args.transform_keys(&:to_s), response.parsed_body["values"]
-    post "/tool_views/surfaces/#{id}/actions", params: payload("submit_form", args).except(:action).merge(action_name: "submit_form"), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("submit_form", args).except(:action).merge(action_name: "submit_form"), headers: { "Accept" => "text/vnd.turbo-stream.html" }
     assert_response :unprocessable_entity
     assert_includes response.body, 'aria-invalid="true"'
     assert_includes response.body, 'value="not-an-email"'
     assert_includes response.body, 'value="Human corrected name"'
     assert_includes response.body, "#{surface.dom_id}_email_error"
     assert_includes response.body, "#{surface.dom_id}_error"
-    post "/tool_views/surfaces/#{id}/actions", params: payload("submit_form", args).except(:action).merge(action_name: "submit_form")
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("submit_form", args).except(:action).merge(action_name: "submit_form")
     assert_response :unprocessable_entity
     assert_includes response.body, "Create customer"
     assert_equal 1, surface.reload.revision
     assert_equal 2, DemoCustomer.count
-    post "/tool_views/surfaces/#{id}/actions", params: payload("submit_form", { name: "Human corrected name", email: "corrected@example.test" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("submit_form", { name: "Human corrected name", email: "corrected@example.test" }), as: :json
     assert_response :success
     assert_equal 3, DemoCustomer.count
     get "/v1/customer"
@@ -48,13 +48,13 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     original = surface
     post "/v1/identity", params: { code: "north-agent" }
-    get "/tool_views/surfaces/#{original.id}", as: :json
+    get "/rails_tool_views/surfaces/#{original.id}", as: :json
     assert_response :not_found
     get "/v1/support", params: { ticket_id: DemoTicket.find_by!(code: "north-ticket").id }
     assert_response :success
     refute_includes response.body, ">Assign ticket</button>"
     id = surface.id
-    post "/tool_views/surfaces/#{id}/actions", params: payload("assign_ticket", { assignee_id: DemoStaff.find_by!(code: "north-agent").id.to_s, ticket_version: "0" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("assign_ticket", { assignee_id: DemoStaff.find_by!(code: "north-agent").id.to_s, ticket_version: "0" }), as: :json
     assert_response :forbidden
     post "/v1/identity", params: { code: "south-lead" }
     get "/v1/support", params: { ticket_id: DemoTicket.find_by!(code: "north-ticket").id }
@@ -64,30 +64,30 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
   test "ticket workflow renders draft review and local queue from committed domain data" do
     get "/v1/support", params: { ticket_id: DemoTicket.find_by!(code: "north-ticket").id }
     id = surface.id
-    post "/tool_views/surfaces/#{id}/actions", params: payload("draft_reply", { reply_version: "0" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("draft_reply", { reply_version: "0" }), as: :json
     assert_response :success
     assert_equal "completed", response.parsed_body["agent_status"]
-    get "/tool_views/surfaces/#{id}"
+    get "/rails_tool_views/surfaces/#{id}"
     assert_includes response.body, "Reply to review"
     assert_includes response.body, "Hello North Workshop"
     reply = DemoReply.first
-    post "/tool_views/surfaces/#{id}/actions", params: payload("review_reply", { body: "Reviewed & approved.", reply_version: reply.lock_version.to_s }), as: :json
-    get "/tool_views/surfaces/#{id}"
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("review_reply", { body: "Reviewed & approved.", reply_version: reply.lock_version.to_s }), as: :json
+    get "/rails_tool_views/surfaces/#{id}"
     assert_includes response.body, "Queue this reviewed reply in the local outbox"
-    post "/tool_views/surfaces/#{id}/actions", params: payload("send_reply", { confirmation: "yes", reply_version: reply.reload.lock_version.to_s }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("send_reply", { confirmation: "yes", reply_version: reply.reload.lock_version.to_s }), as: :json
     assert_response :success
-    get "/tool_views/surfaces/#{id}"
+    get "/rails_tool_views/surfaces/#{id}"
     assert_includes response.body, "No external delivery service is configured"
     assert_includes response.body, "Reviewed &amp; approved."
   end
   test "accepted artifact export is downloadable only by the authorized tenant and role" do
     get "/v1/review"
     id = surface.id
-    post "/tool_views/surfaces/#{id}/actions", params: payload("accept", { artifact_version: "1" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("accept", { artifact_version: "1" }), as: :json
     assert_response :success
-    post "/tool_views/surfaces/#{id}/actions", params: payload("export", { artifact_version: "1" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("export", { artifact_version: "1" }), as: :json
     assert_response :success
-    get "/tool_views/surfaces/#{id}"
+    get "/rails_tool_views/surfaces/#{id}"
     assert_includes response.body, "Download accepted result"
     exported = DemoExport.first
     get "/v1/exports/#{exported.id}"
@@ -105,7 +105,7 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
   test "new draft has a separate artifact instead of overwriting the accepted one" do
     get "/v1/review"
     id = surface.id
-    post "/tool_views/surfaces/#{id}/actions", params: payload("accept", { artifact_version: "1" }), as: :json
+    post "/rails_tool_views/surfaces/#{id}/actions", params: payload("accept", { artifact_version: "1" }), as: :json
     post "/v1/review/new"
     follow_redirect!
     assert_response :success
@@ -118,7 +118,7 @@ class V1ControllerTest < ActionDispatch::IntegrationTest
     ApplicationController.define_method(:demo_authenticated_staff) { DemoStaff.find_by!(code: session.fetch(:v1_identity)) }
     RailsToolViews.configuration.scope_resolver = ->(controller) { DemoV1::Access.scope_for(controller.demo_authenticated_staff) }
     get "/v1/customer"
-    post "/tool_views/surfaces/#{surface.id}/actions", params: payload("submit_form", { name: "Host authenticated", email: "host@example.test" }), as: :json
+    post "/rails_tool_views/surfaces/#{surface.id}/actions", params: payload("submit_form", { name: "Host authenticated", email: "host@example.test" }), as: :json
     assert_response :success
     assert_equal "north", DemoCustomer.find_by!(email: "host@example.test").tenant_ref
   ensure

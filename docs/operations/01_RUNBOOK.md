@@ -11,7 +11,7 @@ Failure exercise: stop normal Puma, run `TOOLVIEWS_DEMO_AGENT_FAILURE=1 bin/demo
 | Symptom | Recovery |
 |---|---|
 | NOT_ALLOWED/NOT_FOUND | Verify host scope and policy, including tenant/domain record; do not relax to global access. If identity is missing only on the mounted routes, authentication may live on a subclass: set `config.parent_controller` |
-| UNKNOWN_FIELD | The form posts a field the Engine does not define; build it with `tool_views_action_form` so inputs are named `arguments[...]` |
+| UNKNOWN_FIELD | The form posts a field the Engine does not define; build it with `rails_tool_views_action_form` so inputs are named `arguments[...]` |
 | CONFLICT | Reload snapshot; retry an uncertain request with the same key and original arguments. Also returned when the database rolls the action back (deadlock, serialization failure, lock timeout) |
 | IDEMPOTENCY_CONFLICT | Investigate key reuse; do not replay a different action with the same key |
 | INCOMPATIBLE_COMPONENT | Preserve snapshot; restore the old contract or perform explicit host migration/re-presentation |
@@ -24,15 +24,15 @@ Failure exercise: stop normal Puma, run `TOOLVIEWS_DEMO_AGENT_FAILURE=1 bin/demo
 | RATE_LIMITED | Wait for budget window; tune host configuration and public endpoint rate limiting |
 | INVALID_SCOPE / INVALID_CONTEXT / INVALID_CORRELATION / INVALID_IDEMPOTENCY_KEY | An actor, tenant, context, adapter, call or idempotency identifier is empty or longer than 150 bytes; shorten the value. INVALID_SCOPE is also raised for a malformed scope object |
 
-Observe metadata-only `*.tool_views` ActiveSupport notifications, including `surface.render_failed` and `agent_failed`. `INVALID_SCHEMA` at boot means a nested schema is untyped, open or an array without `items`. The Engine redacts only its own request parameters and JSON columns; host must review Rails SQL/SDK logs and data projections. Export authorized `Surface#snapshot` plus host-selected metadata; delete with a freshly loaded `surface.destroy!` to cascade namespaced links/receipts/interactions. Business records remain host-owned. Preserve idempotency records while a Surface can receive retries.
+Observe metadata-only `*.rails_tool_views` ActiveSupport notifications, including `surface.render_failed` and `agent_failed`. `INVALID_SCHEMA` at boot means a nested schema is untyped, open or an array without `items`. The Engine redacts only its own request parameters and JSON columns; host must review Rails SQL/SDK logs and data projections. Export authorized `Surface#snapshot` plus host-selected metadata; delete with a freshly loaded `surface.destroy!` to cascade namespaced links/receipts/interactions. Business records remain host-owned. Preserve idempotency records while a Surface can receive retries.
 
 V1's accepted text download checks role/tenant again and uses the exact persisted accepted version. Failed export generation rolls back its record and Surface action; retry the original key/arguments. Surface revision conflict and business version conflict both require reloading current data; do not silently substitute a newer approved version. `bin/check` runs suites sequentially because they share the dummy test DB.
 
 Before uninstall, back up/export using the host's approved procedure, remove mounts/helpers/jobs/adapter code, then remove the gem. Drop namespaced tables only after an explicit owner-approved retention decision. The gem does not silently delete data or manage credentials/backups.
 
-## Rename upgrade (0.2.0.pre.v2)
+## Single identity upgrade (0.3.0.pre.v3)
 
-Use `rails_tool_views` / `RailsToolViews` for new hosts. Existing hosts replace the Gemfile dependency and bundle; retain the installed migration, initializer and mount. Do not rerun the installer. The four `tool_views_*` tables and runtime wire identifiers deliberately remain unchanged; backup/restore and rollback procedures still address those tables. Old requires/constants/helpers/mounts remain supported. Engine partial overrides, if any, move to `app/views/rails_tool_views/`; review custom code that stores Ruby class names. See README upgrade section and ADR 005. No schema migration is required.
+0.3 removes the `ToolViews` aliases that 0.1/0.2 carried before any release (ADR 006). A 0.2 host: drain pending/failed agent continuations (delivery keys change to `rails_tool_views:interaction:<id>`), back up, then run one host migration that renames the custom indexes and the four tables from `tool_views_*` to `rails_tool_views_*` (snippet in the Upgrading guide). Rename helpers, I18n keys, notification subscribers, the Stimulus registration/asset and CSS selectors; mount as `:rails_tool_views`. Do not rerun the installer. Reload pages rendered before the deploy, because Surface DOM ids change. Rollback: restore the 0.2 gem and reverse the migration (`rename_table`/`rename_index` are reversible) before any 0.3-only writes depend on new names.
 
 ## Bounded identifiers (audit hardening, 2026-10-17)
 

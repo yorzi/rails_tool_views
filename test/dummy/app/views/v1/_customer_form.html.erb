@@ -4,7 +4,7 @@
   <% record = DemoCustomer.find_by!(id: state.fetch("customer_id"), tenant_ref: scope.tenant) %>
   <p><strong><%= record.name %></strong></p><p><%= record.email %></p><p class="v1-badge">Created in <%= scope.tenant %></p>
 <% else %>
-  <%= form_with url: tool_views_routes.surface_actions_path(surface), method: :post do %>
+  <%= form_with url: rails_tool_views_routes.surface_actions_path(surface), method: :post do %>
     <%= v1_action_fields(surface, "submit_form") %>
     <fieldset aria-describedby="<%= surface.dom_id %>_status<%= error ? " #{surface.dom_id}_error" : "" %>">
       <legend>Correct the proposed fields before creating a record</legend>

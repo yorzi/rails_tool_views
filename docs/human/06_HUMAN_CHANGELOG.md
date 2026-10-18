@@ -1,5 +1,9 @@
 # 人工变更记录
 
+## 2026-10-18 — 只保留一个名字
+
+gem 名不变，仍是 `rails_tool_views`。变化在于不再有第二套名字：`ToolViews` 常量、旧 require、旧安装命令和 `tool_views_*` helper 都删掉了，表、翻译 key、通知、页面 id 和续接 key 统一用 `rails_tool_views` 前缀。原因是 gem 还没发布，现在去掉没有外部成本；一旦发布，这些别名就要永久兼容，而且顶层 `ToolViews` 会占用一个不属于本 gem 的名字。已有的 0.2 主应用（目前只有 OddlyDock）跑一个改表迁移即可，保存的 Surface 和回放回执不受影响。详见 ADR 006。
+
 2026-10-13：审计加固。需要更新的认知有四点。第一，安装这个 gem 不再改变主应用的日志：以前它会把所有叫 `state`、`result` 的参数和列都打码，现在只打码引擎自己的请求和四张表。第二，“严格闭合 schema”以前有漏洞，没写 type 的子 schema 可以放进任意 JSON，现在注册时就会被拒绝。第三，组件渲染失败或 Agent 适配器出错以前完全无声，现在会进日志和错误上报。第四，之前记录的“测试全绿”依赖执行顺序：单独运行 v1 控制器测试文件时 14 个 seed 中 5 个失败，完整套件前 12 个 seed 中 1 个失败，原因是一个 CSRF 测试污染了全局状态，已修复并用多个 seed 复验。已应 Andy 要求本地提交，未推送。
 
 同日继续：写一个可交互组件不再需要手写隐藏字段，用 `tool_views_action_form` 即可；ViewComponent 不再是二等公民；用 Rails 自带的提交按钮不会再得到 400。PostgreSQL 从“未验证”变为“本地 17.11 通过”，这是之前最大的验证缺口。认证写在 ApplicationController 子类里的主应用现在可以用 `parent_controller` 接入。

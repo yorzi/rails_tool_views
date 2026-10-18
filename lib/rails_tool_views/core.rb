@@ -20,10 +20,10 @@ module RailsToolViews
       "IDEMPOTENCY_CONFLICT" => "This request identifier was already used for a different request."
     }.freeze
     # Hosts own the wording of their codes: pass message:, or translate
-    # tool_views.errors.<downcased code>. Built-in codes translate the same way.
+    # rails_tool_views.errors.<downcased code>. Built-in codes translate the same way.
     def self.message_for(code)
       fallback = MESSAGES.fetch(code) { "The request was rejected (#{code})." }
-      defined?(::I18n) ? ::I18n.t(code.downcase, scope: %i[tool_views errors], default: fallback) : fallback
+      defined?(::I18n) ? ::I18n.t(code.downcase, scope: %i[rails_tool_views errors], default: fallback) : fallback
     end
     # Creates a rejection; message overrides the default or translated wording.
     def initialize(code, status: 400, message: nil)

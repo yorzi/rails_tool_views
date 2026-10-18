@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    rails_tool_views (0.2.0.pre.v2)
+    rails_tool_views (0.3.0.pre.v3)
       json_schemer (~> 2.5)
       rails (>= 7.2, < 9)
       turbo-rails (~> 2.0)
@@ -269,9 +269,9 @@ DEPENDENCIES
   puma (~> 7.0)
   rackup
   rails (= 8.1.4)
+  rails_tool_views!
   sqlite3 (~> 2.0)
   stimulus-rails (~> 1.3)
-  rails_tool_views!
   turbo-rails (~> 2.0)
   view_component (~> 4.0)
 
@@ -344,6 +344,7 @@ CHECKSUMS
   rails (8.1.4) sha256=5f3ecdf9a2a3b79b2e31b8fee3b64a00f7284d76e5631f87d0e58e665911a33b
   rails-dom-testing (2.3.0) sha256=8acc7953a7b911ca44588bf08737bc16719f431a1cc3091a292bca7317925c1d
   rails-html-sanitizer (1.7.1) sha256=e797a7c9b01e567307e317c576b49ab4168017e63eea4dba9ce3cb587e2f22c2
+  rails_tool_views (0.3.0.pre.v3)
   railties (8.1.4) sha256=b5e7a8e8984e33114d68af62227971960aae1e6c02bd7c9d826ffad97fff583c
   rake (13.4.2) sha256=cb825b2bd5f1f8e91ca37bddb4b9aaf345551b4731da62949be002fa89283701
   rbs (4.2.0) sha256=51f7b886dcc05bc09e10b901daa6a81829f6adc03101d6ca9ea4aac6103e0674
@@ -363,7 +364,6 @@ CHECKSUMS
   stimulus-rails (1.3.4) sha256=765676ffa1f33af64ce026d26b48e8ffb2e0b94e0f50e9119e11d6107d67cb06
   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   timeout (0.6.1) sha256=78f57368a7e7bbadec56971f78a3f5ecbcfb59b7fcbb0a3ed6ddc08a5094accb
-  rails_tool_views (0.2.0.pre.v2)
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   turbo-rails (2.0.23) sha256=ee0d90733aafff056cf51ff11e803d65e43cae258cc55f6492020ec1f9f9315f
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b

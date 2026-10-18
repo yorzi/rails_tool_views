@@ -1,6 +1,6 @@
 <h2><%= @title %></h2>
 <p class="demo-muted">Trusted ViewComponent · <%= @options.length %> options</p>
-<%= tool_views_action_form(@surface, :select_option) do |form| %>
+<%= rails_tool_views_action_form(@surface, :select_option) do |form| %>
   <fieldset aria-describedby="<%= @surface.dom_id %>_status">
     <legend>Choose a workflow</legend>
     <% @options.each do |option| %>

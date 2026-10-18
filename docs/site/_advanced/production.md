@@ -30,7 +30,7 @@ Four Engine models persist Surfaces, presentations, action receipts, and agent i
 
 Engine request/SQL/inspect logging masks sensitive Engine values. Notifications contain metadata. Host parameters called `state`, `result`, or `arguments` are not globally filtered by the gem, so the host must configure its own privacy rules. Exceptions raised by host renderers or adapters are reported to Rails and may contain host-supplied sensitive text; sanitize those exception messages.
 
-Keep translations under `tool_views.errors`, `tool_views.surface`, and `tool_views.components`. Provide labeled controls and accessible field feedback in your component. Turbo enhances updates; a non-Turbo rejected action currently displays a fragment page.
+Keep translations under `rails_tool_views.errors`, `rails_tool_views.surface`, and `rails_tool_views.components`. Provide labeled controls and accessible field feedback in your component. Turbo enhances updates; a non-Turbo rejected action currently displays a fragment page.
 
 ## Choose a Database and Integration
 

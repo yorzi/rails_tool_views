@@ -65,7 +65,7 @@ The guides are the detailed reference. Preview the searchable documentation site
 - [Core guides](docs/site/_core_features): components, surfaces, actions and validation.
 - [Advanced guides](docs/site/_advanced): optional RubyLLM, continuation and production boundaries.
 - [API reference](docs/site/_reference/api-reference.md): generated Ruby API documentation.
-- [Upgrading](docs/site/_reference/upgrading.md): compatibility with the previous unpublished ToolViews package.
+- [Upgrading](docs/site/_reference/upgrading.md): moving a 0.2 development host to the single 0.3 identity.
 
 The dummy host in [`test/dummy`](test/dummy) contains the complete runnable examples and is excluded from the gem runtime. OddlyDock is a planned reference host, not a dependency.
 

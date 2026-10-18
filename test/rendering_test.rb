@@ -13,13 +13,29 @@ class RenderingTest < ActiveSupport::TestCase
     html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "&lt;script&gt;"
     refute_includes html, "<script>"
-    assert_includes html, "/tool_views/surfaces/#{surface.id}/actions"
+    assert_includes html, "/rails_tool_views/surfaces/#{surface.id}/actions"
     assert_includes html, "Choose a workflow"
     act(surface)
     html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, 'checked="checked"'
     assert_includes html, "Saved revision 2"
     assert_includes html, "Selection saved"
+  end
+  # Stimulus only binds values and targets named after the registered
+  # identifier, so the markup and the controller must agree on one prefix.
+  test "Surface markup and the Stimulus controller use the same identifier" do
+    surface = RailsToolViews.present(:choice_card, props: props, scope: scope)
+    act(surface)
+    section = Nokogiri::HTML(RailsToolViews.render(surface, view_context: view, scope: scope)).at_css("section")
+    identifier = section["data-controller"]
+    assert_equal "rails-tool-views", identifier
+    assert_equal "rails_tool_views_surface_#{surface.id}", section["id"]
+    %w[revision saving failed].each { |name| assert section["data-#{identifier}-#{name}-value"], "missing #{name} value" }
+    assert_equal "status", section.at_css("[role=status][data-#{identifier}-target]")["data-#{identifier}-target"]
+    data = section.css("*").flat_map { |node| node.attributes.keys }.select { |name| name.start_with?("data-") && name.end_with?("-value", "-target") }
+    assert_empty data.reject { |name| name.start_with?("data-#{identifier}-") }
+    source = File.read(File.expand_path("../app/assets/javascripts/rails_tool_views_controller.js", __dir__))
+    assert_includes source, %("data-#{identifier}-revision-value")
   end
   test "trusted ViewComponent receives validated props" do
     RailsToolViews.register(:vc_card, description: "Existing component", schema: PROPS_SCHEMA, component: DemoCardComponent, policy: ->(_access) { true })
@@ -52,7 +68,7 @@ class RenderingTest < ActiveSupport::TestCase
     reports, events = [], []
     subscriber = Class.new { define_method(:report) { |error, **details| reports << [error, details] } }.new
     Rails.error.subscribe(subscriber)
-    token = ActiveSupport::Notifications.subscribe(/\.tool_views\z/) { |name, *_timing, payload| events << [name, payload] }
+    token = ActiveSupport::Notifications.subscribe(/\.rails_tool_views\z/) { |name, *_timing, payload| events << [name, payload] }
     yield
     [reports, events]
   ensure
@@ -68,8 +84,8 @@ class RenderingTest < ActiveSupport::TestCase
     assert_equal 1, reports.length
     error, details = reports.first
     assert_kind_of ActionView::MissingTemplate, error
-    assert_equal [true, "tool_views", missing.id], [details[:handled], details[:source], details[:context][:surface_id]]
-    assert_equal ["surface.render_failed.tool_views"], events.map(&:first)
+    assert_equal [true, "rails_tool_views", missing.id], [details[:handled], details[:source], details[:context][:surface_id]]
+    assert_equal ["surface.render_failed.rails_tool_views"], events.map(&:first)
     assert_equal({ surface_id: missing.id, component: "missing", error_class: "ActionView::MissingTemplate" }, events.first.last)
     refute_includes events.inspect, "private-title-sentinel"
   end
@@ -77,7 +93,7 @@ class RenderingTest < ActiveSupport::TestCase
     surface = present_card
     reports, events = observe { RailsToolViews.render(surface, view_context: view, scope: scope) }
     assert_empty reports
-    assert_equal ["surface.rendered.tool_views"], events.map(&:first)
+    assert_equal ["surface.rendered.rails_tool_views"], events.map(&:first)
     RailsToolViews.register(:guarded, description: "Host guarded renderer", partial: "v1/ticket_card", policy: ->(_access) { true },
       schema: { type: "object", additionalProperties: false, properties: { ticket_id: { type: "string" } } })
     guarded = RailsToolViews.present(:guarded, props: { ticket_id: "1" }, scope: scope)
@@ -97,11 +113,11 @@ class RenderingTest < ActiveSupport::TestCase
     html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "Changes saved."
     refute_includes html, "Selection saved"
-    I18n.backend.store_translations(:en, tool_views: { surface: { saved: "已保存更改。", revision: "第 %{revision} 版", saving: "正在保存…" } })
+    I18n.backend.store_translations(:en, rails_tool_views: { surface: { saved: "已保存更改。", revision: "第 %{revision} 版", saving: "正在保存…" } })
     html = RailsToolViews.render(surface, view_context: view, scope: scope)
     assert_includes html, "已保存更改。"
     assert_includes html, "第 2 版"
-    assert_includes html, 'data-tool-views-saving-value="正在保存…"'
+    assert_includes html, 'data-rails-tool-views-saving-value="正在保存…"'
     refute_includes html, "Saved revision"
   ensure
     I18n.backend.reload!
@@ -110,7 +126,7 @@ class RenderingTest < ActiveSupport::TestCase
   test "the Surface's accessible name is the description unless the host translates it" do
     surface = present_card
     assert_includes RailsToolViews.render(surface, view_context: view, scope: scope), %(aria-label="#{RailsToolViews.registry.fetch(:choice_card).description}")
-    I18n.backend.store_translations(:en, tool_views: { components: { choice_card: "工作流选择" } })
+    I18n.backend.store_translations(:en, rails_tool_views: { components: { choice_card: "工作流选择" } })
     assert_includes RailsToolViews.render(surface, view_context: view, scope: scope), 'aria-label="工作流选择"'
   ensure
     I18n.backend.reload!
@@ -124,7 +140,7 @@ class RenderingTest < ActiveSupport::TestCase
     assert_equal ids.uniq, ids
     documents.zip([first, second]).each do |document, surface|
       form = document.at_css("form")
-      assert_equal "/tool_views/surfaces/#{surface.id}/actions", form["action"]
+      assert_equal "/rails_tool_views/surfaces/#{surface.id}/actions", form["action"]
       hidden = form.css("input[type=hidden]").to_h { |input| [input["name"], input["value"]] }
       assert_equal ["select_option", surface.reload.revision.to_s, "choice_card"], hidden.values_at("action_name", "base_revision", "source_component")
       assert_match(/\A[0-9a-f-]{36}\z/, hidden["idempotency_key"])
@@ -135,11 +151,11 @@ class RenderingTest < ActiveSupport::TestCase
   end
   test "button helper posts fixed arguments and a mistyped action fails at render with its name" do
     surface = present_card
-    form = Nokogiri::HTML(view.tool_views_action_button(surface, :select_option, "Compare now", arguments: { key: "compare" }, class: "primary")).at_css("form")
+    form = Nokogiri::HTML(view.rails_tool_views_action_button(surface, :select_option, "Compare now", arguments: { key: "compare" }, class: "primary")).at_css("form")
     assert_equal "compare", form.at_css("input[name='arguments[key]']")["value"]
     button = form.at_css("button")
     assert_equal ["Compare now", "submit", "primary", nil], [button.text, button["type"], button["class"], button["name"]]
-    error = assert_raises(ArgumentError) { view.tool_views_action_fields(surface, :select_optoin) }
+    error = assert_raises(ArgumentError) { view.rails_tool_views_action_fields(surface, :select_optoin) }
     assert_equal 'choice_card does not register the action "select_optoin"', error.message
   end
   test "a ViewComponent receives only the Surface context its initializer names" do
@@ -152,7 +168,7 @@ class RenderingTest < ActiveSupport::TestCase
     surface = RailsToolViews.present(:interactive_vc, props: props, scope: scope)
     RailsToolViews.dispatch(surface.id, scope: scope, action: "select_option", arguments: { key: "continue" }, base_revision: 1, idempotency_key: "vc-1")
     document = Nokogiri::HTML(RailsToolViews.render(surface, view_context: view, scope: scope))
-    assert_equal "/tool_views/surfaces/#{surface.id}/actions", document.at_css("form")["action"]
+    assert_equal "/rails_tool_views/surfaces/#{surface.id}/actions", document.at_css("form")["action"]
     assert_equal "2", document.at_css("input[name=base_revision]")["value"]
     assert_equal "continue", document.at_css("input[type=radio][checked]")["value"]
     ambiguous = { type: "object", additionalProperties: false, properties: { title: { type: "string" }, options: { type: "array", items: { type: "string" } }, state: { type: "string" } } }

@@ -14,7 +14,7 @@
     <% @surfaces.each do |surface| %>
       <article class="demo-presentation">
         <% if surface.context_ref == "demo-chat" %><p class="demo-chat-label">Assistant · select a workflow to continue</p><% end %>
-        <%= tool_views_surface(surface, scope: @scope) %>
+        <%= rails_tool_views_surface(surface, scope: @scope) %>
       </article>
     <% end %>
   </section>

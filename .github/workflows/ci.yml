@@ -47,16 +47,16 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_USER: toolviews
-          POSTGRES_DB: toolviews_test
+          POSTGRES_USER: rails_tool_views
+          POSTGRES_DB: rails_tool_views_test
           POSTGRES_HOST_AUTH_METHOD: trust
         ports: ['5432:5432']
         options: >-
-          --health-cmd "pg_isready -U toolviews" --health-interval 5s
+          --health-cmd "pg_isready -U rails_tool_views" --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
       BUNDLE_GEMFILE: gemfiles/postgres.gemfile
-      DATABASE_URL: postgres://toolviews@127.0.0.1:5432/toolviews_test
+      DATABASE_URL: postgres://rails_tool_views@127.0.0.1:5432/rails_tool_views_test
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1

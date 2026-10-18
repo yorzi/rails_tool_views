@@ -19,3 +19,7 @@ WORK-20261013-01 repaired two IMPLEMENTATION_BUGs against the pinned contract: n
 ## DELTA-003 — owner-authorized RailsToolViews identity
 
 2026-10-16; PRODUCT_INTENT_CHANGE; approved by the owner's explicit request in this chat. WORK-20261016-01 / ADR 005 adopts `rails_tool_views` / `RailsToolViews`, retaining legacy API and persisted identifiers. Supplemental source: OddlyNiche c100a73d80b92de2246901922caa2b7bd819d889 naming contract. No external Specs rewrite or fabricated H2 approval. Commit and push are authorized; owner subsequently specified `yorzi/rails_tool_views`, private, now created as origin. Gem publication and OddlyDock integration are not included.
+
+## DELTA-004 — single public identity before release
+
+2026-10-18; PRODUCT_INTENT_CHANGE; approved by the owner in this session ("Full single identity"). WORK-20261018-01 / ADR 006 removes the `ToolViews` compatibility layer that DELTA-003 retained and renames the `tool_views_*` persisted and wire identifiers to `rails_tool_views_*`. The naming supplement (OddlyNiche c100a73, supporting/07, TV-05) allowed either reading old records or an explicit migration; this delta takes the explicit-migration branch, documented in the Upgrading guide and exercised on OddlyDock's development database. Component keys, versions, digests, Surface IDs and replay semantics are unchanged. The pinned Specs are not edited from here; OddlyNiche records the matching decision separately.

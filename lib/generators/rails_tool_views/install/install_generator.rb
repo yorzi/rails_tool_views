@@ -11,8 +11,8 @@ module RailsToolViews
         [Time.now.utc.strftime("%Y%m%d%H%M%S"), format("%014d", next_migration_number)].max
       end
       def install
-        migration_template "create_tool_views.rb", "db/migrate/create_tool_views.rb"
-        template "tool_views.rb", "config/initializers/tool_views.rb"
+        migration_template "create_rails_tool_views.rb", "db/migrate/create_rails_tool_views.rb"
+        template "rails_tool_views.rb", "config/initializers/rails_tool_views.rb"
         route 'mount RailsToolViews::Engine => "/rails_tool_views", as: :rails_tool_views'
       end
     end

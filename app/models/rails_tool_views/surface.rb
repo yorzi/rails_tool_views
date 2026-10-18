@@ -2,7 +2,7 @@
 module RailsToolViews
   # A persisted UI snapshot whose read and action access is checked by RailsToolViews.
   class Surface < ActiveRecord::Base
-    self.table_name = "tool_views_surfaces"
+    self.table_name = "rails_tool_views_surfaces"
     self.filter_attributes += %i[props state]
     attribute :props, RedactedJson.new, default: -> { {} }
     attribute :state, RedactedJson.new, default: -> { {} }
@@ -13,7 +13,7 @@ module RailsToolViews
     validates :actor_ref, :tenant_ref, :component_key, :component_digest, presence: true
     # Returns the stable browser target identifier.
     def dom_id
-      "tool_views_surface_#{id}"
+      "rails_tool_views_surface_#{id}"
     end
     # Returns the UI projection; it is not a permission grant.
     def snapshot

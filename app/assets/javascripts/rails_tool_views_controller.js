@@ -1,6 +1,6 @@
 // Host imports and registers this factory with its own Stimulus application.
 // No provider, generated code, or browser-owned policy participates in actions.
-export default function toolViewsController(Controller) {
+export default function railsToolViewsController(Controller) {
   return class extends Controller {
     static targets = ["status", "error"];
     // The server-rendered Surface supplies translated copy; these are fallbacks.
@@ -22,7 +22,7 @@ export default function toolViewsController(Controller) {
         const stream = event.target;
         if (stream.getAttribute("target") !== this.element.id) return;
         const incoming = stream.querySelector("template")?.content.firstElementChild;
-        const revision = Number(incoming?.getAttribute("data-tool-views-revision-value"));
+        const revision = Number(incoming?.getAttribute("data-rails-tool-views-revision-value"));
         if (revision && revision < this.revisionValue) event.preventDefault();
       };
       this.element.ownerDocument.addEventListener("turbo:before-stream-render", this.beforeStream);

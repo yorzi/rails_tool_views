@@ -12,7 +12,7 @@ class PrivacyTest < ActiveSupport::TestCase
   end
   test "notifications hide presentation data and snapshots exclude identity" do
     events = []
-    token = ActiveSupport::Notifications.subscribe(/\.tool_views\z/) { |*args| events << args.last }
+    token = ActiveSupport::Notifications.subscribe(/\.rails_tool_views\z/) { |*args| events << args.last }
     surface = present_card
     act(surface)
     assert_equal %i[component component_digest id props revision state], surface.snapshot.keys.sort
@@ -86,10 +86,10 @@ class RequestLogPrivacyTest < ActionDispatch::IntegrationTest
   teardown { ActionController::Base.logger = @original_logger }
   test "engine request logs keep routing metadata and mask every other field" do
     surface = present_card
-    post "/tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
+    post "/rails_tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
       base_revision: 1, idempotency_key: "logged-request-1", business_rules: "injected-policy-sentinel" }
     assert_equal "UNKNOWN_FIELD", response.parsed_body["code"]
-    post "/tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
+    post "/rails_tool_views/surfaces/#{surface.id}/actions", as: :json, params: { action_name: "select_option", arguments: { key: "compare" },
       base_revision: 1, idempotency_key: "logged-request-2" }
     assert_response :success
     assert_match(/"arguments"\s*=>\s*"\[FILTERED\]"/, @stream.string)

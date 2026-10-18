@@ -1,4 +1,4 @@
 <%= render "v1/navigation" %>
 <p class="v1-intro">Edits create immutable host versions. Acceptance locks a version; regeneration requires explicit feedback and a separate continuation.</p>
-<%= tool_views_surface(@surface, scope: @scope) %>
+<%= rails_tool_views_surface(@surface, scope: @scope) %>
 <%= button_to "Start a new result draft", v1_new_artifact_path, data: { turbo: false }, class: "v1-secondary" %>

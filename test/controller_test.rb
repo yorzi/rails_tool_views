@@ -13,7 +13,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
     { action_name: "select_option", arguments: { key: "compare" }, base_revision: 1, idempotency_key: "browser-1" }.merge(extra)
   end
   def path(surface)
-    "/tool_views/surfaces/#{surface.id}/actions"
+    "/rails_tool_views/surfaces/#{surface.id}/actions"
   end
   test "JSON and Turbo commit the same transition and replay receipt" do
     surface = present_card
@@ -45,7 +45,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
   test "cross tenant read action and continuation are unavailable" do
     surface = present_card
     RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope("bob") } }
-    get "/tool_views/surfaces/#{surface.id}", as: :json
+    get "/rails_tool_views/surfaces/#{surface.id}", as: :json
     assert_response :not_found
     refute_includes response.body, "Choose a workflow"
     post path(surface), params: body(surface), as: :json
@@ -96,7 +96,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, response.parsed_body["revision"]
     interaction_id = response.parsed_body["interaction_id"]
     assert_equal "pending", RailsToolViews::AgentInteraction.find(interaction_id).status
-    get "/tool_views/surfaces/#{surface.id}"
+    get "/rails_tool_views/surfaces/#{surface.id}"
     assert_includes response.body, "AI follow-up pending"
     RailsToolViews.deliver(interaction_id, scope: scope)
     assert_equal 2, surface.reload.revision
@@ -126,7 +126,7 @@ class ControllerTest < ActionDispatch::IntegrationTest
       actions: { select_option: { schema: PARAMS_SCHEMA, policy: ->(access) { access.actor == "alice" },
         handler: ->(access) { RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key"), message: "Saved by a ViewComponent." }) } } })
     surface = RailsToolViews.present(:interactive_vc, props: props, scope: scope)
-    get "/tool_views/surfaces/#{surface.id}"
+    get "/rails_tool_views/surfaces/#{surface.id}"
     form = Nokogiri::HTML(response.body).at_css("form")
     assert_equal "commit", form.at_css("input[type=submit]")["name"]
     fields = form.css("input[type=hidden]").to_h { |input| [input["name"], input["value"]] }
@@ -149,17 +149,17 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_response :see_other
     assert_equal "http://www.example.com/v1/support?ticket_id=1", response.headers["Location"]
     post path(surface), params: body(surface, idempotency_key: "browser-2", base_revision: 2), headers: html
-    assert_equal "http://www.example.com/tool_views/surfaces/#{surface.id}", response.headers["Location"]
+    assert_equal "http://www.example.com/rails_tool_views/surfaces/#{surface.id}", response.headers["Location"]
     post path(surface), params: body(surface, idempotency_key: "browser-3", base_revision: 3), headers: html.merge("Referer" => "https://elsewhere.example/phish")
     assert_response :see_other
-    assert_equal "http://www.example.com/tool_views/surfaces/#{surface.id}", response.headers["Location"]
+    assert_equal "http://www.example.com/rails_tool_views/surfaces/#{surface.id}", response.headers["Location"]
     assert_equal 4, surface.reload.revision
   end
 
   test "missing host identity resolver denies even authenticated-looking input" do
     surface = present_card
     RailsToolViews.configure { |config| config.scope_resolver = nil }
-    get "/tool_views/surfaces/#{surface.id}", as: :json
+    get "/rails_tool_views/surfaces/#{surface.id}", as: :json
     assert_response :forbidden
   end
 end

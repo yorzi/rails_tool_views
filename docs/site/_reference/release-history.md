@@ -13,7 +13,7 @@ guide: false
 
 No public release has been published. Version {{ site.version }} is the current prerelease candidate on `main`. The repository remains private while development continues.
 
-The current candidate adopts the RailsToolViews package identity with legacy API and persisted-data compatibility. Earlier local implementation milestones are not release tags.
+The current candidate keeps one RailsToolViews identity and removes the legacy ToolViews aliases that earlier unpublished candidates carried. Earlier local implementation milestones are not release tags.
 
 When a stable tag includes this documentation site, the build publishes that tag at the root and default-branch docs at `/next/`; older major versions can remain under `/vN/`. Until then the local build shows the unreleased working tree at the root.
 

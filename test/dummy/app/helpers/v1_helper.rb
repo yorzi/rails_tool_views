@@ -4,7 +4,7 @@ module V1Helper
     RailsToolViews::Scope.new(actor: surface.actor_ref, tenant: surface.tenant_ref)
   end
   def v1_action_fields(surface, action, arguments = {})
-    safe_join([tool_views_action_fields(surface, action)] + arguments.map { |name, value| hidden_field_tag("arguments[#{name}]", value, id: nil) })
+    safe_join([rails_tool_views_action_fields(surface, action)] + arguments.map { |name, value| hidden_field_tag("arguments[#{name}]", value, id: nil) })
   end
   def v1_value(surface, error, field, fallback = nil)
     values = error.is_a?(RailsToolViews::ValidationError) ? error.values : surface.props.fetch("values", {})

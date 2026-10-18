@@ -12,12 +12,12 @@ FileUtils.mkdir_p("pkg")
 spec = Gem::Specification.load("rails_tool_views.gemspec")
 package = Gem::Package.build(spec, true, false, "pkg/rails_tool_views-#{spec.version}.gem")
 contents = Gem::Package.new(package).contents
-%w[app/controllers/rails_tool_views/surfaces_controller.rb app/helpers/rails_tool_views/surfaces_helper.rb app/models/rails_tool_views/redacted_json.rb app/views/rails_tool_views/surfaces/_surface.html.erb app/assets/javascripts/tool_views_controller.js lib/generators/rails_tool_views/install/templates/create_tool_views.rb].each do |path|
+%w[app/controllers/rails_tool_views/surfaces_controller.rb app/helpers/rails_tool_views/surfaces_helper.rb app/models/rails_tool_views/redacted_json.rb app/views/rails_tool_views/surfaces/_surface.html.erb app/assets/javascripts/rails_tool_views_controller.js lib/generators/rails_tool_views/install/templates/create_rails_tool_views.rb].each do |path|
   abort "Missing packaged runtime file: #{path}" unless contents.include?(path)
 end
 abort "Core depends on RubyLLM" if spec.runtime_dependencies.any? { |dependency| dependency.name == "ruby_llm" }
 
-Dir.mktmpdir("toolviews-package-") do |temporary|
+Dir.mktmpdir("rails_tool_views-package-") do |temporary|
   installed = Gem::Installer.at(File.expand_path(package), install_dir: File.join(temporary, "gems"), ignore_dependencies: true, wrappers: false).install
   host = File.join(temporary, "host")
   FileUtils.mkdir_p(File.join(host, "config"))

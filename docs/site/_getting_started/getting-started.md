@@ -28,7 +28,7 @@ bin/rails db:migrate
 
 For a local checkout, use `gem "rails_tool_views", path: "/path/to/rails_tool_views"` in the host Gemfile instead. Install `view_component` separately only if you use that renderer. RubyLLM is optional.
 
-The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. An existing ToolViews host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
+The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. A 0.2 development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
 
 ## Register a ChoiceCard
 
@@ -73,7 +73,7 @@ Save this Partial as `app/views/choices/_card.html.erb`:
 <% end %>
 ```
 
-The form helper includes revision, action, component, and replay fields. The host still provides Rails CSRF protection. For enhanced Turbo updates, keep Turbo enabled and register the shipped `tool_views_controller.js` asset with Stimulus as `tool-views`; ordinary forms also work without it. Follow the asset setup in the reference host's `app/views/layouts/application.html.erb` when using Propshaft.
+The form helper includes revision, action, component, and replay fields. The host still provides Rails CSRF protection. For enhanced Turbo updates, keep Turbo enabled and register the shipped `rails_tool_views_controller.js` asset with Stimulus as `rails-tool-views`; ordinary forms also work without it. Follow the asset setup in the reference host's `app/views/layouts/application.html.erb` when using Propshaft.
 
 ## Present and Restore
 

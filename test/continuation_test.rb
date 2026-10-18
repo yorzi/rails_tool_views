@@ -31,7 +31,7 @@ class ContinuationTest < ActiveSupport::TestCase
     reports, events = [], []
     subscriber = Class.new { define_method(:report) { |error, **details| reports << [error.message, details[:handled], details[:context]] } }.new
     Rails.error.subscribe(subscriber)
-    token = ActiveSupport::Notifications.subscribe("agent_failed.tool_views") { |*_timing, payload| events << payload }
+    token = ActiveSupport::Notifications.subscribe("agent_failed.rails_tool_views") { |*_timing, payload| events << payload }
     assert_equal "failed", RailsToolViews.deliver(interaction_id, scope: scope).status
     RailsToolViews.deliver(interaction_id, scope: scope)
     assert_equal 1, keys.length

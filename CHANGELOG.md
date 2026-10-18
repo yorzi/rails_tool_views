@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0.pre.v3 — single identity, 2026-10-18 (unpublished)
+
+Breaking for 0.2 development hosts; see the Upgrading guide and ADR 006.
+
+- Removed: the `ToolViews` constant, the `toolviews`, `tool_views`, `tool_views/core` and `tool_views/adapters/ruby_llm` entrypoints, the `tool_views:install` generator, the `tool_views_*` view helpers and the `:tool_views` route-proxy fallback.
+- Changed: tables and custom indexes use the `rails_tool_views_` prefix; the interaction/execution index has an explicit 44-byte name so it fits PostgreSQL. The install migration is `CreateRailsToolViews` and the initializer `config/initializers/rails_tool_views.rb`.
+- Changed: I18n keys move to `rails_tool_views.*`, notifications to `*.rails_tool_views`, the `Rails.error` source to `rails_tool_views`, Surface DOM ids to `rails_tool_views_surface_<id>`, CSS classes to `rails-tool-views-*`, the Stimulus asset to `rails_tool_views_controller.js` (`railsToolViewsController`, identifier `rails-tool-views`) and delivery keys to `rails_tool_views:interaction:<id>`.
+- Unchanged: component contracts and digests, Surface IDs, revisions, serialized data, error codes and replay behavior.
+
 ## Unreleased — audit hardening, 2026-10-17
 
 Fixed: the bundled migration created the five-column presentation unique index with unbounded `varchar` columns, so `CREATE TABLE` failed on MySQL/InnoDB under utf8mb4 (5 x 255 x 4 = 5100 bytes against a 3072-byte limit). Identifiers are now bounded to 150 bytes, so the widest index needs 3000 bytes. Changed: stored actor, tenant, context, adapter, call and idempotency references are byte-capped in `RailsToolViews::Data.identifier`; a longer value is rejected (`INVALID_SCOPE`, `INVALID_CONTEXT`, `INVALID_CORRELATION`, `INVALID_IDEMPOTENCY_KEY`) instead of overflowing a column. Descriptions and versions keep the wider 255-byte cap. Fixed: a non-binary database collation could resolve another actor's or tenant's Surface, another correlation's presentation, or another idempotency key's action receipt; every lookup now confirms a byte-exact match before it stands in for the request. Added regression tests for index-key width, the identifier cap, and collation-safe identity matching. No data migration: existing rows are unchanged and the runtime bound is enforced in code.

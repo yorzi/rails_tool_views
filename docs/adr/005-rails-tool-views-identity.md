@@ -1,5 +1,7 @@
 # ADR 005 — RailsToolViews identity with persistent compatibility
 
+> Superseded in part on 2026-10-18 by [ADR 006](006-single-public-identity.md): the legacy `ToolViews` compatibility layer and `tool_views_*` persisted identifiers described below were removed before the first release.
+
 2026-10-16; WORK-20261016-01. Owner explicitly requested the rename, related gem updates, commit and push. This is approval of the implementation identity, not a RubyGems release or formal Specs H2 approval.
 
 ## Source and scope

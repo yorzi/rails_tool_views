@@ -14,7 +14,7 @@ pins.each do |directory, pin|
   abort error unless status.success? && actual.strip == pin
   Dir.chdir(directory) do
     spec = Gem::Specification.load(Dir["*.gemspec"].first)
-    Dir.mktmpdir("toolviews-upstream-package-") do |temporary|
+    Dir.mktmpdir("rails_tool_views-upstream-package-") do |temporary|
       package = Gem::Package.build(spec, true, false, File.join(temporary, "#{spec.name}.gem"))
       files = Gem::Package.new(package).contents
       results[spec.name] = { sha: pin, files: files.size, app_files: files.count { |path| path.start_with?("app/") }, mandatory: spec.runtime_dependencies.map(&:name) }
@@ -39,10 +39,10 @@ abort error unless status.success?
 results["generative_ui"][:normal_load_and_catalog] = output.strip
 blocked = <<~'CODE'
   module Kernel
-    alias toolviews_require require
+    alias rails_tool_views_require require
     def require(path)
       raise LoadError, "optional SDK blocked by probe" if path == "ruby_llm"
-      toolviews_require(path)
+      rails_tool_views_require(path)
     end
   end
   require "generative_ui"

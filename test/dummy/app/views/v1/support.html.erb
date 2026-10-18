@@ -15,6 +15,6 @@
   <% if @tickets.empty? %><p role="status">No matching tickets in this tenant.</p><% end %>
 </div>
 </section><section aria-label="Selected ticket">
-<% if @surface %><%= tool_views_surface(@surface, scope: @scope) %><% else %>
+<% if @surface %><%= rails_tool_views_surface(@surface, scope: @scope) %><% else %>
 <div class="demo-empty"><span class="empty-art" aria-hidden="true">↗</span><span class="section-kicker">REVIEW BEFORE YOU SEND</span><h2>Every reply starts with context.</h2><p>Open a ticket from the inbox to see its account, assignment and reply workflow.</p><p class="demo-note">The final confirmation queues a reply locally. This demo never contacts a customer.</p></div>
 <% end %></section></div>

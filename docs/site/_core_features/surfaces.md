@@ -29,7 +29,7 @@ Use the [Getting Started lifecycle example]({% link _getting_started/getting-sta
 
 The helper renders the current authorized Surface. You can also call `RailsToolViews.render(surface, view_context: view_context, scope: scope)`. A previously loaded ActiveRecord object does not bypass restore or read policy.
 
-A Surface exposes its `props`, `state`, `revision`, and `snapshot`. Treat the snapshot as UI data, not as a permission grant. Engine tables keep the historical `tool_views_` prefix for upgrade compatibility.
+A Surface exposes its `props`, `state`, `revision`, and `snapshot`. Treat the snapshot as UI data, not as a permission grant. Engine tables use the `rails_tool_views_` prefix.
 
 ## Correlate Tool Retries
 

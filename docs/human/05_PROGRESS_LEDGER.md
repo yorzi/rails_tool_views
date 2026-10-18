@@ -191,3 +191,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 - **风险与数据：** 无新表/新列/数据迁移，无依赖变化。行为变化：超过 150 字节的标识符现在被拒绝（`INVALID_SCOPE`/`INVALID_CONTEXT`/`INVALID_CORRELATION`/`INVALID_IDEMPOTENCY_KEY`），而不是截断或写入超长值——这对既有 host 是收紧，需在升级指南告知。授权、事务与幂等语义不变。MySQL 本身仍未运行；未重做真实 provider、浏览器/无障碍与远程 CI。
 - **文档：** CHANGELOG、production/upgrading/whats-new 指南、agent current work 与验收表、human 状态/变更记录、本 ledger；新增 evidence/AUDIT_V2_VALIDATION.md。运行流程未变，无需改图。
 - **交付：** 在 main 本地提交，未推送（用户未要求推送）。遗留一条需 owner 决定的建议：回放动作目前与首次执行同样发 `action.executed`，若要新增 `action.replayed` 会改变固定规格里列出的通知目录，故本次不改。未启动长期进程。
+
+### WORK-20261018-01 — 发布前只保留一个名字（0.3.0.pre.v3）
+
+- **内容与原因：** Andy 在 2026-10-18 的会话中问 gem 是否值得做、是否需要改名，并在两个选项中选了“Full single identity”。结论：gem 名 `rails_tool_views` 符合 RubyGems 下划线命名惯例，保留不改；需要去掉的是 0.1/0.2 遗留的第二套名字。删除 `ToolViews` 常量、`toolviews`/`tool_views` 入口、`tool_views:install`、`tool_views_*` helper 和 `:tool_views` 路由回退。表、索引、I18n、通知、`Rails.error` source、DOM/CSS/Stimulus 和续接 delivery key 统一改为 `rails_tool_views` 前缀。原因：gem 尚未发布，现在去掉没有外部成本；发布后这些别名都要永久兼容，而且顶层 `ToolViews` 会占用一个不属于本 gem 的名字。
+- **映射：** PRODUCT_INTENT_CHANGE，经 owner 批准，记为 DELTA-004 / ADR 006。命名补充合同 TV-05 允许“读取旧记录或显式迁移”，本次选择显式迁移。组件契约、digest、Surface ID、revision 与回放语义不变。原始 Specs 未改。
+- **人工复查：** 读 ADR 006 和 Upgrading 指南中的迁移片段；看 `app/helpers/rails_tool_views/surfaces_helper.rb`，确认已无别名循环和旧挂载回退；看 `test/identity_test.rb` 和新增的 Stimulus 标识测试；按 `bin/demo` 试一次保存后刷新。
+- **验证：** Rails 8.1.4 与 7.2.3、Ruby 4.0.2 下均为 89 runs，0 failures，eager load 通过。adapter 7/45 通过；打包安装和文档示例通过；文档站构建通过，1,042 个链接无断链，样式检查 0 问题。PostgreSQL 和 MySQL 本次 NOT RUN（本机没有数据库服务）。改名中发现一个真实缺陷：`data-tool-views-*` 属性漏改，Stimulus 因此不绑定。OddlyDock 的浏览器测试暴露了这个问题，已修复并加回归测试，详见 IDENTITY_V3_VALIDATION。
+- **风险与数据：** 对 0.2 主应用是破坏性变更，需要一个可回滚的改表迁移。在部署前要排空续接，并刷新已打开的页面。唯一的 0.2 主应用 OddlyDock 已在开发库上做过正向、回滚、再正向迁移，数据保留。授权、CSRF、幂等不变，没有新增依赖。
+- **文档：** README、Upgrading/What's New/Release History/组件/Surface/校验/生产/入门指南、runbook、发布清单、ADR 005 标注被取代、ADR 006、DELTA-004、验收表、human 状态/架构/变更记录、SPEC_BASELINE、CHANGELOG、current work，以及本节。
+- **交付：** 已在 main 本地提交，未推送。临时 demo（127.0.0.1:3111）已停止。下一步：Andy 审阅后推送本仓库，再推送 OddlyDock 的对应提交。

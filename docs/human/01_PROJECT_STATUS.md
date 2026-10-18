@@ -1,5 +1,7 @@
 # 项目状态
 
+2026-10-18：**SINGLE_IDENTITY_LOCAL_VERIFIED / COMMITTED_LOCAL / UNPUSHED / GEM_UNPUBLISHED**。Andy 选择保留 gem 名 `rails_tool_views`，并在首次发布前去掉全部 `ToolViews` 旧标识（WORK-20261018-01，ADR 006，DELTA-004）。版本改为 0.3.0.pre.v3：删除 `ToolViews` 常量、`toolviews`/`tool_views` 入口、`tool_views:install` 和 `tool_views_*` helper；表、索引、I18n、通知、DOM/CSS/Stimulus 和续接 delivery key 统一改为 `rails_tool_views` 前缀。组件契约、Surface ID、revision 与回放语义不变。0.2 主应用的升级步骤（一个可回滚的改表迁移）写在 Upgrading 指南，已在 OddlyDock 开发库实际执行。验证见 `../evidence/IDENTITY_V3_VALIDATION.md`。
+
 2026-10-16 文档更新：四组使用指南、生成式 RDoc API、搜索和 llms 文档已在 `docs/site` 完成本地草稿与验证。入口为 `docs/README.md`，证据为 `evidence/DOCS_VALIDATION.md`。Andy 随后要求提交与推送这些改动，并将本地目录改为 `rails_tool_views`。文档部署保持关闭，private 状态及产品验收结论不变。
 
 2026-10-16：**RENAME_LOCAL_VERIFIED / PUSHED_PRIVATE / GEM_UNPUBLISHED**。Andy 明确要求改名、commit 和 push；WORK-20261016-01 将 gem 更新为 `rails_tool_views` 0.2.0.pre.v2，namespace 为 `RailsToolViews`。旧 API、四张表、组件契约和回放标识保留；原始 Specs 不改，新增命名合同作为补充来源。验证见 `../evidence/RENAME_VALIDATION.md`；设计见 ADR 005。Andy 随后指定 `yorzi/rails_tool_views` private；私有仓库已创建，实施提交 `7e73e4e` 已推送 main，远端 SHA 与 PRIVATE 可见性均已核验。远程 CI 已触发，检查时排队中，尚无远程 PASS 结论。保持 private。RubyGems 发布、正式 H2 和 OddlyDock 集成仍未完成。下面是此前各工作单元的历史状态，不代表当前禁止 push。
@@ -17,11 +19,11 @@
 - 没有 Turbo 且动作被拒时，仍然渲染没有 layout 的片段页（成功路径已改为回到嵌入页面）。
 - 状态文案存在 `state["message"]` 里，刷新后仍显示上一次动作的提示。
 - 回放动作与首次执行都发 `action.executed`，遥测无法区分；新增 `action.replayed` 会改变规格里的通知目录，需 owner 决定（见 AUDIT_V2_VALIDATION 末尾）。
-- 还没有组件生成器（`rails g tool_views:component`）；等有外部开发者试过 helper 之后再决定。
+- 还没有组件生成器（`rails g rails_tool_views:component`）；等有外部开发者试过 helper 之后再决定。
 
 已解决（保留备查）：迁移文件两份一致已由 `test/identity_test.rb` 逐字节断言覆盖。
 
-价值判断（审计结论，不是市场证据）：技术上有明确空位。RubyLLM 自带的工具 partial 和 generative_ui 都只做展示，不做持久化状态、授权动作、幂等和回传；RubyGems 上 `toolviews`/`tool_views` 目前都未被占用。最大的风险不在代码而在采用成本：注册一个组件仍要写 schema、两层 policy 和 handler（表单字段现在由 helper 生成），还没有外部开发者试过。HYP-01/02 仍未验证，下一步最有价值的是找一位外部 Rails 开发者按 README 接入一次并计时。
+价值判断（审计结论，不是市场证据）：技术上有明确空位。RubyLLM 自带的工具 partial 和 generative_ui 都只做展示，不做持久化状态、授权动作、幂等和回传；RubyGems 上 `rails_tool_views`、`toolviews`、`tool_views` 目前都未被占用（2026-10-18 复查）。generative_ui 已于 2026-10-01 发布 0.1.0，仍只覆盖目录、schema 与渲染。最大的风险不在代码而在采用成本：注册一个组件仍要写 schema、两层 policy 和 handler（表单字段现在由 helper 生成），还没有外部开发者试过。HYP-01/02 仍未验证，下一步最有价值的是找一位外部 Rails 开发者按 README 接入一次并计时。
 
 2026-10-11：**V1_LOCAL_COMPLETE / UNPUBLISHED / HUMAN_REVIEW_PENDING**。Demo A、UC-01/10 和新授权的 UC-02..05、Demo B/C 均完成本地实现与验证。Andy 明确要求 v1 完成后才人工检查；当前进入这个检查点。源规格仍为 REVIEW，DELTA-001/002 记录本地授权，不代表正式 H2/C/R 或公共发布批准。
 

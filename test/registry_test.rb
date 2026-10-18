@@ -84,7 +84,7 @@ class RegistryTest < ActiveSupport::TestCase
     assert_equal "Only two left.", RailsToolViews::Error.new("OUT_OF_STOCK", status: 422, message: "Only two left.").message
     assert_equal "Fix the form.", RailsToolViews::ValidationError.new(fields: { name: "is required" }, message: "Fix the form.").to_h[:message]
     assert_equal "This form has already been submitted.", RailsToolViews::Error.new("ALREADY_SUBMITTED", status: 409).message
-    I18n.backend.store_translations(:en, tool_views: { errors: { out_of_stock: "Sold out.", not_found: "Nothing here." } })
+    I18n.backend.store_translations(:en, rails_tool_views: { errors: { out_of_stock: "Sold out.", not_found: "Nothing here." } })
     assert_equal "Sold out.", RailsToolViews::Error.new("OUT_OF_STOCK").message
     assert_equal "Nothing here.", RailsToolViews::Error.new("NOT_FOUND", status: 404).to_h[:message]
   ensure

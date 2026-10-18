@@ -8,7 +8,7 @@ class V1PrivacyTest < ActiveSupport::TestCase
   end
   test 'host body fields and core submitted values do not leak into SQL or notifications' do
     events = []
-    token = ActiveSupport::Notifications.subscribe(/\.tool_views\z/) { |*args| events << args.last }
+    token = ActiveSupport::Notifications.subscribe(/\.rails_tool_views\z/) { |*args| events << args.last }
     stream = StringIO.new
     old_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = ActiveSupport::Logger.new(stream)

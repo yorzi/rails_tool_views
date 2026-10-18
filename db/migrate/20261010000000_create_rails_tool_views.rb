@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-class CreateToolViews < ActiveRecord::Migration[7.2]
+class CreateRailsToolViews < ActiveRecord::Migration[7.2]
   # Identifier columns are bounded to 150 bytes in RailsToolViews::Data, and the
   # value is stored in a byte-limited column. This keeps every index key within
   # utf8mb4's 3072-byte limit on MySQL/InnoDB: the widest index is the five
   # presentation columns below (5 * 150 * 4 = 3000 bytes).
   def change
-    create_table :tool_views_surfaces, id: :string do |t|
+    create_table :rails_tool_views_surfaces, id: :string do |t|
       t.string :actor_ref, null: false, limit: 150
       t.string :tenant_ref, null: false, limit: 150
       t.string :context_ref, limit: 150
@@ -18,9 +18,9 @@ class CreateToolViews < ActiveRecord::Migration[7.2]
       t.integer :lock_version, default: 0, null: false
       t.timestamps
     end
-    add_index :tool_views_surfaces, [:tenant_ref, :actor_ref]
-    create_table :tool_views_presentations do |t|
-      t.references :surface, type: :string, foreign_key: { to_table: :tool_views_surfaces }, null: false
+    add_index :rails_tool_views_surfaces, [:tenant_ref, :actor_ref]
+    create_table :rails_tool_views_presentations do |t|
+      t.references :surface, type: :string, foreign_key: { to_table: :rails_tool_views_surfaces }, null: false
       t.string :actor_ref, null: false, limit: 150
       t.string :tenant_ref, null: false, limit: 150
       t.string :adapter, null: false, limit: 150
@@ -30,9 +30,9 @@ class CreateToolViews < ActiveRecord::Migration[7.2]
       t.json :result, null: false
       t.timestamps
     end
-    add_index :tool_views_presentations, [:tenant_ref, :actor_ref, :adapter, :call_id, :context_ref], unique: true, name: "index_tool_views_call_scope"
-    create_table :tool_views_action_executions do |t|
-      t.references :surface, type: :string, foreign_key: { to_table: :tool_views_surfaces }, null: false
+    add_index :rails_tool_views_presentations, [:tenant_ref, :actor_ref, :adapter, :call_id, :context_ref], unique: true, name: "index_rails_tool_views_call_scope"
+    create_table :rails_tool_views_action_executions do |t|
+      t.references :surface, type: :string, foreign_key: { to_table: :rails_tool_views_surfaces }, null: false
       t.string :actor_ref, null: false, limit: 150
       t.string :action_key, null: false
       t.string :idempotency_key, null: false, limit: 150
@@ -41,10 +41,10 @@ class CreateToolViews < ActiveRecord::Migration[7.2]
       t.json :result, null: false
       t.timestamps
     end
-    add_index :tool_views_action_executions, [:surface_id, :idempotency_key], unique: true, name: "index_tool_views_action_replay"
-    create_table :tool_views_agent_interactions do |t|
-      t.references :surface, type: :string, foreign_key: { to_table: :tool_views_surfaces }, null: false
-      t.references :action_execution, foreign_key: { to_table: :tool_views_action_executions }, null: false, index: { unique: true }
+    add_index :rails_tool_views_action_executions, [:surface_id, :idempotency_key], unique: true, name: "index_rails_tool_views_action_replay"
+    create_table :rails_tool_views_agent_interactions do |t|
+      t.references :surface, type: :string, foreign_key: { to_table: :rails_tool_views_surfaces }, null: false
+      t.references :action_execution, foreign_key: { to_table: :rails_tool_views_action_executions }, null: false, index: { unique: true, name: "index_rails_tool_views_interaction_execution" }
       t.json :payload, null: false
       t.string :status, null: false, default: "pending"
       t.string :error_code

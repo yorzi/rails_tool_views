@@ -1,4 +1,4 @@
 <%= render "v1/navigation" %>
 <p class="v1-intro">A proposed draft is editable. Only approved fields reach the host customer service; invalid input keeps field feedback.</p>
-<%= tool_views_surface(@surface, scope: @scope) %>
+<%= rails_tool_views_surface(@surface, scope: @scope) %>
 <%= button_to "Start another customer draft", v1_new_customer_path, data: { turbo: false }, class: "v1-secondary" %>

@@ -22,11 +22,11 @@ Start with the complete [ChoiceCard registration]({% link _getting_started/getti
 
 Keys use lowercase letters, digits, and underscores, start with a letter, and contain at most 64 characters. Register each key once per registry. Use `version:` to distinguish semantic changes.
 
-The description tells a model what the component does. It also names the rendered Surface for assistive technology. To show a localized name, translate it under `tool_views.components.<key>`:
+The description tells a model what the component does. It also names the rendered Surface for assistive technology. To show a localized name, translate it under `rails_tool_views.components.<key>`:
 
 ```yaml
 fr:
-  tool_views:
+  rails_tool_views:
     components:
       choice_card: "Choisir un flux de travail"
 ```

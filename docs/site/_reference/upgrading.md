@@ -2,7 +2,7 @@
 layout: default
 title: "Upgrading"
 nav_order: 2
-description: "Move an existing ToolViews host to RailsToolViews without replacing saved UI records."
+description: "Move a 0.2 development host to the single RailsToolViews identity before the first release."
 ---
 
 # {{ page.title }}
@@ -12,31 +12,86 @@ description: "Move an existing ToolViews host to RailsToolViews without replacin
 
 After reading this guide, you will know:
 
-* Change the dependency and public namespace.
-* Retain installed migrations and replay identifiers.
-* Review bounded identifiers and custom rendering.
+* Which legacy names 0.3 removes and what replaces each one.
+* How to rename the four tables without losing saved Surfaces.
+* What to drain or reload before you deploy the change.
+* How bounded identifiers and custom rendering affect an upgrade.
 
-## Update the Package
+## Why 0.3 Removes the Legacy Names
 
-Replace the `toolviews` dependency with `rails_tool_views`. Use `require "rails_tool_views"` and `RailsToolViews` in new code. For this unreleased candidate, use a local checkout or the private Git repository as described in [Getting Started]({% link _getting_started/getting-started.md %}).
+Versions 0.1 and 0.2 were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. Version 0.3 keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
 
-Legacy `require "toolviews"`, `require "tool_views"`, `require "tool_views/core"`, and `require "tool_views/adapters/ruby_llm"` still load the same implementation. `ToolViews` shares the canonical registry and configuration; it is not a separate runtime.
+## Update Ruby Code
 
-## Retain Existing Database and Routes
+Use `require "rails_tool_views"` and `RailsToolViews`. The `toolviews`, `tool_views`, `tool_views/core`, and `tool_views/adapters/ruby_llm` entrypoints and the `ToolViews` constant are gone, so loading them raises `LoadError` or `NameError`. Require the adapter as `rails_tool_views/adapters/ruby_llm`.
 
-Do not run the installer again on an existing host. Retain its initializer, migration history, and mount. Existing `:tool_views` mounts and `tool_views_*` helpers still work. New hosts may use `:rails_tool_views` and `rails_tool_views_*`.
+Rename view helpers from `tool_views_` to `rails_tool_views_`:
 
-The four `tool_views_*` tables, migration names, component keys/versions/digests, Surface IDs, DOM/Stimulus identifiers, translations, notification names, and continuation delivery keys remain unchanged. No schema or data migration accompanies the rename.
+| 0.2 helper | 0.3 helper |
+| --- | --- |
+| `tool_views_surface` | `rails_tool_views_surface` |
+| `tool_views_action_form` | `rails_tool_views_action_form` |
+| `tool_views_action_button` | `rails_tool_views_action_button` |
+| `tool_views_action_fields` | `rails_tool_views_action_fields` |
+| `tool_views_component_name` | `rails_tool_views_component_name` |
+
+Mount the engine with the name `:rails_tool_views`. The helpers no longer look for a `:tool_views` mount. You can keep any URL path:
+
+```ruby
+mount RailsToolViews::Engine => "/tool_views", as: :rails_tool_views
+```
+
+The installer is now only `rails_tool_views:install`. It writes `config/initializers/rails_tool_views.rb`; rename an existing `tool_views.rb` initializer if you want the file to match. Do not run the installer again on an existing host.
+
+## Rename the Tables
+
+The engine now reads `rails_tool_views_surfaces`, `rails_tool_views_presentations`, `rails_tool_views_action_executions`, and `rails_tool_views_agent_interactions`. Add one host migration. It renames the custom indexes first, so no renamed index exceeds PostgreSQL's 63-byte identifier limit:
+
+```ruby
+class RenameToolViewsToRailsToolViews < ActiveRecord::Migration[7.2]
+  def change
+    rename_index :tool_views_presentations, "index_tool_views_call_scope", "index_rails_tool_views_call_scope"
+    rename_index :tool_views_action_executions, "index_tool_views_action_replay", "index_rails_tool_views_action_replay"
+    rename_index :tool_views_agent_interactions, "index_tool_views_agent_interactions_on_action_execution_id",
+      "index_rails_tool_views_interaction_execution"
+    rename_table :tool_views_surfaces, :rails_tool_views_surfaces
+    rename_table :tool_views_presentations, :rails_tool_views_presentations
+    rename_table :tool_views_action_executions, :rails_tool_views_action_executions
+    rename_table :tool_views_agent_interactions, :rails_tool_views_agent_interactions
+  end
+end
+```
+
+`rename_table` also renames the indexes Rails named by default. Rows, Surface IDs, revisions, component digests, and replay receipts are unchanged, so saved Surfaces restore and retried actions replay as before. Keep the original install migration in your history.
+
+## Update Translations and Instrumentation
+
+Move translations from `tool_views.errors`, `tool_views.surface`, and `tool_views.components` to the same keys under `rails_tool_views`. Subscribers to `*.tool_views` notifications now subscribe to `*.rails_tool_views`, and errors reported to `Rails.error` use the source `rails_tool_views`.
+
+## Update the Browser Contract
+
+The Stimulus asset is `rails_tool_views_controller.js` and exports `railsToolViewsController`. Register it as `rails-tool-views`:
+
+```js
+import railsToolViewsController from "rails_tool_views_controller";
+application.register("rails-tool-views", railsToolViewsController(Controller));
+```
+
+Surface elements use the id `rails_tool_views_surface_<id>` and the classes `rails-tool-views-surface`, `rails-tool-views-error`, and `rails-tool-views-revision`. Rename host CSS selectors. A page rendered before the deploy targets the old id, so its next Turbo Stream replacement does not apply; reloading the page fixes it.
+
+## Drain Agent Continuations
+
+Delivery keys change from `toolviews:interaction:<id>` to `rails_tool_views:interaction:<id>`. Your delivery callback deduplicates by that key, so a continuation retried after the upgrade does not match a receipt stored under the old key. Before you deploy, let pending deliveries finish and either retry or abandon failed ones. Alternatively, rewrite the stored keys in your deduplication table in the same migration.
 
 ## Review Bounded Identifiers
 
 The runtime bounds the actor, tenant, context, adapter, call and idempotency references to 150 bytes and stores them in byte-limited columns. A longer value is rejected with `INVALID_SCOPE`, `INVALID_CONTEXT`, `INVALID_CORRELATION` or `INVALID_IDEMPOTENCY_KEY` instead of being truncated. The bound keeps every index key inside utf8mb4's 3072-byte limit on MySQL and InnoDB, where the unbounded five-column presentation index would not fit.
 
-If you already installed the migration, no change is required: the columns exist and the runtime still bounds values in code. Run the installer's migration only on a new host, or on MySQL where the original migration does not apply. The runtime also matches stored Surfaces, presentations, action receipts and correlations byte for byte after a lookup, so a non-binary database collation cannot resolve another actor's or tenant's row.
+If you already installed the migration, no column change is required: the runtime still bounds values in code. The runtime also matches stored Surfaces, presentations, action receipts and correlations byte for byte after a lookup, so a non-binary database collation cannot resolve another actor's or tenant's row.
 
 ## Review Host Overrides
 
-Move custom Engine partial overrides to `app/views/rails_tool_views/`. Review custom code that serializes Ruby class names. Do not rename your component classes or Partial paths as a side effect of the gem rename; renderer identity contributes to the digest.
+Custom Engine partial overrides stay in `app/views/rails_tool_views/`. Do not rename your component classes or Partial paths as a side effect of this upgrade; renderer identity contributes to the digest.
 
 If a host changes a component contract, use an explicit host migration or create a new Surface. Never change saved props to bypass `INCOMPATIBLE_COMPONENT`. Back up data before changing host contracts and verify both read and action paths on restored records.
 

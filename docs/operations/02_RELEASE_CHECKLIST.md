@@ -22,3 +22,7 @@ No gate is auto-approved by green local tests. Do not add CI publication credent
 ## 2026-10-16 scope update
 
 Owner approved RailsToolViews identity and commit/push for WORK-20261016-01. Candidate is `rails_tool_views` 0.2.0.pre.v2. The older no-push authorization statement above is historical; the owner subsequently selected `yorzi/rails_tool_views` private; origin is configured. Gem publication remains unauthorized and gemspec `allowed_push_host` remains blocked. Name selection and exact-name HTTP 404 observations do not close legal/near-collision/license clearance. Independent packaged-host and old-data compatibility checks are recorded in RENAME_VALIDATION. OddlyDock TV-02/03 remains open.
+
+## 2026-10-18 single identity
+
+Candidate is now `rails_tool_views` 0.3.0.pre.v3 with one public identity (ADR 006, WORK-20261018-01). The legacy `ToolViews` constant, `toolviews`/`tool_views` entrypoints, `tool_views:install`, `tool_views_*` helpers and `tool_views_*` tables were removed before any release, so no compatibility promise is published. Publication, license and legal name clearance remain open.

@@ -1,19 +1,19 @@
-<section id="<%= surface.dom_id %>" class="tool-views-surface" data-controller="tool-views" data-tool-views-revision-value="<%= surface.revision %>" data-tool-views-saving-value="<%= tool_views_text(:saving) %>" data-tool-views-failed-value="<%= tool_views_text(:save_failed) %>" aria-label="<%= tool_views_component_name(definition.key) %>" aria-describedby="<%= surface.dom_id %>_status">
-  <%= tool_views_body(surface, definition, error: error) %>
+<section id="<%= surface.dom_id %>" class="rails-tool-views-surface" data-controller="rails-tool-views" data-rails-tool-views-revision-value="<%= surface.revision %>" data-rails-tool-views-saving-value="<%= rails_tool_views_text(:saving) %>" data-rails-tool-views-failed-value="<%= rails_tool_views_text(:save_failed) %>" aria-label="<%= rails_tool_views_component_name(definition.key) %>" aria-describedby="<%= surface.dom_id %>_status">
+  <%= rails_tool_views_body(surface, definition, error: error) %>
   <% if error %>
-    <p id="<%= surface.dom_id %>_error" role="alert" tabindex="-1" data-tool-views-target="error"><%= error.message %></p>
+    <p id="<%= surface.dom_id %>_error" role="alert" tabindex="-1" data-rails-tool-views-target="error"><%= error.message %></p>
   <% end %>
-  <p id="<%= surface.dom_id %>_status" role="status" aria-live="polite" tabindex="-1" data-tool-views-target="status">
-    <%= surface.state["message"].is_a?(String) ? surface.state["message"] : tool_views_text(surface.revision > 1 ? :saved : :ready) %>
+  <p id="<%= surface.dom_id %>_status" role="status" aria-live="polite" tabindex="-1" data-rails-tool-views-target="status">
+    <%= surface.state["message"].is_a?(String) ? surface.state["message"] : rails_tool_views_text(surface.revision > 1 ? :saved : :ready) %>
   </p>
   <% interaction = surface.agent_interactions.order(:id).last %>
   <% if interaction && interaction.status != "skipped" %>
-    <p role="status"><%= tool_views_text({ "pending" => :agent_pending, "delivering" => :agent_pending, "completed" => :agent_completed, "failed" => :agent_failed }.fetch(interaction.status, :agent_unavailable)) %></p>
+    <p role="status"><%= rails_tool_views_text({ "pending" => :agent_pending, "delivering" => :agent_pending, "completed" => :agent_completed, "failed" => :agent_failed }.fetch(interaction.status, :agent_unavailable)) %></p>
     <% if interaction.status == "failed" %>
-      <%= form_with url: tool_views_routes.surface_continuation_path(surface, interaction_id: interaction.id), method: :post do %>
-        <button type="submit"><%= tool_views_text(:agent_retry) %></button>
+      <%= form_with url: rails_tool_views_routes.surface_continuation_path(surface, interaction_id: interaction.id), method: :post do %>
+        <button type="submit"><%= rails_tool_views_text(:agent_retry) %></button>
       <% end %>
     <% end %>
   <% end %>
-  <p class="tool-views-revision"><%= tool_views_text(:revision, revision: surface.revision) %></p>
+  <p class="rails-tool-views-revision"><%= rails_tool_views_text(:revision, revision: surface.revision) %></p>
 </section>

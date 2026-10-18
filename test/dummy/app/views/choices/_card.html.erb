@@ -2,7 +2,7 @@
 <% if props.fetch("options").empty? %>
   <p role="status">No options are available.</p>
 <% else %>
-  <%= tool_views_action_form(surface, :select_option) do |form| %>
+  <%= rails_tool_views_action_form(surface, :select_option) do |form| %>
     <fieldset aria-describedby="<%= surface.dom_id %>_status<%= " #{surface.dom_id}_error" if local_assigns[:error] %>">
       <legend>Choose a workflow</legend>
       <% props.fetch("options").each do |option| %>
