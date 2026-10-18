@@ -1,0 +1,9 @@
+<h1 id="rails-tool-views-page-title"><%= rails_tool_views_text(error ? :page_error_title : :page_title) %></h1>
+<% if surface_html %>
+  <%= surface_html %>
+<% elsif error %>
+  <%= render partial: "rails_tool_views/surfaces/error", locals: { error: error } %>
+<% end %>
+<% if error && reload_path %>
+  <p><%= link_to rails_tool_views_text(:reload), reload_path %></p>
+<% end %>

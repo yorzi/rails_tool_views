@@ -12,7 +12,7 @@ sequenceDiagram
   H->>B: 可信组件 HTML
   B->>D: 动作 + revision + key + CSRF
   D->>D: 重新授权、事务 handler/状态/回执
-  D-->>B: JSON 或 Surface 内 Turbo 更新
+  D-->>B: JSON、Surface 内 Turbo 更新或 HTML 303/完整纠错页
   D-->>H: 可选结构化 AgentInteraction
 ```
 
@@ -25,3 +25,5 @@ sequenceDiagram
 工单：可信 staff scope → 有界 query → 返回安全 ID/subject/status → renderer 重新解析关联。查看/分配是确定性动作；草拟只产生显式 interaction，离线 host Agent 写 draft。人工编辑/批准后，lead 勾选确认才能写本地 outbox；没有发送服务。另一个租户、已撤销角色、错误账户关联、伪造 source/action 都被拒绝。
 
 结果：候选版本 → edit 新增不可变版本 → regenerate 明确 interaction → Agent 检查原始业务版本和接受状态再新增版本。Surface revision 与 artifact version 分开，另一 Surface 的过时请求也会冲突。失败续接保留人工修改；重启后可重试。accept 锁定当前版本；export 只对该接受版本生成主应用文本记录，下载再次授权。导出失败回滚并允许原 key 重试。进一步创作通过新 draft 开始。
+
+0.2 HTML：直接读取 Surface 返回完整 Engine 页面；动作成功 303 返回可读来源页或 Surface。422/409 等错误在重新授权后保留表单，纠正后提交避开 POST-only 来源地址；跨身份只显示完整通用错误页，不泄漏 props。嵌入 helper 和 Turbo 仍返回片段，Engine layout 不依赖 embedding controller 的实例变量。

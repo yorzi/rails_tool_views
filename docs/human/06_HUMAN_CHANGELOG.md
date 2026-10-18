@@ -43,3 +43,7 @@ README 只保留定位、安装、demo 和入口；使用细节由文档站统�
 ## 2026-10-18 — 0.2 开发与测试基础
 
 同一份 dummy 同时承担 demo 与真实 Chrome 测试；每次使用临时数据库，保留 fixture 截图。实际打包 gem 在隔离依赖的临时 host 验证接入，避免工作区依赖掩盖缺包。两者分别证明浏览器行为和安装接入，不代表外部采用。后续按 ROADMAP 推进生成器和 HTML 纠错；发布未自动授权。
+
+## 2026-10-18 — 0.2 组件生成与 HTML 纠错
+
+生成器创建三份可审阅文件，授权默认拒绝；统一 reload block 加载，不修改已有 initializer。Engine 的独立 HTML 页面现在可在无 JavaScript 时完成纠错，不依赖嵌入页的 controller 数据；嵌入 helper 与 Turbo 仍是片段。成功纠正后的跳转避开 POST-only 来源地址。无业务写入、schema 或依赖新增。

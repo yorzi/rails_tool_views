@@ -85,3 +85,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] 先失败（命令不存在），再通过 3/46 聚焦测试；全套 92/769 与 eager load；实际打包 host 的默认拒绝、授权后 escaped render/HTTP mutation 与生成的 Minitest 1/2 通过。
 - [x] 16 篇指南 lint 零错误/警告；新功能独立指南、components、What's New、upgrading 与安装模板更新。最终 docs build/matrix 留 WORK-09，不称已通过。
 - [x] 无 migration/dependency/新业务功能，Specs 不改，implementation aligned；共享 reload hook 不互相清空，无隐式 agent exposure。状态、验收、ledger 更新；下一步 HTML。无长期进程。
+
+## WORK-20261018-08 — complete HTML correction pages
+
+- [x] FR-07：完整 HTML 文档、main/title/viewport/lang/CSRF；授权后纠错和安全 reload。拒绝身份不显示组件数据。修复纠正后 Referer 为 POST-only 路由导致 GET 404 的缺陷；JSON/Turbo/auth/status 不变。
+- [x] 新 4 测试先失败；5 个 HTTP 测试共 66 assertions + core 全套 97/835/eager load PASS。Chrome 4/28 PASS，关闭 JavaScript 的实际表单 invalid → correction → refresh，390px CDP 移动模拟截图检查。无辅助技术完整审核。
+- [x] 新 layout 无 host 实例变量/资源依赖，可通过 Rails view override 定制；guide、upgrading、What's New、flow 与 ADR 007 更新。无 schema/migration/dependency，implementation aligned，Specs 不改。
+- [x] 验收/状态/ledger 更新。Chrome/driver/Puma 随测试退出，无保留进程。最终兼容性和文档构建留 WORK-09。

@@ -261,3 +261,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 新测试先因命令不存在而失败；实现后 3 tests / 46 assertions PASS，覆盖默认拒绝、额外字段、多组件 reload、冲突与 symlink；全套 92/769 与 eager load PASS。实际打包 gem 的新 host 生成、默认拒绝、显式授权后 escaped render/HTTP 保存及生成 Minitest 1/2 PASS。16 篇指南 lint 零问题。最终跨版本/隔离安装/站点构建安排 WORK-09，远程 CI 未运行。
 
 **影响/文档/下一步：** 无 schema/migration/dependency；既有手写定义不变。新 Generating a Component 指南、components/What's New/upgrading 与安装模板同步；状态、验收、checklist 更新。运行时架构不变，无需改图；测试 host 清理，无保留进程。main 本地提交。下一步完整 HTML 错误/纠错页面。
+
+### WORK-20261018-08 — 完整 HTML 纠错与安全返回
+
+**内容/映射：** FR-07：Engine HTML GET/错误使用自有完整 layout（lang/title/viewport/CSRF/main），授权后保留组件字段与 reload link。跨身份拒绝不呈现 props/表单。修正后 Referer 若为 POST-only Engine route，303 到可读 Surface，修复 GET /actions 404。嵌入 helper、JSON/Turbo/status/重新授权边界不变。实现层修复，无产品意图 delta。
+
+**复查/验证：** 四个 HTTP 测试先失败，再增加 CSRF；合计 5/66，完整 core 97 tests / 835 assertions 与 eager load PASS。Chrome 4/28 PASS，包括真正禁用 JavaScript 的表单 error/correction/refresh，390px 设备模拟。检查移动错误截图，字段保留、标签/描述连接且可读；没有完整 screen-reader/物理设备审核。现有 Turbo/JSON suites 全绿。最终兼容矩阵、build、isolated host 由 WORK-09 完成。
+
+**影响/文档/下一步：** 无 schema/migration/dependency；Engine layout 不加载 host 资产或依赖其 controller 实例变量，host 可覆盖，保留语义元素。更新 validation/upgrading/What's New、runtime flow、ADR 007、status/acceptance/checklists。浏览器/driver/Puma 随测试退出，无保留服务。main 本地提交，下一步版本元数据与最终验收，不自动发布。

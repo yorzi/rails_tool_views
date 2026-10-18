@@ -13,14 +13,14 @@
 
 Andy 已授权 0.2.0 的开发和持续本地提交。复用 test/dummy 作为 demo 和浏览器测试 host，隔离依赖的临时 Rails 应用验证实际 gem；不另养一个应用仓库。
 
-测试基础已完成：Chrome 三个场景 18 个断言通过，截图已检查；实际 gem 在空 GEM_HOME 的完整 host 流程和激活依赖审计通过。下一步：组件生成器和无 Turbo 完整纠错页面。新 gem 尚未发布；后续发布需相应授权。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+测试基础已完成：Chrome 三个场景 18 个断言通过，截图已检查；实际 gem 在空 GEM_HOME 的完整 host 流程和激活依赖审计通过。组件生成器和无 Turbo 完整纠错页面均已完成。下一步：0.2 完整矩阵、打包、文档和浏览器验收。新 gem 尚未发布；后续发布需相应授权。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
 | 组件接入成本 | Partial 组件生成器已完成；closed schema、默认拒绝、三文件脚手架和实际打包验证通过 |
-| 无 Turbo 的错误页面 | 拒绝动作仍显示片段；拟在 0.2 改善 |
+| 无 Turbo 的错误页面 | 完整 Engine 页面与无 JS 移动端纠错已完成；最后矩阵和打包检查中 |
 | 数据生命周期 | 无内置 retention/cleanup API，重放回执与续接记录不可随意清理；拟在 0.3 先定契约 |
 | 运行反馈与遥测 | `state["message"]` 会持久化，回放仍发 `action.executed`；拟在 0.4 处理，新通知契约需 owner 决定 |
 | 实际采用 | 缺少外部开发者接入试验和实测定制实现对照；dummy 和本地 OddlyDock 接入不能替代外部证据 |

@@ -23,7 +23,7 @@ module RailsToolViews
       surface = RailsToolViews.restore(params[:id], scope: current_scope)
       respond_to do |format|
         format.json { render json: surface.snapshot }
-        format.html { render html: RailsToolViews.render(surface, view_context: view_context, scope: current_scope) }
+        format.html { render_surface_page(surface) }
       end
     end
 
@@ -88,8 +88,28 @@ module RailsToolViews
         format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, RailsToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
         # Without Turbo, return to the page that embeds the Surface; it re-renders saved state.
         # The Engine's own helper keeps whatever mount path and name the host chose.
-        format.html { redirect_back_or_to surface_path(surface), allow_other_host: false, status: :see_other }
+        format.html { redirect_after_action(surface) }
       end
+    end
+    def redirect_after_action(surface)
+      # After correcting a full-page error, Referer can be a POST-only Engine
+      # route. Redirect to the readable Surface instead of GET /actions (404).
+      referrer_path = begin
+        URI.parse(request.referer.to_s).path.to_s
+      rescue URI::InvalidURIError
+        ""
+      end
+      if referrer_path.start_with?("#{surface_path(surface)}/")
+        redirect_to surface_path(surface), status: :see_other
+      else
+        redirect_back_or_to surface_path(surface), allow_other_host: false, status: :see_other
+      end
+    end
+    def render_surface_page(surface, error: nil)
+      html = surface && RailsToolViews.render(surface, view_context: view_context, scope: current_scope, error: error)
+      render template: "rails_tool_views/surfaces/page", layout: "rails_tool_views/application",
+        locals: { surface_html: html, reload_path: surface && surface_path(surface), error: error },
+        status: error ? error.status : :ok
     end
     def reject_request(error)
       respond_to do |format|
@@ -107,9 +127,9 @@ module RailsToolViews
         format.html do
           begin
             surface = RailsToolViews.restore(params[:id], scope: current_scope)
-            render html: RailsToolViews.render(surface, view_context: view_context, scope: current_scope, error: error), status: error.status
+            render_surface_page(surface, error: error)
           rescue RailsToolViews::Error
-            render partial: "rails_tool_views/surfaces/error", locals: { error: error }, status: error.status
+            render_surface_page(nil, error: error)
           end
         end
       end

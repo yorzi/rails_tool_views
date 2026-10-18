@@ -31,7 +31,7 @@ class BrowserWorkflowsTest < BrowserTest
   end
 
   test "customer validation retains values then creates once on a mobile page" do
-    page.current_window.resize_to(390, 844)
+    mobile_viewport
     visit "/v1/customer"
     fill_in "Customer name", with: "Browser customer"
     fill_in "Customer email", with: "not-an-email"
@@ -49,4 +49,31 @@ class BrowserWorkflowsTest < BrowserTest
     assert_equal 1, DemoCustomer.uncached { DemoCustomer.where(name: "Browser customer").count }
     assert page.evaluate_script("document.documentElement.scrollWidth <= window.innerWidth"), "Mobile page overflows horizontally"
   end
+  test "without JavaScript a complete mobile error page supports correction and refresh" do
+    Capybara.using_driver(:rails_tool_views_no_js) do
+      mobile_viewport
+      visit "/v1/customer"
+      fill_in "Customer name", with: "HTML customer"
+      fill_in "Customer email", with: "invalid"
+      click_button "Create customer"
+      assert_title "Unable to complete this request"
+      assert_selector "main h1", text: "Unable to complete this request"
+      assert_field "Customer name", with: "HTML customer"
+      assert_field "Customer email", with: "invalid"
+      assert_selector "[aria-invalid=true][aria-describedby]"
+      assert_equal 0, DemoCustomer.uncached { DemoCustomer.where(name: "HTML customer").count }
+      take_screenshot("no-js-invalid-mobile")
+      fill_in "Customer email", with: "html@example.test"
+      click_button "Create customer"
+      assert_title "Interactive view"
+      assert_text "Created in north"
+      page.refresh
+      assert_text "HTML customer"
+      assert_equal 1, DemoCustomer.uncached { DemoCustomer.where(name: "HTML customer").count }
+      take_screenshot("no-js-corrected-mobile")
+    ensure
+      page.driver.quit
+    end
+  end
+
 end

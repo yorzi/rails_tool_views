@@ -106,3 +106,7 @@ FR-07/08 LOCAL_PASS: `bin/check-browser` Chrome 3/18，Partial/ViewComponent 保
 ## Partial generator — WORK-20261018-07
 
 FR-01/02/08 LOCAL_PASS: 三文件生成器，64 字符 key，closed schema、双 policy deny、无 agent exposure，reload 多定义保留。非法名/越界 symlink/冲突（含 --force）先拒绝无部分写入。3/46 聚焦、全套 92/769 + eager load；实际 package host 默认拒绝、显式授权渲染/保存与生成 Minitest 1/2 PASS。docs lint 16 guides clean；最终构建/matrix 由 WORK-09 执行。
+
+## Complete HTML correction — WORK-20261018-08
+
+FR-07 LOCAL_PASS: HTML page/403 CSRF/404 scoped denial/409 conflict/422 escaped retained fields、safe reload、correction redirect 均有 HTTP assertions。JSON/Turbo 回归保留。core 97/835/eager load；Chrome 4/28，真实禁用 JS 的 390px 表单纠正和刷新 PASS。截图人工检查，screen-reader/物理设备/完整 a11y 未运行。最终 matrix/package/docs 留 WORK-09。

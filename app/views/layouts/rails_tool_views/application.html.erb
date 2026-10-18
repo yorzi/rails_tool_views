@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= rails_tool_views_text(error ? :page_error_title : :page_title) %></title>
+  <%= csrf_meta_tags %>
+  <style>
+    .rails-tool-views-page { box-sizing: border-box; max-width: 48rem; margin: 2rem auto; padding: 0 1rem; font: 1rem/1.6 system-ui, sans-serif; overflow-wrap: anywhere; }
+    .rails-tool-views-page * { box-sizing: border-box; }
+    .rails-tool-views-page input, .rails-tool-views-page textarea, .rails-tool-views-page select { max-width: 100%; font: inherit; }
+    .rails-tool-views-page label { display: block; }
+    .rails-tool-views-page fieldset { min-width: 0; }
+    .rails-tool-views-page button, .rails-tool-views-page input[type=submit] { padding: .5rem 1rem; font: inherit; cursor: pointer; }
+    .rails-tool-views-page [role=alert], .rails-tool-views-page [aria-invalid=true] { color: #a51d1d; }
+    .rails-tool-views-page :focus-visible { outline: 3px solid #215dc4; outline-offset: 3px; }
+  </style>
+</head>
+<body class="rails-tool-views-page">
+  <main aria-labelledby="rails-tool-views-page-title">
+    <%= yield %>
+  </main>
+</body>
+</html>

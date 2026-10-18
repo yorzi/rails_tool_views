@@ -20,11 +20,14 @@ Capybara.server = :puma, { Silent: true }
 Capybara.server_host = "127.0.0.1"
 Capybara.default_max_wait_time = 5
 Capybara.save_path = ENV.fetch("BROWSER_ARTIFACTS")
-Capybara.register_driver :rails_tool_views_chrome do |app|
+%i[rails_tool_views_chrome rails_tool_views_no_js].each do |driver_name|
+Capybara.register_driver driver_name do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   %w[--headless=new --window-size=1440,1000 --disable-background-networking --no-sandbox --disable-dev-shm-usage].each { |arg| options.add_argument(arg) }
+  options.add_preference("profile.managed_default_content_settings.javascript", 2) if driver_name == :rails_tool_views_no_js
   options.binary = ENV["CHROME_BIN"] if ENV["CHROME_BIN"]
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
 end
 Capybara.default_driver = :rails_tool_views_chrome
 
@@ -47,6 +50,10 @@ class BrowserTest < ActiveSupport::TestCase
       Capybara.reset_sessions!
       Capybara.current_session.driver.quit
     end
+  end
+
+  def mobile_viewport
+    page.driver.browser.execute_cdp("Emulation.setDeviceMetricsOverride", width: 390, height: 844, deviceScaleFactor: 1, mobile: true)
   end
 
   def take_screenshot(label)

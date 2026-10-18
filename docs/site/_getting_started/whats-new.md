@@ -17,7 +17,7 @@ After reading this guide, you will know:
 
 ## Preview 0.2
 
-The next version adds a [Partial component generator]({% link _core_features/component-generator.md %}). It creates closed schemas and denied policies; configure host authorization before presenting it. The first public release remains 0.1.0 until a new release is published.
+The next version adds a [Partial component generator]({% link _core_features/component-generator.md %}). It creates closed schemas and denied policies; configure host authorization before presenting it. Non-Turbo errors now use [complete correction pages]({% link _core_features/validation.md %}#correct-a-form-without-turbo), including safe navigation after a successful correction. The first public release remains 0.1.0 until a new release is published.
 
 ## Use RailsToolViews
 

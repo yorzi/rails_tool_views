@@ -4,6 +4,7 @@ module RailsToolViews
   module SurfacesHelper
     # Engine-owned copy. Translate or reword any of it under rails_tool_views.surface.<key>.
     TEXT = {
+      page_title: "Interactive view", page_error_title: "Unable to complete this request", reload: "Reload saved view",
       ready: "View ready.", saved: "Changes saved.", revision: "Saved revision %{revision}",
       saving: "Saving changes…", save_failed: "Changes could not be saved. Review the message and try again.",
       agent_pending: "AI follow-up pending.", agent_completed: "AI follow-up completed.",
