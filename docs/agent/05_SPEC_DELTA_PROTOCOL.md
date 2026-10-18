@@ -27,3 +27,7 @@ WORK-20261013-01 repaired two IMPLEMENTATION_BUGs against the pinned contract: n
 ## DELTA-005 — owner-authorized first publication
 
 2026-10-18; INTENTIONAL_DELTA; accepted by the owner's explicit request to publish `0.1.0` with GitHub Pages and DNS. Andy separately confirms MIT, GitHub private vulnerability reporting, the public repository and `rails-tool-views.wangyaodi.com`. WORK-20261018-02 packages the existing implementation and removes historical publication blocks. No runtime/API/schema change and no external Specs edit. Formal H2/C/R, independent security review, live provider/MySQL qualification and external adoption remain open; release authorization is not evidence that these gates passed. Internal `0.2` and `0.3` versions were unpublished development candidates; public versioning begins at 0.1.0.
+
+## 2026-10-18 — public 0.2 release authorization
+
+Owner explicitly authorizes pushing the completed 0.2 candidate, checking remote CI, then publishing 0.2.0. This extends DELTA-005's publication authorization to the bounded implementation in WORK-06..09; no product/API/schema intent changes. Formal/security/provider/MySQL/adoption evidence limits remain open. External Specs are unchanged. WORK-10/11 records preparation and observed delivery separately.

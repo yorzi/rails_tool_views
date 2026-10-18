@@ -4,6 +4,8 @@ The owner authorized the first public `rails_tool_views` release as **0.1.0** on
 
 0.1.0 publication, checksum comparison and stable/next HTTPS deployment are complete. The release tag is `v0.1.0` at `f2d4303`; see the evidence above before changing a release.
 
+Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; actual delivery is recorded in `evidence/RELEASE_0_2_0.md`. The v0.1.0 tag remains immutable.
+
 ## One-time setup
 
 - Public repository: `yorzi/rails_tool_views`; keep private vulnerability reporting enabled.
@@ -42,11 +44,11 @@ For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb
 
 ## Publish
 
-For the first release only:
+For this release, after the exact candidate passes remote CI:
 
 ```sh
-git tag -a v0.1.0 -m "Release RailsToolViews 0.1.0"
-git push origin v0.1.0
+git tag -a v0.2.0 -m "Release RailsToolViews 0.2.0"
+git push origin v0.2.0
 ```
 
 The `Release Gem` workflow runs the full reusable compatibility CI (Ruby 3.3 and 4.0, Rails 7.2 and 8.1, optional RubyLLM and PostgreSQL), metadata/package checks, independent dependency resolution, dependency advisories and versioned documentation builds. Only then can the `release` environment publish through OIDC and create the GitHub Release with the gem and SHA256SUMS.
@@ -57,7 +59,7 @@ Do not move or reuse a tag after a successful RubyGems upload. If checks fail be
 
 - RubyGems API and gem page report the intended version and source/docs/MFA metadata. Download the published gem and compare SHA-256 with the GitHub Release asset and SHA256SUMS.
 - Release verification and publication jobs both succeed for the tagged commit. Preserve the exact run URL.
-- Post-release Docs workflow succeeds; stable home/Getting Started name 0.1.0, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
+- Post-release Docs workflow succeeds; stable home/Getting Started name the new release, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
 - Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
 
 ## Evidence limits retained in 0.1.0

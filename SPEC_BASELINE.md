@@ -28,3 +28,7 @@ Andy explicitly requests documentation on GitHub Pages, DNS and publishing the g
 ## 2026-10-18 public 0.2 development authorization
 
 Andy explicitly authorizes improving AI-agent local development/testing, implementing the bounded 0.2 generator and HTML correction scope, and incremental local commits until acceptance. Reuse the maintained dummy demo plus disposable installed-gem hosts, with real browser/E2E screenshots. This does not authorize future publication, provider calls or speculative lifecycle/notification changes. No baseline intent or external Specs changed; ADR 007 records implementation choices.
+
+## 2026-10-18 public 0.2 release authorization
+
+After reviewing local acceptance, Andy explicitly authorizes pushing the candidate, checking remote CI, then publishing 0.2.0. This supersedes the previous local-only limitation for this release, including necessary metadata commits, annotated tag, OIDC upload, GitHub Release and versioned Pages deployment/verification. MIT, disclosure and scope stay unchanged; formal/security/provider/adoption gaps remain open.

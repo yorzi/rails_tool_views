@@ -1,14 +1,8 @@
 # Current work
 
-## 0.2.0 — owner-authorized implementation
+## Owner-authorized 0.2.0 publication
 
-Andy authorizes improving the local AI-agent testing foundation, then implementing 0.2 with incremental commits until acceptance. Public 0.1.0 remains unchanged. Local development/commits are authorized; future gem publication is not inferred.
+- [ ] WORK-20261018-10: finalize release docs/metadata, verify local package/site, push candidate, require exact remote CI, then v0.2.0/OIDC publication and hosted checksum/HTTPS checks.
+- [ ] WORK-20261018-11: record actual delivery/evidence and update status/acceptance in a separate ledger-linked commit; push and verify final CI/docs.
 
-- [x] WORK-20261018-06: browser/system tests with screenshots and cleanup; full packaged-host workflow in isolated dependencies; document the agent verification loop.
-- [x] WORK-20261018-07: safe Partial component generator, generated tests and fresh-host usage guide.
-- [x] WORK-20261018-08: complete accessible non-Turbo error/correction pages without changing JSON/Turbo/authentication boundaries.
-- [x] WORK-20261018-09: version/docs, focused and full/matrix checks, actual browser review, packaged fresh host, acceptance evidence, stop all temporary processes.
-
-No retention, telemetry catalog, new adapter or 1.0 expansion. External developer trials/production adoption are separate from automated host tests and do not block starting 0.2. Read [ROADMAP](../../ROADMAP.md) for later proposals and [status](../human/01_PROJECT_STATUS.md) for current reality.
-
-Local 0.2 acceptance is complete; no active development item remains. Review [validation](../evidence/V0_2_VALIDATION.md) before the next action: owner-authorized candidate push/remote CI and publication preparation. Do not start 0.3 automatically.
+Local implementation and acceptance WORK-06..09 are complete; see [validation](../evidence/V0_2_VALIDATION.md). Andy explicitly authorizes pushing and publishing 0.2.0 after remote CI. No 0.3, provider calls or speculative lifecycle/notification changes.

@@ -277,3 +277,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** Ruby3.3.5/Rails8.1.4、Ruby3.3.5/Rails7.2.3.2、Ruby4.0.2/Rails8.1.4 及 PostgreSQL17.11 各 97/837/eager load PASS；adapter 7/45、两种 docs examples PASS。冻结包三组实际 host 与生成 Minitest 1/2 PASS；空 GEM_HOME network resolve/full host/activated audit PASS。包 SHA256 e3c784de6f8527db6091b86b059945de2a0be112b9a2237fcf240904c4069a30，31 个打包文件；七份锁 audit clean，公告 fa2295251efb3b0d1a300e5ce8ad700ff1f1b485。Chrome 4/28，禁用 JS/390px；故意失败截图探针验证实际页面被捕获，恢复源码后全绿；人工 Tab→Enter invalid/correction/refresh PASS。16 guides zero errors、两条预期 unreleased/tag warnings；build/2,210 links/内部内容排除 PASS。candidate package gate PASS，正式 gate 对 unreleased 按预期拒绝。详细命令/范围见 V0_2_VALIDATION。
 
 **影响/文档/下一步：** 无 migration/schema/runtime dependency，授权/CSRF/replay 不变。更新 Getting Started/What's New/upgrading、ROADMAP、操作/状态/feature map/实现图景、baseline 授权与验收；HTML flow/ADR 已在 WORK-08 更新。临时 demo 127.0.0.1:3198 PID51497 已停止，临时库删除；浏览器/driver/Puma 和临时 PG databases 清理，已有 PG 服务不动。main 本地第四次提交，无推送/tag/gem 上传/provider；下一步 owner 审阅后授权候选推送、remote CI，再准备发布标记和标签。不自动开始 0.3。
+
+### WORK-20261018-10 — 准备并推进已授权的 0.2 发布
+
+**内容/映射：** Andy 明确授权推送候选、检查远端 CI、再发布 0.2.0。FR-08/NFR-03；版本不再改动，补齐日期/released flag、聚焦 0.1→0.2 升级指南、新版 What's New 路径与导航；0.1 What's New 保留旧 URL，旧升级指南链接到 immutable v0.1.0。baseline/delta 只追加授权，Specs 不改；无 runtime/API/schema/依赖变化。
+
+**复查/验证：** 实际新包 host 的安装/迁移、JSON/Turbo replay、stale/scoped denial、生成组件 HTML 纠错与持久化/eager load PASS，生成 Minitest 1/2；正式 release package gate PASS（31 files），docs examples PASS。17 guides zero errors，一条预期 pre-tag version warning；stable/next 构建与本地链接检查 PASS，内部内容排除。impact 提示 ApplicationController removed 是误报：core 默认仍为 ::ApplicationController，configuration 指南保留。完整本地运行矩阵见 V0_2_VALIDATION；精确候选的远程 CI 尚待推送运行，不提前声称通过。
+
+**影响/下一步：** MIT/OIDC/release 环境、私密安全报告、Pages HTTPS 现状已复核；无权限/DNS 改动，无 provider 或外部客户通信。没有启动临时服务。先提交推送，等待本提交完整 CI，随后 annotated v0.2.0 触发 OIDC，核对 registry/Release SHA256 与 hosted docs，再由 WORK-11 单独记录实际交付。架构与运行序列不变，无需改图。

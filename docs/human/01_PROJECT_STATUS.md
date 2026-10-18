@@ -15,7 +15,7 @@ Andy 已授权 0.2.0 的开发和持续本地提交。复用 test/dummy 作为 d
 
 0.2 实现与本地验收完成：安全 Partial 生成器、完整无 Turbo 纠错页、Chrome E2E/截图、隔离依赖的实际 gem host。三个 Ruby/Rails 组合及 PostgreSQL 各 97/837，adapter 7/45，Chrome 4/28；隔离 full host、七份锁文件及激活依赖审计、文档构建/2,210 链接通过。详见 [0.2 验证](../evidence/V0_2_VALIDATION.md)。
 
-下一步：owner 审阅后授权推送候选并检查其远程 CI，再准备 0.2 发布元数据/标签。源码与本地包为 0.2.0，公开 gem 仍为 0.1.0；没有推送、创建新 tag 或上传新 gem。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+Andy 已明确授权推送、检查远程 CI 并发布 0.2.0。发布元数据与升级指南已准备；下一步推送精确候选、要求完整 CI，通过后推送 v0.2.0 并核对 registry/Release/Pages。公开 gem 暂仍为 0.1.0；真实结果见 [发布证据](../evidence/RELEASE_0_2_0.md)。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 

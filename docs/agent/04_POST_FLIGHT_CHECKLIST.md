@@ -101,3 +101,11 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] 七份 locks/advisory audit clean；16 guides zero errors，两条预期 unreleased/tag version warnings；stable+next 构建、2,210 links、内部内容排除 PASS。
 - [x] 无 schema/migration/runtime dependency 新增。Specs 未编辑，implementation aligned。同步 baseline 授权、status/map/flow/roadmap、operations、evidence 与 ledger；current work 全部完成。
 - [x] 临时 demo PID 51497 / 127.0.0.1:3198 停止并删除临时 SQLite；Chrome/driver/Puma 无遗留，临时 PG databases 已 drop；已有 PostgreSQL 服务未停止。无新推送/tag/上传/provider。
+
+## WORK-20261018-10 — release candidate preparation
+
+- [x] Owner explicitly authorizes 0.2 push/remote CI/publication. Refetched origin, v0.2.0 unused; existing release environment/private security reporting/Pages HTTPS confirmed.
+- [x] Release dates/metadata, current/archived What's New, focused upgrading guide and navigation aligned. Public code/schema/dependencies unchanged; pinned Specs untouched.
+- [x] Actual package host + generated Minitest, release package gate, docs examples, 17-guide lint (one expected pre-tag version warning), stable/next build/link/content checks PASS.
+- [ ] Exact candidate CI, tag/OIDC publication, registry/Release hash and hosted stable/next outcome. Record actual delivery in WORK-11; do not treat this preparation commit as publication proof.
+- [x] Ledger, status/authority/current work/release procedure updated; architecture unchanged. No temporary service.
