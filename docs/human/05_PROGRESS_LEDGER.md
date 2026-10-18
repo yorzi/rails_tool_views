@@ -285,3 +285,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 实际新包 host 的安装/迁移、JSON/Turbo replay、stale/scoped denial、生成组件 HTML 纠错与持久化/eager load PASS，生成 Minitest 1/2；正式 release package gate PASS（31 files），docs examples PASS。17 guides zero errors，一条预期 pre-tag version warning；stable/next 构建与本地链接检查 PASS，内部内容排除。impact 提示 ApplicationController removed 是误报：core 默认仍为 ::ApplicationController，configuration 指南保留。完整本地运行矩阵见 V0_2_VALIDATION；精确候选的远程 CI 尚待推送运行，不提前声称通过。
 
 **影响/下一步：** MIT/OIDC/release 环境、私密安全报告、Pages HTTPS 现状已复核；无权限/DNS 改动，无 provider 或外部客户通信。没有启动临时服务。先提交推送，等待本提交完整 CI，随后 annotated v0.2.0 触发 OIDC，核对 registry/Release SHA256 与 hosted docs，再由 WORK-11 单独记录实际交付。架构与运行序列不变，无需改图。
+
+### WORK-20261018-11 — 记录已核验的 0.2.0 正式交付
+
+**内容/映射：** 完成 Andy 明确授权的候选推送、远程 CI 后发布。v0.2.0 指向 3156fd38f9fde60c3d8d582853a84b3d9d71e3d5，经现有 OIDC 上传 RubyGems，GitHub Release 与稳定/next Pages 上线。FR-08/NFR-03；不移动已发布标签，不改 runtime/API/schema/依赖或外部 Specs。
+
+**复查/验证：** main CI 39126752647、候选 Docs 39126752515、Release 39126933977、发布后 Pages 39127199725 全绿。标签三个 Ruby/Rails 与 PostgreSQL 各 97/837，adapter 7/45，Chrome 4/28；31-file package、生成测试、隔离安装/激活依赖审计、2,450 docs links PASS。registry API/实际 gem fetch/GitHub gem/SHA256SUMS 都是 5fd6a193dd9e69be3277ef34ff63802118031c51fee95ddcf4952af46d307367；31 个文件逐字节与本地一致、gemspec 契约相同（工具版本/文件排序不同，不声称跨 job 二进制复现）。版本页确认 MFA/精确 workflow publisher。稳定0.2/next 安装、搜索生成器指南、版本切换和 15 HTTPS 页面验证通过。详见 RELEASE_0_2_0；此记录自己的 post-push CI 需在提交后确认并在最终回复交接。
+
+**影响/下一步：** 无迁移、新权限/DNS/长期 key/provider/客户联系；既有正式/安全/MySQL/adoption gaps 不变。更新 status/map/roadmap/operations/acceptance/checklist/evidence/current work；架构/运行序列无改动。没有启动本地服务；watchers 已结束，客户端临时目录删除，浏览器页关闭，下载包和截图保留 ignored tmp。提交推送本记录并核验最终 CI；本次无剩余发布操作，不自动开始 0.3。

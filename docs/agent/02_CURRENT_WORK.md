@@ -1,8 +1,8 @@
 # Current work
 
-## Owner-authorized 0.2.0 publication
+## 0.2.0 publication complete
 
-- [ ] WORK-20261018-10: finalize release docs/metadata, verify local package/site, push candidate, require exact remote CI, then v0.2.0/OIDC publication and hosted checksum/HTTPS checks.
-- [ ] WORK-20261018-11: record actual delivery/evidence and update status/acceptance in a separate ledger-linked commit; push and verify final CI/docs.
+- [x] WORK-20261018-10: release metadata/docs, candidate push and exact remote CI, annotated v0.2.0, OIDC upload and hosted checks.
+- [x] WORK-20261018-11: record observed registry/Release/hash/Pages delivery, update status/acceptance and push the delivery record. Post-push checks are verified after this commit and reported in the final handoff.
 
-Local implementation and acceptance WORK-06..09 are complete; see [validation](../evidence/V0_2_VALIDATION.md). Andy explicitly authorizes pushing and publishing 0.2.0 after remote CI. No 0.3, provider calls or speculative lifecycle/notification changes.
+No active implementation or release task remains. [Release evidence](../evidence/RELEASE_0_2_0.md) distinguishes exact-tag remote results from local [validation](../evidence/V0_2_VALIDATION.md). Keep both published tags immutable. Future 0.3/lifecycle/notification/provider work and publication require their own authorization; do not start them from the roadmap alone.

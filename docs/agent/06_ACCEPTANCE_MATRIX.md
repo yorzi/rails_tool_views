@@ -116,3 +116,7 @@ FR-07 LOCAL_PASS: HTML page/403 CSRF/404 scoped denial/409 conflict/422 escaped 
 FR-01/02/07/08 LOCAL_PASS: generator 默认展示/动作拒绝（公开 dispatch 验证）、closed schemas、路径/冲突守卫、多文件 reload；完整 HTML 403/404/409/422、字段保留/escaping、纠正后安全跳转；嵌入/JSON/Turbo 回归保留。三个 Ruby/Rails SQLite 组合与 PostgreSQL 各 97/837/eager load；adapter 7/45；Chrome 4/28，禁用 JS/390px/实际键盘复查。冻结 artifact 的实际 host 在三个组合通过，独立 GEM_HOME full host + generated Minitest + activated audit PASS。七份锁审计、16-guide lint（两条预期版本警告）、build/2,210 links 通过。详见 ../evidence/V0_2_VALIDATION.md。
 
 仅本地候选，未推送/未发布，remote CI NOT_RUN。无新 schema/migration/runtime dependency；不关闭 MySQL/provider/外部采用/独立安全/正式 H2/C/R。
+
+## Public 0.2 delivery — WORK-20261018-11
+
+FR-08/NFR-03 RELEASE_PASS: exact tag 3156fd3 CI and OIDC publication complete, RubyGems/Release/client checksum agreement, full isolated installed host and dependency audits PASS. FR-01/02/07 remote regressions: three Ruby/Rails and PostgreSQL each 97/837; adapter 7/45; Chrome 4/28. Hosted stable0.2/next Pages, new feature search/version navigation, 15 HTTPS entries, 17-guide lint and 2,450 generated links PASS. No migration/runtime dependency change. Exact run/hash details in ../evidence/RELEASE_0_2_0.md. Formal H2/C/R, MySQL/provider/adoption/independent security/full a11y remain open.

@@ -107,5 +107,13 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Owner explicitly authorizes 0.2 push/remote CI/publication. Refetched origin, v0.2.0 unused; existing release environment/private security reporting/Pages HTTPS confirmed.
 - [x] Release dates/metadata, current/archived What's New, focused upgrading guide and navigation aligned. Public code/schema/dependencies unchanged; pinned Specs untouched.
 - [x] Actual package host + generated Minitest, release package gate, docs examples, 17-guide lint (one expected pre-tag version warning), stable/next build/link/content checks PASS.
-- [ ] Exact candidate CI, tag/OIDC publication, registry/Release hash and hosted stable/next outcome. Record actual delivery in WORK-11; do not treat this preparation commit as publication proof.
+- [x] Exact candidate CI, tag/OIDC publication, registry/Release hash and hosted stable/next outcome now verified. Actual delivery is recorded in WORK-11; the preparation commit alone was not publication proof.
 - [x] Ledger, status/authority/current work/release procedure updated; architecture unchanged. No temporary service.
+
+## WORK-20261018-11 — verified 0.2 delivery
+
+- [x] main/tag 3156fd3 remote CI/Docs/Release green; all tagged compatibility checks (97/837 × four, adapter 7/45, Chrome 4/28), isolated installation/audits/docs PASS.
+- [x] RubyGems API/index/client actual download, GitHub gem/SHA256SUMS agree on 5fd6a193dd9e69be3277ef34ff63802118031c51fee95ddcf4952af46d307367; all 31 files and gemspec contract match local source. MFA and scoped OIDC publisher verified from the version page.
+- [x] Release not draft/prerelease; post-release Pages successful; stable 0.2/next install commands, search/version menu, 15 HTTPS endpoints and redirect verified. Internal content remains excluded.
+- [x] Status/map/roadmap/operations/acceptance/evidence/current work and ledger reflect delivery. No runtime/API/schema/migration/new dependency/DNS/security grant/provider/contact. Specs unchanged; architecture/runtime flow unchanged.
+- [x] No temporary server; watchers finished, disposable client directory removed, browser tab closed. Downloaded evidence is retained in ignored tmp. This record's own post-push CI/Docs is checked after commit, without claiming future results inside it.

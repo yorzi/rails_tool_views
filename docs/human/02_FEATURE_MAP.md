@@ -9,7 +9,7 @@
 | FR-05 授权动作 | IMPLEMENTED | dispatch、ActionExecution |
 | FR-06 Agent 后续交互 | IMPLEMENTED；远端去重由 host 提供 | AgentInteraction、deliver、Continuation |
 | FR-07 Rails UI | IMPLEMENTED；JSON/Turbo/完整 HTML 纠错，无 ActionCable | SurfacesController、Stimulus factory |
-| FR-08 安装/文档 | 0.1.0 已发布；0.2 组件生成器与浏览器/隔离 host 验证本地完成，未发布 | install/component generators、test/dummy、bin/check-browser、release.yml、docs/site |
+| FR-08 安装/文档 | 0.2.0 已发布；组件生成器、浏览器/隔离 host 验证与 hosted docs 已通过精确标签 CI | install/component generators、test/dummy、bin/check-browser、release.yml、docs/site |
 
 v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 

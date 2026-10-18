@@ -1,31 +1,29 @@
 # 项目状态
 
-2026-10-18：**0.1.0 已发布；0.2.0 本地验收完成，未发布；1.0 路线图为提案。**
+2026-10-18：**0.2.0 已发布；源码、RubyGems、GitHub Release 与稳定文档已核验。1.0 路线图仍为提案。**
 
 ## 已交付
 
-- [RubyGems 0.1.0](https://rubygems.org/gems/rails_tool_views/versions/0.1.0)，tag `v0.1.0` 指向 `f2d4303`，MIT、MFA 和 GitHub OIDC 发布。
-- [文档站](https://rails-tool-views.wangyaodi.com)：稳定版与 `/next/`，DNS、强制 HTTPS、搜索、API 和 llms 已验证。
-- Registry/schema、Partial/ViewComponent、持久化 Surface、授权事务动作、revision/重放、表单反馈和可选 RubyLLM 续接已实现。客户/工单/内容是主应用示例，非 gem 内置业务。
-- 正式标签的三个 SQLite 组合与 PostgreSQL 各 89 tests / 723 assertions，adapter 7/45；打包、依赖审计和 2,152 文档链接检查通过。完整边界见 [发布证据](../evidence/RELEASE_0_1_0.md)。
+- [RubyGems 0.2.0](https://rubygems.org/gems/rails_tool_views/versions/0.2.0)，[GitHub Release](https://github.com/yorzi/rails_tool_views/releases/tag/v0.2.0)；tag 指向 `3156fd3`，MIT、MFA、现有 GitHub OIDC。
+- 新增安全 Partial 生成器、完整无 Turbo HTML 纠错与安全返回。已有 schema/Surface/授权事务/回放/可选 RubyLLM 能力保持；无 migration 或新 runtime dependency。
+- 精确标签远端：三个 Ruby/Rails 与 PostgreSQL 各 97/837、adapter 7/45、Chrome 4/28；实际安装、生成测试、依赖审计与 2,450 文档链接通过。
+- [文档站](https://rails-tool-views.wangyaodi.com) 稳定版 0.2.0，next 跟随 main；搜索、版本切换、15 个 HTTPS 入口与实际客户端 gem 下载验证通过。
+
+完整记录：[发布证据](../evidence/RELEASE_0_2_0.md)；[本地实现验收](../evidence/V0_2_VALIDATION.md)。历史版本保持不可变，不把旧内部 V1 名称当成公共 1.0。
 
 ## 当前工作与下一步
 
-Andy 已授权 0.2.0 的开发和持续本地提交。复用 test/dummy 作为 demo 和浏览器测试 host，隔离依赖的临时 Rails 应用验证实际 gem；不另养一个应用仓库。
+本次完成 owner 授权的推送、精确 CI 与 0.2.0 发布。没有剩余发布操作，也没有自动开始 0.3。日常开发复用 dummy demo，`bin/check --browser` 运行真实 E2E/截图；隔离 host 验证实际包，不另养一个应用仓库。
 
-0.2 实现与本地验收完成：安全 Partial 生成器、完整无 Turbo 纠错页、Chrome E2E/截图、隔离依赖的实际 gem host。三个 Ruby/Rails 组合及 PostgreSQL 各 97/837，adapter 7/45，Chrome 4/28；隔离 full host、七份锁文件及激活依赖审计、文档构建/2,210 链接通过。详见 [0.2 验证](../evidence/V0_2_VALIDATION.md)。
-
-Andy 已明确授权推送、检查远程 CI 并发布 0.2.0。发布元数据与升级指南已准备；下一步推送精确候选、要求完整 CI，通过后推送 v0.2.0 并核对 registry/Release/Pages。公开 gem 暂仍为 0.1.0；真实结果见 [发布证据](../evidence/RELEASE_0_2_0.md)。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+下一开发版本按 [ROADMAP](../../ROADMAP.md) 先讨论生命周期与重放/续接保留契约；拟议 API/schema/通知或后续发布需要相应授权。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
-| 数据生命周期 | 无内置 retention/cleanup API，重放回执与续接记录不可随意清理；拟在 0.3 先定契约 |
-| 运行反馈与遥测 | `state["message"]` 会持久化，回放仍发 `action.executed`；拟在 0.4 处理，新通知契约需 owner 决定 |
-| 实际采用 | 缺少外部开发者接入试验和实测定制实现对照；dummy 和本地 OddlyDock 接入不能替代外部证据 |
-| 支持边界 | MySQL、真实 provider 与独立安全审核未验证；正式 H2/C/R 仍开放 |
+| 数据生命周期 | 无内置 retention/cleanup；不能随意清除回放回执和续接；拟在 0.3 先定契约 |
+| 运行反馈与遥测 | state message 会持久化，回放仍发 action.executed；拟在 0.4 处理，新通知契约需 owner 决定 |
+| 实际采用 | 缺少外部开发者试验和实测定制实现对照；dummy/本地接入不是外部采用 |
+| 支持边界 | MySQL、真实 provider、独立安全审核未验证；正式 H2/C/R 仍开放 |
 
-1.0 的目标是稳定契约和可维护的实际接入，不是把所有构想都做完。具体版本退出条件只维护在 ROADMAP；此处不重复它的计划清单。
-
-历史变更与授权见 [Progress Ledger](05_PROGRESS_LEDGER.md)、[Spec Delta](../agent/05_SPEC_DELTA_PROTOCOL.md) 和 [验证记录](../evidence/)。内部旧 `0.2/0.3` 标签是未发布候选，不是公共版本。
+历史与授权见 [Progress Ledger](05_PROGRESS_LEDGER.md)、[Spec Delta](../agent/05_SPEC_DELTA_PROTOCOL.md)。

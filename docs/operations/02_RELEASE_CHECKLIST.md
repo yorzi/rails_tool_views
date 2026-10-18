@@ -4,7 +4,7 @@ The owner authorized the first public `rails_tool_views` release as **0.1.0** on
 
 0.1.0 publication, checksum comparison and stable/next HTTPS deployment are complete. The release tag is `v0.1.0` at `f2d4303`; see the evidence above before changing a release.
 
-Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; actual delivery is recorded in `evidence/RELEASE_0_2_0.md`. The v0.1.0 tag remains immutable.
+Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; 0.2.0 delivery is complete; [actual evidence](../evidence/RELEASE_0_2_0.md) records the exact commit, runs and checksum. The v0.1.0 tag remains immutable.
 
 ## One-time setup
 
@@ -40,7 +40,7 @@ python3 scripts/check_docs_site.py
 3. Inspect the package manifest, dependency licenses, advisory results, generated site and disclosure URL. Internal records, databases and credentials must not enter either artifact. Review the evidence gaps below as gaps, not PASS.
 4. Add a Progress Ledger section with honest checks and `Work-ID`, run staged linkage, commit and push the release candidate to `main`. Verify that candidate's remote CI and Docs checks before tagging.
 
-For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb --candidate`. It validates the same package metadata and exclusions while allowing `released: false`. The release workflow never supplies this flag; a normal release check must still refuse an unreleased docs configuration. Before publishing 0.2, change the changelog date, release history and `released` flag, obtain owner authorization and run the exact candidate through remote CI.
+For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb --candidate`. It validates the same package metadata and exclusions while allowing `released: false`. The release workflow never supplies this flag; a normal release check must still refuse an unreleased docs configuration. For a future release, change the changelog date, release history and `released` flag, obtain owner authorization and run the exact candidate through remote CI.
 
 ## Publish
 
@@ -62,9 +62,9 @@ Do not move or reuse a tag after a successful RubyGems upload. If checks fail be
 - Post-release Docs workflow succeeds; stable home/Getting Started name the new release, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
 - Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
 
-## Evidence limits retained in 0.1.0
+## Evidence limits retained after 0.2.0
 
-Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit first-release instruction is recorded separately.
+Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit release instruction is recorded separately.
 
 ## Rollback
 
