@@ -75,8 +75,39 @@ client.post("/rails_tool_views/surfaces/#{invalid.id}/actions", params: { action
 feedback = JSON.parse(client.response.body)
 raise "Installed validation feedback failed" unless client.response.status == 422 && feedback["fields"] == { "key" => "needs correction" } && feedback["values"] == { "key" => "a" }
 raise "Rejected form changed persistence" unless invalid.reload.revision == 1
+# The installed component generator must produce a runnable, closed-by-default scaffold.
+require "generators/rails_tool_views/component/component_generator"
+RailsToolViews::Generators::ComponentGenerator.start(["review_card"], destination_root: host)
+registration = File.join(host, "config/rails_tool_views/components/review_card.rb")
+load registration
+begin
+  RailsToolViews.present(:review_card, props: { title: "Review" }, scope: scope)
+  raise "Generated component was allowed by default"
+rescue RailsToolViews::Error => error
+  raise unless error.code == "NOT_ALLOWED"
+end
+# Host-authorized fixture policies replace both denied defaults explicitly.
+File.write(registration, File.read(registration).gsub("->(_access) { false }", '->(access) { access.actor == "alice" && access.tenant == "acme" }'))
+RailsToolViews.reset_registry!
+load registration
+review = RailsToolViews.present(:review_card, props: { title: "Generated <safe> review" }, scope: scope)
+html = RailsToolViews.render(review, view_context: controller.view_context, scope: scope)
+raise "Generated partial/form failed" unless html.include?("Generated &lt;safe&gt; review") && html.include?('name="arguments[value]"')
+client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_name: "set_value", arguments: { value: "reviewed" }, base_revision: 1, idempotency_key: "generated-1" }, as: :json)
+raise "Generated action failed" unless client.response.status == 200 && review.reload.state["value"] == "reviewed"
+# Run the actual generated Minitest file after restoring its safe default.
+File.write(registration, File.read(registration).gsub('->(access) { access.actor == "alice" && access.tenant == "acme" }', "->(_access) { false }"))
+FileUtils.mkdir_p(File.join(host, "test"))
+File.write(File.join(host, "test/test_helper.rb"), 'require "rails/test_help"')
+$LOAD_PATH.unshift(File.join(host, "test"))
+# Load the safe registration exactly as the documented host reload hook does.
+RailsToolViews.reset_registry!
+load registration
+# This fixture already ran its timestamped installer migration above.
+ActiveRecord.maintain_test_schema = false
+load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> no-Turbo HTML redirect -> validation feedback -> durable restore -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

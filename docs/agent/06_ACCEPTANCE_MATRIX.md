@@ -102,3 +102,7 @@ FR-08 documentation: README now routes to canonical hosted tutorials/API; contri
 ## 0.2 development foundation — WORK-20261018-06
 
 FR-07/08 LOCAL_PASS: `bin/check-browser` Chrome 3/18，Partial/ViewComponent 保存刷新、移动端字段错误及纠正；截图保存在 ignored tmp/browser，CI 配置上传。`clean_install_smoke.rb --audit` 在空 GEM_HOME 外部 Bundler 完成完整 Rails host 行为与激活依赖审计；不再只加载入口。core 89/723、adapter 7/45、eager load、package/docs examples 通过。远程 CI、外部采用、provider 和完整辅助技术审核未运行。
+
+## Partial generator — WORK-20261018-07
+
+FR-01/02/08 LOCAL_PASS: 三文件生成器，64 字符 key，closed schema、双 policy deny、无 agent exposure，reload 多定义保留。非法名/越界 symlink/冲突（含 --force）先拒绝无部分写入。3/46 聚焦、全套 92/769 + eager load；实际 package host 默认拒绝、显式授权渲染/保存与生成 Minitest 1/2 PASS。docs lint 16 guides clean；最终构建/matrix 由 WORK-09 执行。

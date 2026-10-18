@@ -15,6 +15,10 @@ After reading this guide, you will know:
 * Use the single package, namespace, and prefix.
 * Find the changes a 0.2 development host needs.
 
+## Preview 0.2
+
+The next version adds a [Partial component generator]({% link _core_features/component-generator.md %}). It creates closed schemas and denied policies; configure host authorization before presenting it. The first public release remains 0.1.0 until a new release is published.
+
 ## Use RailsToolViews
 
 The first public release is {{ site.version }}. Its package is `rails_tool_views`, its Ruby namespace is `RailsToolViews`, and its installer is `rails_tool_views:install`. New hosts use the canonical helper prefix `rails_tool_views_`.

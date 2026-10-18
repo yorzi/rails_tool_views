@@ -1,0 +1,6 @@
+<h2><%%= props.fetch("title") %></h2>
+<%%= rails_tool_views_action_form(surface, :set_value) do |form| %>
+  <%%= form.label :value, "Value" %>
+  <%%= form.text_field :value, value: state["value"], maxlength: 120 %>
+  <%%= form.submit "Save" %>
+<%% end %>

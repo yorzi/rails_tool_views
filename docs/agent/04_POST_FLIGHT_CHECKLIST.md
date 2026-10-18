@@ -78,3 +78,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] core 89/723、eager load、adapter 7/45、docs examples、打包 host 与隔离 GEM_HOME full host + activated audit 通过。CI 已配置，尚未推送/远程运行。
 - [x] 无 runtime API/schema/迁移；浏览器依赖独立 bundle。59 个 Specs 文件与 pinned revision 完全一致，未编辑。FR-07/08 测试基础，implementation aligned。
 - [x] 更新操作手册、贡献说明、当前工作、状态、验收与 ledger。无运行时架构变化，无需改图。浏览器子进程退出，临时 host/数据库自动清理，无保留服务。
+
+## WORK-20261018-07 — safe Partial generator
+
+- [x] FR-01/02/08：组件/动作默认拒绝，两个闭合 schema；三文件脚手架。所有输出预检，非法名称/冲突/越界 symlink 不产生部分写入。64 字符与 core key 上限一致。
+- [x] 先失败（命令不存在），再通过 3/46 聚焦测试；全套 92/769 与 eager load；实际打包 host 的默认拒绝、授权后 escaped render/HTTP mutation 与生成的 Minitest 1/2 通过。
+- [x] 16 篇指南 lint 零错误/警告；新功能独立指南、components、What's New、upgrading 与安装模板更新。最终 docs build/matrix 留 WORK-09，不称已通过。
+- [x] 无 migration/dependency/新业务功能，Specs 不改，implementation aligned；共享 reload hook 不互相清空，无隐式 agent exposure。状态、验收、ledger 更新；下一步 HTML。无长期进程。

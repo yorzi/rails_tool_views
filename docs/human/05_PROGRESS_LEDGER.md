@@ -253,3 +253,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** `bin/check-browser` 3 runs / 18 assertions PASS，检查移动端字段错误截图，值保留且无横向溢出。core 89/723、adapter 7/45、eager load、docs examples、package PASS。隔离 full host 与 activated-dependency audit PASS（fa2295251efb3b0d1a300e5ce8ad700ff1f1b485）。浏览器测试发现测试线程 SQL 缓存会掩盖服务端写入，改用 uncached 断言；Selenium 默认探测所有接口，改为 loopback。CI YAML 已解析；远程 CI 尚未运行。
 
 **影响/文档/下一步：** 无 runtime API/schema/迁移，浏览器依赖仅开发使用。更新 CONTRIBUTING、操作手册、状态、验收与 checklists；架构/运行序列不变。临时 host/数据库清理，浏览器/driver 随测试退出，无保留服务。main 本地提交；下一步 WORK-07 安全组件生成器。
+
+### WORK-20261018-07 — 安全的 Partial 组件脚手架
+
+**内容/映射：** FR-01/02/08；`rails_tool_views:component review_card` 创建注册定义、Partial、Minitest。组件和动作 policy 默认 false，props/arguments 均闭合有界，无 agent exposure 和业务写入。遵循 core 的 64 字符 key。所有输出写前检查，已有文件（含 --force）、非法名称、越界符号链接拒绝；不重写 host initializer。统一共享 to_prepare 加载，避免多组件 reload 相互清除。实现层 ergonomics，无产品意图 delta。
+
+**复查/验证：** 新测试先因命令不存在而失败；实现后 3 tests / 46 assertions PASS，覆盖默认拒绝、额外字段、多组件 reload、冲突与 symlink；全套 92/769 与 eager load PASS。实际打包 gem 的新 host 生成、默认拒绝、显式授权后 escaped render/HTTP 保存及生成 Minitest 1/2 PASS。16 篇指南 lint 零问题。最终跨版本/隔离安装/站点构建安排 WORK-09，远程 CI 未运行。
+
+**影响/文档/下一步：** 无 schema/migration/dependency；既有手写定义不变。新 Generating a Component 指南、components/What's New/upgrading 与安装模板同步；状态、验收、checklist 更新。运行时架构不变，无需改图；测试 host 清理，无保留进程。main 本地提交。下一步完整 HTML 错误/纠错页面。

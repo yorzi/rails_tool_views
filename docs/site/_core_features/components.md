@@ -16,6 +16,8 @@ After reading this guide, you will know:
 * Reuse a Partial or ViewComponent.
 * Change contracts without reinterpreting saved state.
 
+Start a Partial with the [component generator]({% link _core_features/component-generator.md %}), or register an existing renderer directly.
+
 ## Define the Contract
 
 Start with the complete [ChoiceCard registration]({% link _getting_started/getting-started.md %}#register-a-choicecard). Supply `description:`, `schema:`, and exactly one of `partial:` or `component:`. Supply a component policy and a policy for every action; missing policies deny.

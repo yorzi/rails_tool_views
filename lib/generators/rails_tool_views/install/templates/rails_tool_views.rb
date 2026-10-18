@@ -9,4 +9,5 @@ RailsToolViews.configure do |config|
   # config.parent_controller = "::ApplicationController"
 end
 # Register trusted components and explicit policies in Rails.application.config.to_prepare.
-# Read the gem README for a complete ChoiceCard definition and optional adapter.
+# Generate a safe scaffold: bin/rails generate rails_tool_views:component review_card
+# See https://rails-tool-views.wangyaodi.com/component-generator/ for registration and policies.

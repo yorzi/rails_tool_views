@@ -17,6 +17,10 @@ After reading this guide, you will know:
 * What to drain or reload before you deploy the change.
 * How bounded identifiers and custom rendering affect an upgrade.
 
+## From 0.1 to the 0.2 Preview
+
+No database migration is needed for the new component generator. Existing manual registrations keep working. Load generated definitions in your existing shared `to_prepare` block after `reset_registry!`; do not add a reset for each file. See [Generating a Component]({% link _core_features/component-generator.md %}).
+
 ## Start with One Identity
 
 The internal candidates `0.1.0.pre.v0`, `0.2.0.pre.v2` and `0.3.0.pre.v3` were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. The first public version, {{ site.version }}, keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
