@@ -86,3 +86,7 @@ README and reference host presentation refreshed. Existing action/persistence/va
 ## Audit hardening — WORK-20261017-02
 
 SEC-04, SEC-07, SEC-08, SEC-18 and NFR-02/03 gain executable coverage: the suite now asserts that every index key stays inside utf8mb4's 3072-byte limit (closing the MySQL `CREATE TABLE` failure recorded under NFR-03), that stored identifiers are byte-capped, and that a lookup only a non-binary collation could match is refused for a Surface, a correlation and an idempotency key. 88 tests / 702 assertions pass on SQLite and PostgreSQL 17.11. MySQL stays NOT_RUN: the fix is proven by column introspection and arithmetic, not a real MySQL migration. See [AUDIT_V2_VALIDATION.md](../evidence/AUDIT_V2_VALIDATION.md).
+
+## First public release — WORK-20261018-02
+
+FR-08/NFR-03 分发与文档：首次公开版本 0.1.0，MIT、自定义域名 GitHub Pages、私密安全报告及 GitHub OIDC 标签发布流程。三组本地核心套件各 89/723、适配器 7/45、打包主应用、文档与六份 lockfile 安全审计通过。Rails 7.2 样例更新到 7.2.3.2，并显式约束五个易被旧 Ruby 默认版本满足的运行时依赖。精确提交的远端验证、实际发布和 HTTPS 见 `../evidence/RELEASE_0_1_0.md`；先前 NOT_RUN 的历史行不替代本次证据，开放的 MySQL/provider/adoption/H2 等边界不变。

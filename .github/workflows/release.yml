@@ -1,0 +1,95 @@
+name: Release Gem
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  compatibility:
+    uses: ./.github/workflows/ci.yml
+
+  package:
+    name: Verify release package and documentation
+    needs: compatibility
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Match release metadata and inspect the package
+        run: |
+          bundle exec rake build
+          bundle exec ruby scripts/verify_release.rb
+      - name: Check dependency advisories
+        run: |
+          gem install bundler-audit --no-document
+          bundle-audit check --update
+          for lock in gemfiles/*.lock docs/site/Gemfile.lock; do
+            bundle-audit check --gemfile-lock "$lock"
+          done
+      - name: Resolve and audit outside the source bundle
+        run: ruby scripts/clean_install_smoke.rb --audit
+      - name: Install documentation dependencies
+        run: BUNDLE_GEMFILE=docs/site/Gemfile bundle install
+      - name: Build and check stable and next documentation
+        run: |
+          docs/site/bin/build.sh
+          python3 scripts/check_docs_site.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-gem
+          path: pkg/*.gem
+
+  publish:
+    name: Publish to RubyGems
+    needs: package
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Publish with RubyGems Trusted Publishing
+        uses: rubygems/release-gem@v1
+        with:
+          # Match the proven ruby_llm-browser workflow; avoid default-zlib activation.
+          attestations: false
+      - name: Prepare release assets and notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          ( cd pkg && sha256sum "rails_tool_views-${version}.gem" > SHA256SUMS )
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          version = os.environ['GITHUB_REF_NAME'].removeprefix('v')
+          changelog = Path('CHANGELOG.md').read_text()
+          start = changelog.index(f'## [{version}]')
+          end = changelog.find('\n## ', start + 1)
+          Path('release-notes.md').write_text(changelog[start:end if end >= 0 else None].strip() + '\n')
+          PY
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag \
+            --title "RailsToolViews $GITHUB_REF_NAME" --notes-file release-notes.md \
+            "pkg/rails_tool_views-${GITHUB_REF_NAME#v}.gem" pkg/SHA256SUMS

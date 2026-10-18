@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.0] - 2026-10-18
+
+First public release. Earlier version labels below describe unpublished development milestones.
+
+- Register trusted Rails Partials and ViewComponents with closed schemas and explicit policies.
+- Persist and restore scoped Surfaces; execute authorized actions with revisions, transactions and durable replay receipts.
+- Render JSON/Turbo responses, accessible action forms and bounded validation feedback.
+- Add optional RubyLLM presentation and durable host-managed continuation without a core AI dependency.
+- Install the engine into Rails 7.2 and 8.1 on Ruby 3.3 or later; one `rails_tool_views` identity throughout.
+- Publish versioned guides and an API reference on GitHub Pages; release gems through GitHub OIDC.
+- Require patched CGI, ERB, Resolv, URI and Zlib gems so Ruby 3.3 default gems cannot silently satisfy the runtime dependencies. Test the Rails 7.2 line on patched 7.2.3.2.
+- MySQL, live-provider behavior, independent security review and external adoption remain unverified.
+
 ## 0.3.0.pre.v3 — single identity, 2026-10-18 (unpublished)
 
 Breaking for 0.2 development hosts; see the Upgrading guide and ADR 006.

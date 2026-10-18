@@ -20,3 +20,7 @@ The owner kept `rails_tool_views` and chose to remove the legacy `ToolViews` com
 ## 2026-10-16 identity supplement and push authorization
 
 The owner now explicitly requests adopting **RailsToolViews**, updating the gem and related surfaces, then commit and push. This supersedes the earlier no-push scope for this work unit; RubyGems publication is not requested. Original Specs remain pinned above and unchanged. Additional naming/compatibility intent is read from OddlyNiche commit `c100a73d80b92de2246901922caa2b7bd819d889`, `toolviews/supporting/07_RAILS_NAME_AND_ODDLYDOCK_CONTRACT.md`. See ADR 005 and DELTA-003 for the implementation decision. OddlyDock remains a planned reference host, not a core dependency or a completed integration claim.
+
+## 2026-10-18 first public release authorization
+
+Andy explicitly requests documentation on GitHub Pages, DNS and publishing the gem as `0.1.0`, following ruby_llm-browser. He selects `rails-tool-views.wangyaodi.com`, a public repository, MIT and GitHub private vulnerability reporting. This authorizes the necessary commit/push/tag/publication and supersedes older no-publication statements for this release. Internal `0.2`/`0.3` prerelease labels were never public versions. DELTA-005 records remaining formal, security, provider and adoption gaps; external Specs remain read-only and pinned.

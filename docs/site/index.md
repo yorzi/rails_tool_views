@@ -32,7 +32,7 @@ features:
 
 ## Start in Your Rails App
 
-Current candidate: **{{ site.version }}**, unreleased. Repository access is required while development remains private.
+{% if site.docs_unreleased %}Development documentation for `main`. Choose the stable version for the published gem.{% else %}Current release: **{{ site.version }}**.{% endif %}
 
 ```sh
 {% if site.docs_unreleased %}bundle add rails_tool_views --git https://github.com/yorzi/rails_tool_views --branch main{% else %}bundle add rails_tool_views --version {{ site.version }}{% endif %}

@@ -1,8 +1,8 @@
 title: "RailsToolViews"
 description: "Register trusted Rails components, persist UI state, and authorize user actions with optional AI adapters."
 tagline: "Turn Rails views into interactive tools"
-url: https://yorzi.github.io
-baseurl: "/rails_tool_views"
+url: https://rails-tool-views.wangyaodi.com
+baseurl: ""
 lang: en-US
 repository: yorzi/rails_tool_views
 
@@ -44,7 +44,7 @@ jekyll_vitepress:
     publisher:
       type: Organization
       name: "RailsToolViews"
-      url: https://yorzi.github.io
+      url: https://rails-tool-views.wangyaodi.com
       same_as:
         - https://github.com/yorzi/rails_tool_views
   llms:
@@ -72,14 +72,14 @@ jekyll_vitepress:
       "--vp-c-brand-3": "#BA3D32"
       "--vp-c-brand-soft": "rgba(210, 97, 87, 0.18)"
   github_star:
-    enabled: false
+    enabled: true
     repository: yorzi/rails_tool_views
     text: Star
     show_count: true
   footer:
     enabled: true
     show_on_docs: false
-    message: "Unofficial Rails community project. Rails marks belong to David Heinemeier Hansson and are exclusively licensed to the Rails Foundation. Framework names identify compatibility, without endorsement or affiliation. License selection is pending."
+    message: "Unofficial Rails community project. Rails marks belong to David Heinemeier Hansson and are exclusively licensed to the Rails Foundation. Framework names identify compatibility, without endorsement or affiliation. Released under the MIT license."
     copyright: "Copyright © 2026 Andy Wang"
   doc_footer:
     enabled: true
@@ -117,8 +117,8 @@ code_language: ruby
 # Values that change between releases. Pages read them as {{ site.version }}
 # and {{ site.examples.NAME }}, so one edit here updates every page. Set
 # `released: true` and the new version in the commit you tag for a release.
-released: false
-version: "0.3.0.pre.v3"
+released: true
+version: "0.1.0"
 examples: {}
 requirements:
   ruby: "3.3 or later"

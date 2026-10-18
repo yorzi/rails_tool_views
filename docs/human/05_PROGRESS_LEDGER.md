@@ -201,3 +201,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 - **风险与数据：** 对 0.2 主应用是破坏性变更，需要一个可回滚的改表迁移。在部署前要排空续接，并刷新已打开的页面。唯一的 0.2 主应用 OddlyDock 已在开发库上做过正向、回滚、再正向迁移，数据保留。授权、CSRF、幂等不变，没有新增依赖。
 - **文档：** README、Upgrading/What's New/Release History/组件/Surface/校验/生产/入门指南、runbook、发布清单、ADR 005 标注被取代、ADR 006、DELTA-004、验收表、human 状态/架构/变更记录、SPEC_BASELINE、CHANGELOG、current work，以及本节。
 - **交付：** 已在 main 本地提交，未推送。临时 demo（127.0.0.1:3111）已停止。下一步：Andy 审阅后推送本仓库，再推送 OddlyDock 的对应提交。
+
+### WORK-20261018-02 — Prepare 0.1.0 gem and hosted documentation
+
+**What / why:** Andy 要求完成 gem 文档、GitHub Pages、DNS，参考 ruby_llm-browser 发布 0.1.0；随后明确选定 MIT、公开仓库、私密安全报告与域名，并确认创建精确限定的 OIDC 发布权限。统一首次公开版本，补齐元数据和标签发布流程；主线与稳定版文档分别在 next 与根路径。FR-08/NFR-03，DELTA-005，外部 Specs 不改。
+
+**Human review:** 阅读 README 和线上 Getting Started；核对安装命令、MIT、私密漏洞入口；查看 release.yml 的匹配元数据/完整兼容性/实际依赖审计/打包/文档检查与 OIDC 发布边界。发布状态以 RELEASE_0_1_0 为准。
+
+**Validation:** 本地 Ruby 3.3/Rails 8.1.4、Ruby 3.3/Rails 7.2.3.2、Ruby 4.0.2/Rails 8.1.4 各 89 tests / 723 assertions，adapter 7/45；eager load、文档示例、打包主应用、15 页文档检查、站点构建与 1,042 链接均通过。六份 lockfile 安全审计通过。初次共享库并行测试失败及 probe 自身错误均已修正并顺序重跑；详细证据保留边界。独立网络解析安装与激活依赖审计通过；精确提交的远端/上传证据另行记录。
+
+**Risk / data / security:** 无 API/schema/业务数据迁移。修复发布依赖隐患：Rails 7.2 测试补丁及 CGI/ERB/Resolv/URI/Zlib 下限；25 个 gem 文件排除内部记录、数据库与凭证。DNS 仅新增指定子域名，发布凭证由 OIDC 临时取得。无 provider 调用或临时服务。开放的独立安全审查、MySQL、真实 provider、外部采用与正式 H2/C/R 未被改为 PASS。
+
+**Docs / alignment / next:** 更新 README、用户指南、release checklist、baseline 授权补充、delta、acceptance、status、human changelog 与 evidence；架构/运行序列不变。下一步：推送候选并验证其远端 CI，推送匹配标签、核验 RubyGems 与 stable/next Pages、HTTPS，然后记录实际交付结果。

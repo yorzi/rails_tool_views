@@ -3,7 +3,11 @@
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlparse,unquote
+import re
 root=Path('docs/site/_site').resolve();bad=[];count=0
+config=Path('docs/site/_config.yml').read_text()
+match=re.search(r'^baseurl:\s*[\"\']?([^\"\'\n]*)',config,re.M)
+base=match.group(1).strip().rstrip('/') if match else ''
 class Links(HTMLParser):
  def __init__(self):super().__init__();self.links=[]
  def handle_starttag(self,t,a):
@@ -20,7 +24,8 @@ for p in pages:
   u=urlparse(href)
   if u.scheme or u.netloc or not u.path:continue
   path=unquote(u.path)
-  if path.startswith('/rails_tool_views/'):q=root/path[len('/rails_tool_views/'):]
+  if base and path.startswith(base+'/'):q=root/path[len(base)+1:]
+  elif path.startswith('/') and not base:q=root/path.lstrip('/')
   elif path.startswith('/'):continue
   else:q=p.parent/path
   if q.is_dir():q=q/'index.html'
@@ -29,5 +34,6 @@ for p in pages:
 print({'local_links_checked':count,'broken':bad[:40],'broken_count':len(bad)})
 assert not bad
 for folder in ['specs','agent','human','evidence','operations','adr']:
- assert not (root/folder).exists(),folder
+ for output in [root,root/'next',*root.glob('v[0-9]*')]:
+  assert not (output/folder).exists(),str(output/folder)
 print('Internal records excluded: PASS')

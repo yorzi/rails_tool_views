@@ -1,5 +1,7 @@
 # 项目状态
 
+2026-10-18：**RELEASE_0_1_0_PREPARED / PUBLIC_REPOSITORY / PUBLICATION_IN_PROGRESS**。Andy 明确要求首次发布 `0.1.0`，选定 `rails-tool-views.wangyaodi.com`、MIT 和 GitHub 私密安全报告（WORK-20261018-02 / DELTA-005）。版本、文档、OIDC 发布工作流和 DNS 已准备。此前 `0.2/0.3` 为未公开开发候选。依赖审计发现的 Rails 7.2 与 Ruby 默认 gem 问题已通过修补版本约束解决；本地三组兼容性与适配器、打包主应用和文档验证通过。上传、精确提交的远端 CI、稳定/next 文档和 HTTPS 以 [发布证据](../evidence/RELEASE_0_1_0.md) 为准；下文是历史记录，不再代表当前发布授权。
+
 2026-10-18：**SINGLE_IDENTITY_LOCAL_VERIFIED / COMMITTED_LOCAL / UNPUSHED / GEM_UNPUBLISHED**。Andy 选择保留 gem 名 `rails_tool_views`，并在首次发布前去掉全部 `ToolViews` 旧标识（WORK-20261018-01，ADR 006，DELTA-004）。版本改为 0.3.0.pre.v3：删除 `ToolViews` 常量、`toolviews`/`tool_views` 入口、`tool_views:install` 和 `tool_views_*` helper；表、索引、I18n、通知、DOM/CSS/Stimulus 和续接 delivery key 统一改为 `rails_tool_views` 前缀。组件契约、Surface ID、revision 与回放语义不变。0.2 主应用的升级步骤（一个可回滚的改表迁移）写在 Upgrading 指南，已在 OddlyDock 开发库实际执行。验证见 `../evidence/IDENTITY_V3_VALIDATION.md`。
 
 2026-10-16 文档更新：四组使用指南、生成式 RDoc API、搜索和 llms 文档已在 `docs/site` 完成本地草稿与验证。入口为 `docs/README.md`，证据为 `evidence/DOCS_VALIDATION.md`。Andy 随后要求提交与推送这些改动，并将本地目录改为 `rails_tool_views`。文档部署保持关闭，private 状态及产品验收结论不变。

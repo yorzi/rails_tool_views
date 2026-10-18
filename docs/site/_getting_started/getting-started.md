@@ -2,7 +2,7 @@
 layout: default
 title: "Getting Started"
 nav_order: 1
-description: "Install the prerelease and build an interactive ChoiceCard without an AI provider."
+description: "Install the gem and build an interactive ChoiceCard without an AI provider."
 ---
 
 # {{ page.title }}
@@ -18,7 +18,7 @@ After reading this guide, you will know:
 
 ## Install the Engine
 
-Use Ruby {{ site.requirements.ruby }} and Rails {{ site.requirements.rails }} with a database. This documentation describes unreleased version {{ site.version }}. The repository is private, so GitHub installation requires access; no RubyGems release exists yet.
+Use Ruby {{ site.requirements.ruby }} and Rails {{ site.requirements.rails }} with a database. {% if site.docs_unreleased %}This is the development guide for `main`. For a published version, choose the stable documentation in the version menu.{% else %}This guide covers version {{ site.version }}.{% endif %}
 
 ```sh
 {% if site.docs_unreleased %}bundle add rails_tool_views --git https://github.com/yorzi/rails_tool_views --branch main{% else %}bundle add rails_tool_views --version {{ site.version }}{% endif %}
@@ -26,9 +26,11 @@ bin/rails generate rails_tool_views:install
 bin/rails db:migrate
 ```
 
+Use a patched Rails release. The compatibility suite covers Rails 7.2.3.2 and 8.1.4. The gem also requires patched versions of Ruby default gems used by Rails, including CGI, ERB, URI, Resolv and Zlib; Bundler installs these even when your Ruby includes an older default.
+
 For a local checkout, use `gem "rails_tool_views", path: "/path/to/rails_tool_views"` in the host Gemfile instead. Install `view_component` separately only if you use that renderer. RubyLLM is optional.
 
-The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. A 0.2 development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
+The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. An earlier unpublished development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
 
 ## Register a ChoiceCard
 

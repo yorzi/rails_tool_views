@@ -2,7 +2,7 @@
 layout: default
 title: "Release History"
 nav_order: 9
-description: "Distinguish the current development candidate from published releases."
+description: "Find published versions and the guides for each release."
 guide: false
 ---
 
@@ -11,10 +11,12 @@ guide: false
 {{ page.description }}
 {: .fs-6 .fw-300 }
 
-No public release has been published. Version {{ site.version }} is the current prerelease candidate on `main`. The repository remains private while development continues.
+| Version | Date | Highlights |
+| --- | --- | --- |
+| [0.1.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.1.0) | 2026-10-18 | First public release: trusted components, durable Surfaces, authorized actions and optional RubyLLM integration. |
 
-The current candidate keeps one RailsToolViews identity and removes the legacy ToolViews aliases that earlier unpublished candidates carried. Earlier local implementation milestones are not release tags.
+The first public release starts at `0.1.0`. Earlier `0.2` and `0.3` labels were unpublished development candidates, not releases or compatibility promises.
 
-When a stable tag includes this documentation site, the build publishes that tag at the root and default-branch docs at `/next/`; older major versions can remain under `/vN/`. Until then the local build shows the unreleased working tree at the root.
+The latest stable tag is built at `/` and the default branch at `/next/`. Older major versions can remain under `/vN/`.
 
 See [What Is New]({% link _getting_started/whats-new.md %}) and [Upgrading]({% link _reference/upgrading.md %}).

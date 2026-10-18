@@ -1,28 +1,65 @@
-# Release gate — OPEN / NOT AUTHORIZED
+# Gem and documentation release
 
-Candidate: local 0.2.0.pre.v1 on main, 2026-10-11. No public repository or RubyGem publication was performed. Local build authorization does not approve release. Andy's manual inspection follows V1 completion and remains pending.
+The owner authorized the first public `rails_tool_views` release as **0.1.0** on 2026-10-18, including commit/push/tag, GitHub Pages and DNS. The owner selected MIT and GitHub private vulnerability reporting. This replaces the historical no-publication scope; it does not invent H2/C/R, independent security review, external adoption or live-provider results. See DELTA-005 and [release evidence](../evidence/RELEASE_0_1_0.md).
 
-- [x] Offline core and optional adapter implementation/tests; negative/security coverage.
-- [x] Packaged install in fresh Rails host and namespaced migration.
-- [x] Local supported-version checks and mobile/keyboard/recovery evidence.
-- [x] Contribution/security/install/failure/retention documentation.
-- [x] Owner-authorized local UC-02..05 / Demo B/C, validation feedback and host version/recovery examples.
-- [ ] Human API/security/spec review and formal H2/C/R/adoption records.
-- [ ] Name/namespace and license/dependency attribution clearance.
-- [ ] Verified private security disclosure channel and maintenance policy.
-- [ ] Remote Linux CI execution against the exact candidate commit.
-- [ ] PostgreSQL concurrency verification before broader database support. Local PostgreSQL 17.11 passed the suite, separate-process concurrency and the demo on 2026-10-13; the CI job is configured and NOT_RUN, so this stays open.
-- [ ] Configured real-provider presentation/continuation smoke.
-- [ ] Complete upstream extraction/runtime comparison SP-09..12; no inferred exploit claims.
-- [ ] At least three external setup trials and measured bespoke integration comparator.
-- [ ] Explicit owner approval for push/public repository/release.
+## One-time setup
 
-No gate is auto-approved by green local tests. Do not add CI publication credentials or a release workflow until authorized.
+- Public repository: `yorzi/rails_tool_views`; keep private vulnerability reporting enabled.
+- GitHub environment: `release`. RubyGems Trusted Publisher: owner `yorzi`, repository `rails_tool_views`, workflow `release.yml`, environment `release`. No long-lived RubyGems API key is stored in GitHub.
+- GitHub Pages source: GitHub Actions; repository variable `DOCS_PUBLISH=true`.
+- Domain: `rails-tool-views.wangyaodi.com`, claimed in Pages before creating the Cloudflare DNS-only CNAME `rails-tool-views → yorzi.github.io`. Keep HTTPS enforced after certificate issuance.
+- Keep gem version, docs version, changelog heading and tag identical. MIT is in `LICENSE.txt`; gem metadata requires MFA.
 
-## 2026-10-16 scope update
+This follows ruby_llm-browser's successful OIDC release workflow. Optional experimental attestations are disabled to avoid pre-Bundler default-zlib activation. OIDC remains enabled.
 
-Owner approved RailsToolViews identity and commit/push for WORK-20261016-01. Candidate is `rails_tool_views` 0.2.0.pre.v2. The older no-push authorization statement above is historical; the owner subsequently selected `yorzi/rails_tool_views` private; origin is configured. Gem publication remains unauthorized and gemspec `allowed_push_host` remains blocked. Name selection and exact-name HTTP 404 observations do not close legal/near-collision/license clearance. Independent packaged-host and old-data compatibility checks are recorded in RENAME_VALIDATION. OddlyDock TV-02/03 remains open.
+## Prepare and verify
 
-## 2026-10-18 single identity
+1. Update `lib/rails_tool_views/version.rb`, path entries in all lockfiles, `docs/site/_config.yml` (`released: true`), `CHANGELOG.md`, release history and What's New. Public behavior changes also update their guide and Upgrading.
+2. Run tests **sequentially** because local bundles share the dummy test database:
 
-Candidate is now `rails_tool_views` 0.3.0.pre.v3 with one public identity (ADR 006, WORK-20261018-01). The legacy `ToolViews` constant, `toolviews`/`tool_views` entrypoints, `tool_views:install`, `tool_views_*` helpers and `tool_views_*` tables were removed before any release, so no compatibility promise is published. Publication, license and legal name clearance remain open.
+```sh
+bundle exec rake test zeitwerk:check
+bundle exec ruby scripts/package_smoke.rb
+bundle exec ruby scripts/docs_examples.rb
+BUNDLE_GEMFILE=gemfiles/rails72.gemfile bundle exec rake test zeitwerk:check
+BUNDLE_GEMFILE=gemfiles/adapter.gemfile bundle exec rake test:adapter
+BUNDLE_GEMFILE=gemfiles/adapter.gemfile DOCS_ADAPTER=1 bundle exec ruby scripts/docs_examples.rb
+bundle exec rake build
+bundle exec ruby scripts/verify_release.rb
+ruby scripts/clean_install_smoke.rb --audit
+docs/site/bin/build.sh
+python3 scripts/check_docs_site.py
+```
+
+`package_smoke.rb` installs the artifact into a fresh Rails host and checks migration, rendering, HTTP actions, validation, restore and eager loading using the development dependency bundle. Refresh the advisory database first with `bundle-audit check --update` (install `bundler-audit` outside the app bundle if needed). `clean_install_smoke.rb --audit` separately resolves dependencies from RubyGems in an empty GEM_HOME and loads the artifact and installer outside the source bundle; it then audits the actually activated gems, including Ruby default gems. It does not claim a second full host workflow. Both temporary install directories are removed on exit.
+
+3. Inspect the package manifest, dependency licenses, advisory results, generated site and disclosure URL. Internal records, databases and credentials must not enter either artifact. Review the evidence gaps below as gaps, not PASS.
+4. Add a Progress Ledger section with honest checks and `Work-ID`, run staged linkage, commit and push the release candidate to `main`. Verify that candidate's remote CI and Docs checks before tagging.
+
+## Publish
+
+For the first release only:
+
+```sh
+git tag -a v0.1.0 -m "Release RailsToolViews 0.1.0"
+git push origin v0.1.0
+```
+
+The `Release Gem` workflow runs the full reusable compatibility CI (Ruby 3.3 and 4.0, Rails 7.2 and 8.1, optional RubyLLM and PostgreSQL), metadata/package checks, independent dependency resolution, dependency advisories and versioned documentation builds. Only then can the `release` environment publish through OIDC and create the GitHub Release with the gem and SHA256SUMS.
+
+Do not move or reuse a tag after a successful RubyGems upload. If checks fail before publication, fix on main and inspect the exact failed step before deciding how to retry. Published versions are immutable; use a new version for code fixes.
+
+## Verify the outcome
+
+- RubyGems API and gem page report the intended version and source/docs/MFA metadata. Download the published gem and compare SHA-256 with the GitHub Release asset and SHA256SUMS.
+- Release verification and publication jobs both succeed for the tagged commit. Preserve the exact run URL.
+- Post-release Docs workflow succeeds; stable home/Getting Started name 0.1.0, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
+- Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
+
+## Evidence limits retained in 0.1.0
+
+Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit first-release instruction is recorded separately.
+
+## Rollback
+
+Revert documentation source and rerun Docs for a site correction; use Pages deployment history to inspect the prior deployment. Do not delete DNS while Pages still claims the live domain. If retiring the site, remove DNS first and then detach the Pages domain to avoid a dangling custom-domain record. RubyGems publication cannot be undone by a Git revert; issue a corrected version and consider yanking only for a concrete broken or unsafe package with owner authorization.

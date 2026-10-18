@@ -50,3 +50,14 @@ Base `a1a9b26`. Owner asked in this session for a full review and audit and for 
 - [x] Committed on main with `Work-ID: WORK-20261017-02`; not pushed (owner did not ask). No long-lived process started.
 
 Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no live provider, browser, remote CI or assistive-technology run. Local-only evidence. See ../evidence/AUDIT_V2_VALIDATION.md.
+
+## WORK-20261018-02 — release preparation
+
+- [x] Owner authorizations, MIT/security reporting, public-repository observation and DELTA-005 recorded.
+- [x] Version/gem/docs/changelog/package agree on 0.1.0; 25 packaged files reviewed; no API/schema or business-data migration.
+- [x] Three core compatibility combinations each 89/723, adapter 7/45, packaged host and runnable docs pass; all checks with the shared test database run sequentially.
+- [x] Docs style/build and 1,042 links pass; internal records excluded. No preview service started.
+- [x] Six dependency lock audits and a clean network-resolved installation plus activated/default-gem audit pass. Security findings repaired by patched dependency floors and Rails 7.2.3.2 test target.
+- [x] Pages/domain/DNS, private security reporting and the scoped OIDC publisher configured and observed. No long-lived secret added.
+- [x] Operations, status, acceptance, delta, evidence and human changelog updated; architecture/runtime diagrams unchanged because behavior is unchanged.
+- [ ] Exact-commit remote checks, gem publication, release assets, versioned hosted docs and HTTPS verification follow the candidate commit. Evidence must be updated after actual delivery.

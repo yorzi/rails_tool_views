@@ -2,7 +2,7 @@
 layout: default
 title: "Upgrading"
 nav_order: 2
-description: "Move a 0.2 development host to the single RailsToolViews identity before the first release."
+description: "Move an unpublished development host to the first public RailsToolViews release."
 ---
 
 # {{ page.title }}
@@ -12,14 +12,14 @@ description: "Move a 0.2 development host to the single RailsToolViews identity 
 
 After reading this guide, you will know:
 
-* Which legacy names 0.3 removes and what replaces each one.
+* Which legacy names the first release removes and what replaces each one.
 * How to rename the four tables without losing saved Surfaces.
 * What to drain or reload before you deploy the change.
 * How bounded identifiers and custom rendering affect an upgrade.
 
-## Why 0.3 Removes the Legacy Names
+## Start with One Identity
 
-Versions 0.1 and 0.2 were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. Version 0.3 keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
+The internal candidates `0.1.0.pre.v0`, `0.2.0.pre.v2` and `0.3.0.pre.v3` were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. The first public version, {{ site.version }}, keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
 
 ## Update Ruby Code
 
@@ -27,7 +27,7 @@ Use `require "rails_tool_views"` and `RailsToolViews`. The `toolviews`, `tool_vi
 
 Rename view helpers from `tool_views_` to `rails_tool_views_`:
 
-| 0.2 helper | 0.3 helper |
+| Unpublished helper | Public helper |
 | --- | --- |
 | `tool_views_surface` | `rails_tool_views_surface` |
 | `tool_views_action_form` | `rails_tool_views_action_form` |

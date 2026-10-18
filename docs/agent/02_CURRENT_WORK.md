@@ -62,3 +62,14 @@ Andy kept the gem name and chose "Full single identity" in this session (2026-10
 - [x] Verify Rails 8.1/7.2, Ruby 4.0.2, adapter, packaged install, docs and the upgrade on OddlyDock's development database.
 
 Delivery: committed on main; not pushed. OddlyDock's matching change pins this commit through its local override, so push this repository before OddlyDock's CI resolves the lock.
+
+## WORK-20261018-02 — first public release
+
+Owner requests `0.1.0`, hosted gem guides on GitHub Pages, DNS configuration and the ruby_llm-browser release pattern. This explicitly authorizes the required commit/push/tag/publication; the repository is already public.
+
+- [x] Read release constraints and reference workflow; verify pinned Specs and local baseline.
+- [x] Align version, release docs, license, gem metadata and security disclosure.
+- [x] Validate core/adapter/matrix, packaged host, clean dependency installation, docs and package boundaries.
+- [x] Configure Pages/domain/DNS and RubyGems Trusted Publisher.
+- [ ] Commit with ledger, push, verify exact-candidate remote checks, then tag/release.
+- [ ] Verify RubyGems artifact, GitHub Release assets, stable/next docs and HTTPS; record outcome and stop previews.

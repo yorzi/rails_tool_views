@@ -41,3 +41,15 @@ Owner asked in this session for a full review and audit and for real problems to
 - [x] Scope limit: no new table, column, dependency or data migration; authorization, transaction, idempotency and transport semantics preserved; descriptions and versions keep the 255-byte cap.
 - [x] Tests precede the completion claim; each fix is verified by reverting it alone.
 - [x] Owner decision recorded in current work; docs updated for the public behavior change (identifiers over 150 bytes now rejected).
+
+## WORK-20261018-02 — first gem release and hosted docs
+
+- Owner explicitly requests documentation on GitHub Pages, DNS setup, following ruby_llm-browser's release process, and publishing `rails_tool_views` 0.1.0. This supersedes the historical no-publication scope.
+- Base `eb72232`, clean main. Read entrypoint, pinned baseline, current work, maintenance, release checklist, acceptance and ADR 006. All 59 `docs/specs` files match pinned OddlyNiche `0ea28b1`; its current checkout differs, so the pinned revision was used.
+- Baseline: Ruby 3.3.5 / Rails 8.1.4, SQLite, 89 tests / 723 assertions and eager load PASS. Remote repository is already PUBLIC; Pages does not exist, private security reports are disabled.
+- Scope: first public version metadata, existing guides, versioned Pages, narrowly scoped DNS record, OIDC release workflow, package/install validation. No runtime/API/schema change. License and disclosure decisions requested from owner before publication.
+- Classification: INTENTIONAL_DELTA for first publication despite open formal/adoption/live-provider evidence; record DELTA-005 without editing external Specs or implying those checks passed.
+- Reference: ruby_llm-browser `release.yml` and successful release run 39110148539 use environment `release`, RubyGems Trusted Publishing, matching tag/version checks and disabled optional experimental attestations.
+- Security: inspect gem/site manifests; exclude internal Specs, databases, credentials and tests; no API key added to GitHub. Temporary previews bind loopback and stop before completion.
+
+Release preflight update: owner confirms domain/public repository/MIT/private reports and completes RubyGems reauthentication. Explicit at-action confirmation authorizes creating the scoped OIDC publisher. Release audit found Rails 7.2.3 and Ruby 3.3 default-gem advisories; this work therefore also updates the 7.2 test target to 7.2.3.2 and requires patched CGI/ERB/Resolv/URI/Zlib. This is dependency hardening inside the existing runtime contract, not a feature or schema change. Audit activated isolated-install specs in addition to lockfiles.

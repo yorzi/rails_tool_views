@@ -6,7 +6,9 @@ Register an existing Partial or ViewComponent, present it with validated data, a
 
 The core runs without an AI provider. An optional RubyLLM adapter lets agents present registered components and continue after a user action. RailsToolViews does not generate executable UI code.
 
-> Development preview. The gem is unpublished and the repository is private. The documentation site is available locally; hosted publication and license selection remain pending.
+[Documentation](https://rails-tool-views.wangyaodi.com) · [RubyGems](https://rubygems.org/gems/rails_tool_views) · [API reference](https://rails-tool-views.wangyaodi.com/api/)
+
+Version **0.1.0** is the first public release.
 
 ## Try the workbench
 
@@ -30,11 +32,11 @@ Switch synthetic identities to explore two tenants and two roles. Fixtures run l
 
 ## Add it to a Rails application
 
-Until publication, use a local checkout:
+Add the gem:
 
 ```ruby
 # Gemfile
-gem "rails_tool_views", path: "/path/to/rails_tool_views"
+gem "rails_tool_views", "~> 0.1.0"
 ```
 
 ```sh
@@ -58,14 +60,14 @@ Component and action policies deny by default. The host must authorize domain re
 
 ## Documentation
 
-The guides are the detailed reference. Preview the searchable documentation site with `docs/bin/serve.sh`; setup and build instructions are in [docs/README.md](docs/README.md).
+Read the [searchable guides](https://rails-tool-views.wangyaodi.com). Preview locally with `docs/bin/serve.sh`; setup and build instructions are in [docs/README.md](docs/README.md).
 
 - [Getting Started](docs/site/_getting_started/getting-started.md): installation and a working first component.
 - [Configuration](docs/site/_getting_started/configuration.md): host identity and engine settings.
 - [Core guides](docs/site/_core_features): components, surfaces, actions and validation.
 - [Advanced guides](docs/site/_advanced): optional RubyLLM, continuation and production boundaries.
 - [API reference](docs/site/_reference/api-reference.md): generated Ruby API documentation.
-- [Upgrading](docs/site/_reference/upgrading.md): moving a 0.2 development host to the single 0.3 identity.
+- [Upgrading](docs/site/_reference/upgrading.md): moving an unpublished development host to the first public version.
 
 The dummy host in [`test/dummy`](test/dummy) contains the complete runnable examples and is excluded from the gem runtime. OddlyDock is a planned reference host, not a dependency.
 
@@ -83,6 +85,6 @@ Tests use offline responses and block TCP connections. Supported dependency boun
 
 ## Project status and attribution
 
-This is an unpublished implementation draft. See [LICENSE_PENDING.md](LICENSE_PENDING.md) for license status.
+Released under the [MIT license](LICENSE.txt).
 
 RailsToolViews is an unofficial community project. Rails marks belong to David Heinemeier Hansson, with exclusive licensing to the Rails Foundation. Framework names identify compatibility; neither the owner nor the Foundation endorses or is affiliated with this project. See the [Rails trademark policy](https://rubyonrails.org/trademarks).

@@ -8,8 +8,8 @@ exclude:
   - \.json$
 footer_content:
   Documentation:
-    Guides: https://yorzi.github.io/rails_tool_views/
-    Upgrading: https://yorzi.github.io/rails_tool_views/upgrading/
+    Guides: https://rails-tool-views.wangyaodi.com/
+    Upgrading: https://rails-tool-views.wangyaodi.com/upgrading/
   Resources:
     GitHub: https://github.com/yorzi/rails_tool_views
     Issues: https://github.com/yorzi/rails_tool_views/issues
