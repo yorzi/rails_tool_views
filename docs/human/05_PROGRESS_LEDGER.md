@@ -269,3 +269,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 四个 HTTP 测试先失败，再增加 CSRF；合计 5/66，完整 core 97 tests / 835 assertions 与 eager load PASS。Chrome 4/28 PASS，包括真正禁用 JavaScript 的表单 error/correction/refresh，390px 设备模拟。检查移动错误截图，字段保留、标签/描述连接且可读；没有完整 screen-reader/物理设备审核。现有 Turbo/JSON suites 全绿。最终兼容矩阵、build、isolated host 由 WORK-09 完成。
 
 **影响/文档/下一步：** 无 schema/migration/dependency；Engine layout 不加载 host 资产或依赖其 controller 实例变量，host 可覆盖，保留语义元素。更新 validation/upgrading/What's New、runtime flow、ADR 007、status/acceptance/checklists。浏览器/driver/Puma 随测试退出，无保留服务。main 本地提交，下一步版本元数据与最终验收，不自动发布。
+
+### WORK-20261018-09 — 完成 0.2 本地候选验收
+
+**内容/映射：** FR-01/02/07/08；版本/六份应用锁 path entries/站点对齐 0.2.0，changelog/history 与 docs 标记未发布。补强“只允许展示而未授权动作”公开 dispatch 拒绝测试；冻结安装输入副本并记录 SHA-256，避免构建覆盖正在验证的 artifact。实际 host 增补 JSON/Turbo replay、HTML stale/cross-scope denial、生成组件 HTML correction/restore。无产品意图 delta，Specs 不改。
+
+**复查/验证：** Ruby3.3.5/Rails8.1.4、Ruby3.3.5/Rails7.2.3.2、Ruby4.0.2/Rails8.1.4 及 PostgreSQL17.11 各 97/837/eager load PASS；adapter 7/45、两种 docs examples PASS。冻结包三组实际 host 与生成 Minitest 1/2 PASS；空 GEM_HOME network resolve/full host/activated audit PASS。包 SHA256 e3c784de6f8527db6091b86b059945de2a0be112b9a2237fcf240904c4069a30，31 个打包文件；七份锁 audit clean，公告 fa2295251efb3b0d1a300e5ce8ad700ff1f1b485。Chrome 4/28，禁用 JS/390px；故意失败截图探针验证实际页面被捕获，恢复源码后全绿；人工 Tab→Enter invalid/correction/refresh PASS。16 guides zero errors、两条预期 unreleased/tag warnings；build/2,210 links/内部内容排除 PASS。candidate package gate PASS，正式 gate 对 unreleased 按预期拒绝。详细命令/范围见 V0_2_VALIDATION。
+
+**影响/文档/下一步：** 无 migration/schema/runtime dependency，授权/CSRF/replay 不变。更新 Getting Started/What's New/upgrading、ROADMAP、操作/状态/feature map/实现图景、baseline 授权与验收；HTML flow/ADR 已在 WORK-08 更新。临时 demo 127.0.0.1:3198 PID51497 已停止，临时库删除；浏览器/driver/Puma 和临时 PG databases 清理，已有 PG 服务不动。main 本地第四次提交，无推送/tag/gem 上传/provider；下一步 owner 审阅后授权候选推送、remote CI，再准备发布标记和标签。不自动开始 0.3。

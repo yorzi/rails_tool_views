@@ -92,3 +92,12 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] 新 4 测试先失败；5 个 HTTP 测试共 66 assertions + core 全套 97/835/eager load PASS。Chrome 4/28 PASS，关闭 JavaScript 的实际表单 invalid → correction → refresh，390px CDP 移动模拟截图检查。无辅助技术完整审核。
 - [x] 新 layout 无 host 实例变量/资源依赖，可通过 Rails view override 定制；guide、upgrading、What's New、flow 与 ADR 007 更新。无 schema/migration/dependency，implementation aligned，Specs 不改。
 - [x] 验收/状态/ledger 更新。Chrome/driver/Puma 随测试退出，无保留进程。最终兼容性和文档构建留 WORK-09。
+
+## WORK-20261018-09 — 0.2 local acceptance
+
+- [x] VERSION、六份应用 lockfile path entries、docs 0.2.0 对齐；CHANGELOG/History 标明 unreleased，正式 release gate 拒绝该状态，candidate-only package check 通过。六份应用 lockfiles（含 root）加 docs/site 锁文件共七份被审计。
+- [x] 三个 SQLite 兼容组合与 PostgreSQL 各 97 tests / 837 assertions、eager load；adapter 7/45、core/adapter docs examples PASS。实际 artifact host 在三个组合通过；生成 Minitest 各 1/2；空 GEM_HOME full host 和 activated audit PASS。
+- [x] Chrome 4/28，真正禁用 JavaScript、390px 模拟、CSRF 和持久化；人工浏览器 Tab/Enter invalid → correction → refresh 复核，截图保留。无完整辅助技术/物理设备审核。
+- [x] 七份 locks/advisory audit clean；16 guides zero errors，两条预期 unreleased/tag version warnings；stable+next 构建、2,210 links、内部内容排除 PASS。
+- [x] 无 schema/migration/runtime dependency 新增。Specs 未编辑，implementation aligned。同步 baseline 授权、status/map/flow/roadmap、operations、evidence 与 ledger；current work 全部完成。
+- [x] 临时 demo PID 51497 / 127.0.0.1:3198 停止并删除临时 SQLite；Chrome/driver/Puma 无遗留，临时 PG databases 已 drop；已有 PostgreSQL 服务未停止。无新推送/tag/上传/provider。

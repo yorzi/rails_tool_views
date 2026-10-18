@@ -38,6 +38,8 @@ python3 scripts/check_docs_site.py
 3. Inspect the package manifest, dependency licenses, advisory results, generated site and disclosure URL. Internal records, databases and credentials must not enter either artifact. Review the evidence gaps below as gaps, not PASS.
 4. Add a Progress Ledger section with honest checks and `Work-ID`, run staged linkage, commit and push the release candidate to `main`. Verify that candidate's remote CI and Docs checks before tagging.
 
+For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb --candidate`. It validates the same package metadata and exclusions while allowing `released: false`. The release workflow never supplies this flag; a normal release check must still refuse an unreleased docs configuration. Before publishing 0.2, change the changelog date, release history and `released` flag, obtain owner authorization and run the exact candidate through remote CI.
+
 ## Publish
 
 For the first release only:

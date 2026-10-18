@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**Proposal after 0.1.0, updated 2026-10-18.** Only 0.1.0 is delivered. The owner authorized the 0.2 implementation and local incremental commits on 2026-10-18. Later versions, provider calls and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**Proposal after 0.1.0, updated 2026-10-18.** Only 0.1.0 is published; 0.2 implementation and local acceptance are complete. The owner authorized the 0.2 implementation and local incremental commits on 2026-10-18. Later versions, provider calls and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -8,7 +8,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 0.1.0 already provides schemas, Partial/ViewComponent rendering, persistent Surfaces, authorized transactional actions, revision/replay protection, form validation and optional RubyLLM continuation. SQLite/PostgreSQL release CI, guides and gem publication are verified.
 
-Remaining gaps: authoring effort, fragment-only non-Turbo errors, no retention API, persistent status notices and indistinguishable replay telemetry. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
+0.2 addresses authoring effort and fragment-only non-Turbo errors. Remaining gaps: no retention API, persistent status notices and indistinguishable replay telemetry. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
 
 ## Version sequence
 
@@ -26,8 +26,10 @@ Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor 
 
 Use the existing `test/dummy` as the maintained demo/test host. Verify installation with a disposable host consuming the built gem under isolated dependencies; a second long-lived Rails repository is not required. Agent browser checks and repeatable system tests complement each other. These are engineering checks, not external setup trials.
 
-- **Partial generator.** Proposed command: `bin/rails generate rails_tool_views:component choice_card`. Generate a Partial, closed-schema registration and test scaffold. Reuse registry reloads and form helpers. Keep policies deny-by-default and identity/business rules host-owned. Reject invalid names; never silently overwrite host files. Defer a ViewComponent option until needed.
-- **Complete HTML errors.** Non-Turbo rejection should show a usable page, error and correction path. Preserve status, authorized validation values and host authentication; denied/not-found responses expose no component data. Choose the smallest host-layout integration before coding. Keep payloads out of URLs.
+- **Partial generator (implemented locally).** Command: `bin/rails generate rails_tool_views:component choice_card`. Generate a Partial, closed-schema registration and test scaffold. Reuse registry reloads and form helpers. Keep policies deny-by-default and identity/business rules host-owned. Reject invalid names; never silently overwrite host files. Defer a ViewComponent option until needed.
+- **Complete HTML errors (implemented locally).** Non-Turbo rejection shows a usable page, error and correction path. Preserve status, authorized validation values and host authentication; denied/not-found responses expose no component data. The Engine owns a complete layout that hosts can override. Keep payloads out of URLs.
+
+**Local acceptance complete:** see [0.2 validation](docs/evidence/V0_2_VALIDATION.md).
 
 **Done when:** a fresh packaged host exercises both transports, invalid input, stale revision, denial and refresh/restore; JSON/Turbo contracts still pass. Ship a generator guide, updated Getting Started and upgrade notes with the implementation.
 

@@ -9,6 +9,7 @@ module RailsToolViews
       argument :name, type: :string, required: true, desc: "Flat snake_case component key"
       desc "Generate a Partial, registration and Minitest scaffold. Policies deny access until configured."
 
+      # Preflights all destinations, then writes the registration, Partial and test.
       def create_component
         unless name.match?(/\A[a-z][a-z0-9_]{0,63}\z/)
           raise Thor::Error, "Use a flat snake_case name of 1 to 64 characters, starting with a letter."

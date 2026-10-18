@@ -26,3 +26,7 @@ Promoted by explicit owner authorization after V0, without changing the external
 5. Full regression/SDK/matrix/package checks, separate-process durability, privacy and browser/mobile/restart/download evidence; update ADR/human/operations docs and local ledger-linked commit.
 
 Feature-milestone acceptance is in 08_V1_ACCEPTANCE.md. Version 0.1.0 publication is recorded in ../evidence/RELEASE_0_1_0.md; remaining adoption/formal gaps and the next unit are tracked in the current status and Current Work.
+
+## Public 0.2 local acceptance
+
+WORK-20261018-06..09: browser/isolated-host foundation → deny-by-default Partial generator → complete authorized HTML correction → metadata/docs/matrix/package verification. No migration, retention, notification or adapter expansion. [Validation](../evidence/V0_2_VALIDATION.md) records local completion; push/remote CI/publication are separate next steps.

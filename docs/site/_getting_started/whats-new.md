@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "What Is New in 0.1"
+title: "What Is New in 0.2"
 nav_order: 4
-description: "The first release provides persistent Rails views with authorized actions and optional AI adapters."
+description: "Generate safe Partial components and correct forms on complete HTML pages without Turbo."
 ---
 
 # {{ page.title }}
@@ -12,28 +12,28 @@ description: "The first release provides persistent Rails views with authorized 
 
 After reading this guide, you will know:
 
-* Use the single package, namespace, and prefix.
-* Find the changes a 0.2 development host needs.
+* Start a Partial with denied policies and closed schemas.
+* Correct a rejected action without JavaScript.
+* Find the installation and upgrade steps.
 
-## Preview 0.2
+## Generate a Partial
 
-The next version adds a [Partial component generator]({% link _core_features/component-generator.md %}). It creates closed schemas and denied policies; configure host authorization before presenting it. Non-Turbo errors now use [complete correction pages]({% link _core_features/validation.md %}#correct-a-form-without-turbo), including safe navigation after a successful correction. The first public release remains 0.1.0 until a new release is published.
+```sh
+bin/rails generate rails_tool_views:component review_card
+```
 
-## Use RailsToolViews
+The [component generator]({% link _core_features/component-generator.md %}) creates a registration, Partial and Minitest scaffold. It refuses conflicting files and paths that escape your application. Configure both denied policies with trusted host authorization, then load the definition in your shared Rails reload block. Existing manual registrations keep working.
 
-The first public release is {{ site.version }}. Its package is `rails_tool_views`, its Ruby namespace is `RailsToolViews`, and its installer is `rails_tool_views:install`. New hosts use the canonical helper prefix `rails_tool_views_`.
+## Correct a Form without Turbo
 
-## One Identity
+An HTML error returns a complete document with a title, main heading and the authorized component. Correct the retained fields and submit again. The successful redirect avoids POST-only Engine routes. A reload link reads the saved view without keeping unsaved corrections. Missing identity or unavailable Surfaces do not expose component data.
 
-The first release removes the second identity carried by unpublished development candidates. The `ToolViews` constant, the `toolviews` and `tool_views` entrypoints, the `tool_views:install` command, and the `tool_views_*` helpers are gone. Tables, translations, notifications, DOM and Stimulus identifiers, and continuation delivery keys now use the `rails_tool_views` prefix. An earlier development host renames four tables with one migration; saved Surfaces, revisions, and replay receipts keep working.
+Read [Validation and Errors]({% link _core_features/validation.md %}#correct-a-form-without-turbo) for status codes and layout overrides. Embedded helpers and JSON/Turbo responses keep their existing formats.
 
-The engine also provides field-validation feedback, host controller inheritance, action form helpers, and optional durable agent continuation. A Surface's accessible name can be translated under `rails_tool_views.components.<key>`. Without Turbo, a committed action now redirects correctly under any mount name, including the installer's `rails_tool_views`. Actor, tenant, context, adapter, call and idempotency identifiers are bounded to 150 bytes so every index key fits MySQL's utf8mb4 limit, and stored identities are matched byte for byte regardless of database collation. The reference host demonstrates customer forms, support workflows, and artifact review with offline data.
+## Verify the Integration
 
-## Patched Runtime Dependencies
+The development suite uses real Chrome for Partial/ViewComponent persistence and mobile form correction, including a browser with JavaScript disabled. An isolated temporary Rails host tests the installed gem, generated scaffold and saved actions. These checks do not claim external adoption or live-provider coverage.
 
-A clean Ruby installation may include older default gems even when your application lockfile uses patched versions. RailsToolViews requires patched CGI, ERB, Resolv, URI and Zlib versions. Use a patched Rails release in the host; the compatibility suite uses Rails 7.2.3.2 and 8.1.4.
+## Upgrade
 
-## Next Steps
-
-* [Upgrading]({% link _reference/upgrading.md %}) lists the required host changes.
-* [Release History]({% link _reference/release-history.md %}) distinguishes candidates from releases.
+Version {{ site.version }} requires no database migration or new runtime dependency. Follow [Upgrading]({% link _reference/upgrading.md %}) if you override Engine HTML templates. {% if site.docs_unreleased %}This version is under development; use stable documentation for the published gem.{% endif %}

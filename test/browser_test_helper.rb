@@ -21,13 +21,13 @@ Capybara.server_host = "127.0.0.1"
 Capybara.default_max_wait_time = 5
 Capybara.save_path = ENV.fetch("BROWSER_ARTIFACTS")
 %i[rails_tool_views_chrome rails_tool_views_no_js].each do |driver_name|
-Capybara.register_driver driver_name do |app|
-  options = Selenium::WebDriver::Chrome::Options.new
-  %w[--headless=new --window-size=1440,1000 --disable-background-networking --no-sandbox --disable-dev-shm-usage].each { |arg| options.add_argument(arg) }
-  options.add_preference("profile.managed_default_content_settings.javascript", 2) if driver_name == :rails_tool_views_no_js
-  options.binary = ENV["CHROME_BIN"] if ENV["CHROME_BIN"]
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
-end
+  Capybara.register_driver driver_name do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    %w[--headless=new --window-size=1440,1000 --disable-background-networking --no-sandbox --disable-dev-shm-usage].each { |arg| options.add_argument(arg) }
+    options.add_preference("profile.managed_default_content_settings.javascript", 2) if driver_name == :rails_tool_views_no_js
+    options.binary = ENV["CHROME_BIN"] if ENV["CHROME_BIN"]
+    Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+  end
 end
 Capybara.default_driver = :rails_tool_views_chrome
 
@@ -43,13 +43,29 @@ class BrowserTest < ActiveSupport::TestCase
 
   teardown do
     begin
-      take_screenshot(passed? ? "passed" : "failed")
-    rescue StandardError => error
-      warn "Browser screenshot unavailable: #{error.class}: #{error.message}"
+      capture_browser(passed? ? "passed" : "failed") unless @browser_captured
     ensure
       Capybara.reset_sessions!
       Capybara.current_session.driver.quit
     end
+  end
+
+  # Capture the selected driver before Capybara restores the default session.
+  # Otherwise failures inside using_driver would produce a blank default tab.
+  def with_browser(driver)
+    Capybara.using_driver(driver) do
+      yield
+    ensure
+      capture_browser($! ? "failed" : "passed")
+      @browser_captured = true
+      page.driver.quit
+    end
+  end
+
+  def capture_browser(label)
+    take_screenshot(label)
+  rescue StandardError => error
+    warn "Browser screenshot unavailable: #{error.class}: #{error.message}"
   end
 
   def mobile_viewport

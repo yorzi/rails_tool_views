@@ -63,9 +63,20 @@ client = ActionDispatch::Integration::Session.new(Rails.application)
 client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-1" }, as: :json)
 raise "Installed action controller failed: #{client.response.body}" unless client.response.status == 200
 raise "Installed persistence failed" unless RailsToolViews.restore(surface.id, scope: scope).state["selected"] == "a"
+# Same receipt through Turbo must replace only the authorized Surface once.
+client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action_name: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-1" }, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+raise "Installed Turbo replay failed" unless client.response.status == 200 && client.response.body.include?(%(target="#{surface.dom_id}")) && surface.reload.revision == 2 && RailsToolViews::ActionExecution.where(surface_id: surface.id).count == 1
+client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action_name: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "packaged-stale" }, headers: { "Accept" => "text/html" })
+raise "Installed stale HTML guard failed" unless client.response.status == 409 && client.response.body.match?(/<!doctype html>/i) && surface.reload.revision == 2
+RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { RailsToolViews::Scope.new(actor: "other", tenant: "acme") } }
+client.get("/rails_tool_views/surfaces/#{surface.id}", headers: { "Accept" => "text/html" })
+raise "Installed scoped denial failed" unless client.response.status == 404 && client.response.body.match?(/<!doctype html>/i) && !client.response.body.include?("Packaged &lt;safe&gt; card") && !client.response.body.include?("<form")
+RailsToolViews.configure { |config| config.scope_resolver = ->(controller) { controller.host_authenticated_scope } }
 # Without Turbo and without a referrer, the action returns to the Surface under the installer's mount.
 client.post("/rails_tool_views/surfaces/#{surface.id}/actions", params: { action_name: "select_option", arguments: { key: "a" }, base_revision: 2, idempotency_key: "packaged-2" }, headers: { "Accept" => "text/html" })
 raise "Installed HTML fallback failed: #{client.response.status} #{client.response.location}" unless client.response.status == 303 && client.response.location == "http://www.example.com/rails_tool_views/surfaces/#{surface.id}"
+client.follow_redirect!
+raise "Installed Surface is not a complete HTML page" unless client.response.status == 200 && client.response.body.match?(/<!doctype html>/i) && client.response.body.include?("<main")
 RailsToolViews.register(:invalid_form, description: "Validation feedback", schema: schema, partial: "choices/card", policy: ->(_access) { true },
   actions: { submit_form: { schema: params_schema, policy: ->(_access) { true }, handler: ->(access) {
     raise RailsToolViews::ValidationError.new(fields: { key: "needs correction" }, values: access.arguments)
@@ -93,8 +104,12 @@ load registration
 review = RailsToolViews.present(:review_card, props: { title: "Generated <safe> review" }, scope: scope)
 html = RailsToolViews.render(review, view_context: controller.view_context, scope: scope)
 raise "Generated partial/form failed" unless html.include?("Generated &lt;safe&gt; review") && html.include?('name="arguments[value]"')
-client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_name: "set_value", arguments: { value: "reviewed" }, base_revision: 1, idempotency_key: "generated-1" }, as: :json)
-raise "Generated action failed" unless client.response.status == 200 && review.reload.state["value"] == "reviewed"
+client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_name: "set_value", arguments: { value: "invalid", injected: "rejected" }, base_revision: 1, idempotency_key: "generated-invalid" }, headers: { "Accept" => "text/html" })
+raise "Generated invalid action is not a full correction page" unless client.response.status == 400 && client.response.body.match?(/<!doctype html>/i) && client.response.body.include?('name="arguments[value]"') && review.reload.revision == 1
+client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_name: "set_value", arguments: { value: "reviewed" }, base_revision: 1, idempotency_key: "generated-1" }, headers: { "Accept" => "text/html", "Referer" => "http://www.example.com/rails_tool_views/surfaces/#{review.id}/actions" })
+raise "Generated HTML correction failed" unless client.response.status == 303 && client.response.location == "http://www.example.com/rails_tool_views/surfaces/#{review.id}" && review.reload.state["value"] == "reviewed"
+client.follow_redirect!
+raise "Generated saved view did not restore" unless client.response.status == 200 && client.response.body.include?('value="reviewed"')
 # Run the actual generated Minitest file after restoring its safe default.
 File.write(registration, File.read(registration).gsub('->(access) { access.actor == "alice" && access.tenant == "acme" }', "->(_access) { false }"))
 FileUtils.mkdir_p(File.join(host, "test"))
@@ -107,7 +122,7 @@ load registration
 ActiveRecord.maintain_test_schema = false
 load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP action -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated scaffold/test -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

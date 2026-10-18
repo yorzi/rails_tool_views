@@ -47,3 +47,7 @@ README 只保留定位、安装、demo 和入口；使用细节由文档站统�
 ## 2026-10-18 — 0.2 组件生成与 HTML 纠错
 
 生成器创建三份可审阅文件，授权默认拒绝；统一 reload block 加载，不修改已有 initializer。Engine 的独立 HTML 页面现在可在无 JavaScript 时完成纠错，不依赖嵌入页的 controller 数据；嵌入 helper 与 Turbo 仍是片段。成功纠正后的跳转避开 POST-only 来源地址。无业务写入、schema 或依赖新增。
+
+## 2026-10-18 — 0.2 本地验收完成
+
+0.2 的实现和文档已完成本地验证，后续仍按 roadmap 审阅版本范围。测试分三层：核心/矩阵回归、同一 dummy 的真实浏览器、实际 artifact 的隔离安装 host。工程验证不是外部采用。源码和包版本 0.2.0；公开版本仍为 0.1.0，未来推送/发布是下一步。无迁移和 runtime dependency 变化。

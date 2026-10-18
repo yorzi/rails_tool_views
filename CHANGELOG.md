@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0] - Unreleased
+
+- Add `rails_tool_views:component NAME` for a Partial, closed registration schemas and a Minitest scaffold. Component and action policies deny by default. Existing paths, unsafe names and symlink escapes are refused before writing.
+- Render complete Engine HTML read/error pages with accessible document structure, authorized correction fields and a saved-view reload link. Embedded helpers and JSON/Turbo retain their formats.
+- Fix redirects after correcting a non-Turbo error when the referrer is a POST-only Engine route.
+- Add real Chrome E2E tests, including JavaScript-disabled mobile correction, fixture screenshots and a browser CI job. Keep browser dependencies in a development-only bundle.
+- Exercise the installed gem and generated scaffold in a temporary Rails host, both with developer dependencies and an isolated network-resolved GEM_HOME.
+- No database migration or new runtime dependency. Publication and remote CI remain separate steps.
+
 ## [0.1.0] - 2026-10-18
 
 First public release. Earlier version labels below describe unpublished development milestones.

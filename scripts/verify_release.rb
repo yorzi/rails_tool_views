@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Release-only checks. Run after `bundle exec rake build`, before any upload.
+# Package checks after building. --candidate permits unreleased docs locally;
+# release CI omits it and must refuse an unreleased configuration.
 require "rubygems/package"
 require "yaml"
 require_relative "../lib/rails_tool_views/version"
@@ -10,7 +11,8 @@ tag = ENV.fetch("GITHUB_REF_NAME", "v#{version}")
 abort "Tag #{tag} does not match v#{version}" unless tag == "v#{version}"
 config = YAML.load_file("docs/site/_config.yml")
 abort "Docs version differs" unless config.fetch("version") == version
-abort "Docs are not marked released" unless config.fetch("released") == true
+candidate = ARGV.include?("--candidate")
+abort "Docs are not marked released" unless candidate || config.fetch("released") == true
 abort "Missing changelog section" unless File.readlines("CHANGELOG.md").any? { |line| line.start_with?("## [#{version}]") }
 
 package = Gem::Package.new("pkg/rails_tool_views-#{version}.gem")
@@ -32,4 +34,4 @@ forbidden = files.select do |path|
 end
 abort "Forbidden package files: #{forbidden}" unless forbidden.empty?
 abort "Core must not depend on RubyLLM" if spec.runtime_dependencies.any? { |dependency| dependency.name == "ruby_llm" }
-puts "RELEASE_PACKAGE_PASS: #{spec.full_name}, #{files.length} reviewed files, tag/docs/changelog/license/MFA metadata aligned"
+puts "#{candidate ? "CANDIDATE_PACKAGE_PASS" : "RELEASE_PACKAGE_PASS"}: #{spec.full_name}, #{files.length} reviewed files, tag/docs/changelog/license/MFA metadata aligned"

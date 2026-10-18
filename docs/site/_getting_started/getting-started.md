@@ -32,6 +32,8 @@ For a local checkout, use `gem "rails_tool_views", path: "/path/to/rails_tool_vi
 
 The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. An earlier unpublished development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
 
+For a new Partial, use the [component generator]({% link _core_features/component-generator.md %}) to create closed schemas and denied policies. The complete registration below also works for an existing Partial.
+
 ## Register a ChoiceCard
 
 Put the registration below inside `Rails.application.config.to_prepare do ... end` in the host initializer. Call `RailsToolViews.reset_registry!` at the start of that block so development reloads can register the components again.

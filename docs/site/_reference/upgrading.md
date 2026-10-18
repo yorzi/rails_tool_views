@@ -25,7 +25,7 @@ Direct Engine HTML reads and errors now render a full document with the Engine l
 
 ## Start with One Identity
 
-The internal candidates `0.1.0.pre.v0`, `0.2.0.pre.v2` and `0.3.0.pre.v3` were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. The first public version, {{ site.version }}, keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
+The internal candidates `0.1.0.pre.v0`, `0.2.0.pre.v2` and `0.3.0.pre.v3` were never published. They carried a second `ToolViews` identity so early development hosts kept working after the package rename. A first public release would have turned every one of those aliases into a permanent contract, and the top-level `ToolViews` constant would have claimed a name this package does not own. The first public version, 0.1.0, keeps one identity: the package `rails_tool_views`, the module `RailsToolViews`, and the prefix `rails_tool_views` everywhere else.
 
 ## Update Ruby Code
 

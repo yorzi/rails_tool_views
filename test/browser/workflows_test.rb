@@ -50,7 +50,7 @@ class BrowserWorkflowsTest < BrowserTest
     assert page.evaluate_script("document.documentElement.scrollWidth <= window.innerWidth"), "Mobile page overflows horizontally"
   end
   test "without JavaScript a complete mobile error page supports correction and refresh" do
-    Capybara.using_driver(:rails_tool_views_no_js) do
+    with_browser(:rails_tool_views_no_js) do
       mobile_viewport
       visit "/v1/customer"
       fill_in "Customer name", with: "HTML customer"
@@ -71,8 +71,6 @@ class BrowserWorkflowsTest < BrowserTest
       assert_text "HTML customer"
       assert_equal 1, DemoCustomer.uncached { DemoCustomer.where(name: "HTML customer").count }
       take_screenshot("no-js-corrected-mobile")
-    ensure
-      page.driver.quit
     end
   end
 

@@ -18,7 +18,19 @@ class ComponentGeneratorTest < ActiveSupport::TestCase
       definition = RailsToolViews.registry.fetch(:review_card)
       assert_error("INVALID_PROPS") { definition.schema.validate!({ "title" => "Review", "trusted" => true }) }
       assert_error("INVALID_ARGUMENTS") { definition.actions.fetch("set_value").schema.validate!({ "value" => "ok", "admin" => true }, code: "INVALID_ARGUMENTS") }
-      assert_equal false, definition.actions.fetch("set_value").policy.call(nil)
+      registration = File.join(root, "config/rails_tool_views/components/review_card.rb")
+      original = File.read(registration)
+      # Authorize presentation only: the separate action policy must still deny.
+      File.write(registration, original.sub("policy: ->(_access) { false }", "policy: ->(_access) { true }"))
+      RailsToolViews.reset_registry!
+      load registration
+      surface = RailsToolViews.present(:review_card, props: { title: "Review" }, scope: scope)
+      assert_error("NOT_ALLOWED") do
+        RailsToolViews.dispatch(surface.id, scope: scope, action: "set_value", arguments: { value: "no write" },
+          base_revision: 1, idempotency_key: "generator-denied")
+      end
+      assert_equal 1, surface.reload.revision
+      File.write(registration, original)
       assert_empty definition.expose_to
       assert File.file?(File.join(root, "test/rails_tool_views/components/review_card_test.rb"))
       assert_includes File.read(File.join(root, "app/views/rails_tool_views/components/_review_card.html.erb")), 'props.fetch("title")'

@@ -15,4 +15,6 @@ flowchart LR
   Interaction --> Agent[主应用 Agent 适配器]
 ```
 
-先看 README 的离线演示；再看 01_PROJECT_STATUS 和 03_SYSTEM_ARCHITECTURE。本地与远端 Ruby/Rails/PostgreSQL 兼容性已核验；最大的未证实部分是独立安全审核、MySQL/真实 provider 行为与外部接入价值。
+先看 README 的离线演示；再看 01_PROJECT_STATUS 和 03_SYSTEM_ARCHITECTURE。0.1 发布的本地与远端 Ruby/Rails/PostgreSQL 兼容性已核验；最大的未证实部分是独立安全审核、MySQL/真实 provider 行为与外部接入价值。
+
+0.2 的安全 Partial 生成器与完整 HTML 纠错已本地完成，测试入口是 `bin/check` 和 `bin/check-browser`；后者真实运行 Chrome 并保存截图。实际 gem 接入由临时隔离 host 验证。当前没有推送或发布 0.2，远端 CI 等下一步授权；详见 [验证记录](../evidence/V0_2_VALIDATION.md)。

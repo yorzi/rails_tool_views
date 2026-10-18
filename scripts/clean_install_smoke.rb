@@ -5,6 +5,8 @@
 require "tmpdir"
 require "rbconfig"
 require "json"
+require "fileutils"
+require "digest"
 require_relative "../lib/rails_tool_views/version"
 
 if ARGV.include?("--audit")
@@ -14,10 +16,16 @@ if ARGV.include?("--audit")
 end
 
 version = RailsToolViews::VERSION
-package = File.expand_path("../pkg/rails_tool_views-#{version}.gem", __dir__)
-abort "Build #{package} first" unless File.file?(package)
+source_package = File.expand_path("../pkg/rails_tool_views-#{version}.gem", __dir__)
+abort "Build #{source_package} first" unless File.file?(source_package)
 
 Dir.mktmpdir("rails-tool-views-install-") do |temporary|
+  # Freeze the input before network resolution; another build must not change
+  # the artifact while RubyGems is installing its dependencies.
+  package = File.join(temporary, File.basename(source_package))
+  FileUtils.cp(source_package, package)
+  puts "CLEAN_INSTALL_ARTIFACT_SHA256: #{Digest::SHA256.file(package).hexdigest}"
+  $stdout.flush
   gems = File.join(temporary, "gems")
   env = ENV.keys.grep(/\ABUNDLE_/).to_h { |key| [key, nil] }.merge(
     "GEM_HOME" => gems, "GEM_PATH" => gems, "RUBYOPT" => nil, "RUBYLIB" => nil, "RAILS_TOOL_VIEWS_PACKAGE_BUNDLE" => nil

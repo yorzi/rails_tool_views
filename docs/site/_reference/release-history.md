@@ -13,6 +13,7 @@ guide: false
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| 0.2.0 (unreleased) | Not published | Partial component generator, complete HTML correction pages and browser/package verification. |
 | [0.1.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.1.0) | 2026-10-18 | First public release: trusted components, durable Surfaces, authorized actions and optional RubyLLM integration. |
 
 The first public release starts at `0.1.0`. Earlier `0.2` and `0.3` labels were unpublished development candidates, not releases or compatibility promises.

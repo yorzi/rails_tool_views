@@ -24,3 +24,7 @@ The owner now explicitly requests adopting **RailsToolViews**, updating the gem 
 ## 2026-10-18 first public release authorization
 
 Andy explicitly requests documentation on GitHub Pages, DNS and publishing the gem as `0.1.0`, following ruby_llm-browser. He selects `rails-tool-views.wangyaodi.com`, a public repository, MIT and GitHub private vulnerability reporting. This authorizes the necessary commit/push/tag/publication and supersedes older no-publication statements for this release. Internal `0.2`/`0.3` prerelease labels were never public versions. DELTA-005 records remaining formal, security, provider and adoption gaps; external Specs remain read-only and pinned.
+
+## 2026-10-18 public 0.2 development authorization
+
+Andy explicitly authorizes improving AI-agent local development/testing, implementing the bounded 0.2 generator and HTML correction scope, and incremental local commits until acceptance. Reuse the maintained dummy demo plus disposable installed-gem hosts, with real browser/E2E screenshots. This does not authorize future publication, provider calls or speculative lifecycle/notification changes. No baseline intent or external Specs changed; ADR 007 records implementation choices.
