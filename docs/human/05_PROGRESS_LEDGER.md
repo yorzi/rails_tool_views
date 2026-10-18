@@ -245,3 +245,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Impact / alignment:** gem 仍为 0.1.0，未改依赖/API/schema/数据或发布新 gem。原 Specs 的 pinned roadmap/launch 两文件已比对；没有改外部 Specs，也没有把生命周期/通知/新适配器决策视为批准。当前状态和计划的角色变化写入 human changelog 与 maintenance；架构/流程不变，无需改图。没有启动临时服务。
 
 **Next:** 提交推送本次 GitHub 文档更新并核验。开发下一单元前先走一次独立 host 接入，建议优先组件生成器；本次不开始 0.2 实现。稳定站点保留 v0.1.0 快照，main 文档更新在 next。
+
+### WORK-20261018-06 — 建立 agent 浏览器与实际安装验证循环
+
+**内容/映射：** 按 Andy 授权开始 0.2。独立浏览器 bundle、临时 SQLite、loopback Puma/Chrome、截图与 CI job；统一 developer/isolated 安装 host fixture，空 GEM_HOME 从仅加载升级为完整安装/渲染/表单/持久化/eager load。FR-07/08 测试基础，无产品意图 delta；59 个 Specs 文件比对 pinned revision 一致。
+
+**复查/验证：** `bin/check-browser` 3 runs / 18 assertions PASS，检查移动端字段错误截图，值保留且无横向溢出。core 89/723、adapter 7/45、eager load、docs examples、package PASS。隔离 full host 与 activated-dependency audit PASS（fa2295251efb3b0d1a300e5ce8ad700ff1f1b485）。浏览器测试发现测试线程 SQL 缓存会掩盖服务端写入，改用 uncached 断言；Selenium 默认探测所有接口，改为 loopback。CI YAML 已解析；远程 CI 尚未运行。
+
+**影响/文档/下一步：** 无 runtime API/schema/迁移，浏览器依赖仅开发使用。更新 CONTRIBUTING、操作手册、状态、验收与 checklists；架构/运行序列不变。临时 host/数据库清理，浏览器/driver 随测试退出，无保留服务。main 本地提交；下一步 WORK-07 安全组件生成器。

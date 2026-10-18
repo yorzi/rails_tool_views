@@ -39,3 +39,7 @@ A full review of the gem found two real defects. The first is the biggest one be
 README 只保留定位、安装、demo 和入口；使用细节由文档站统一维护，贡献/安全/变更/版本计划留在仓库 Markdown。修正 CONTRIBUTING 与 Production 中未发布/未选许可证的旧说法，压缩当前状态和任务清单，历史仍在 ledger/evidence 与 Git。
 
 新增 ROADMAP 提案：0.2 接入便利与错误页面，0.3 生命周期，0.4 恢复/诊断，1.0 RC 冻结契约、审查、外部试用与升级验证。未来功能尚未实现，内部历史 V1 不等于公开 1.0。架构和业务流程无变化。
+
+## 2026-10-18 — 0.2 开发与测试基础
+
+同一份 dummy 同时承担 demo 与真实 Chrome 测试；每次使用临时数据库，保留 fixture 截图。实际打包 gem 在隔离依赖的临时 host 验证接入，避免工作区依赖掩盖缺包。两者分别证明浏览器行为和安装接入，不代表外部采用。后续按 ROADMAP 推进生成器和 HTML 纠错；发布未自动授权。

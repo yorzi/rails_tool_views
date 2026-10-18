@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# Run real-browser checks with a disposable database and fixture-only artifacts.
+require "tmpdir"
+require "fileutils"
+require "rbconfig"
+root = File.expand_path("..", __dir__)
+artifacts = File.join(root, "tmp/browser", "#{Time.now.utc.strftime('%Y%m%dT%H%M%S')}-#{Process.pid}")
+FileUtils.mkdir_p(artifacts)
+puts "Browser artifacts: #{artifacts}"
+Dir.mktmpdir("rails-tool-views-browser-") do |temporary|
+  env = { "BUNDLE_GEMFILE" => File.join(root, "gemfiles/browser.gemfile"),
+    "DATABASE_URL" => "sqlite3:#{temporary}/browser.sqlite3", "RAILS_ENV" => "test",
+    "RAILS_TOOL_VIEWS_SYSTEM_TEST" => "1", "BROWSER_ARTIFACTS" => artifacts,
+    "SE_CACHE_PATH" => File.join(root, "tmp/selenium") }
+  abort "Browser checks failed; inspect #{artifacts}" unless system(env, RbConfig.ruby, "-S", "bundle", "exec", "rake", "test:browser", chdir: root)
+end
+abort "Browser checks produced no screenshots" if Dir[File.join(artifacts, "*.png")].empty?

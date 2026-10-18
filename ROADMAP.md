@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**Proposal after 0.1.0, updated 2026-10-18.** Only 0.1.0 is delivered. This plan does not authorize implementation, provider calls or future releases. Reassess each version using feedback from the previous one; dates are not promised.
+**Proposal after 0.1.0, updated 2026-10-18.** Only 0.1.0 is delivered. The owner authorized the 0.2 implementation and local incremental commits on 2026-10-18. Later versions, provider calls and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -20,11 +20,11 @@ Remaining gaps: authoring effort, fragment-only non-Turbo errors, no retention A
 | 1.0.0.rc1 | Frozen contract | Upgrade, independent review and setup trials | All 1.0 conditions below are evidenced |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The gem remains 0.1.0 while this plan is reviewed.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem remains 0.1.0 until a separately authorized release.
 
 ## 0.2.0: two small improvements
 
-First, follow the existing guide in a separate Rails application and record repetitive work. A maintainer exercise is engineering evidence, not an external setup trial.
+Use the existing `test/dummy` as the maintained demo/test host. Verify installation with a disposable host consuming the built gem under isolated dependencies; a second long-lived Rails repository is not required. Agent browser checks and repeatable system tests complement each other. These are engineering checks, not external setup trials.
 
 - **Partial generator.** Proposed command: `bin/rails generate rails_tool_views:component choice_card`. Generate a Partial, closed-schema registration and test scaffold. Reuse registry reloads and form helpers. Keep policies deny-by-default and identity/business rules host-owned. Reject invalid names; never silently overwrite host files. Defer a ViewComponent option until needed.
 - **Complete HTML errors.** Non-Turbo rejection should show a usable page, error and correction path. Preserve status, authorized validation values and host authentication; denied/not-found responses expose no component data. Choose the smallest host-layout integration before coding. Keep payloads out of URLs.

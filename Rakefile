@@ -41,3 +41,11 @@ namespace :zeitwerk do
     puts "All is good!"
   end
 end
+
+# Browser tests run in a separate process and disposable DB via bin/check-browser.
+Rake::TestTask.new("test:browser") do |task|
+  task.libs << "test"
+  task.pattern = "test/browser/*_test.rb"
+  task.warning = false
+end
+task "test:browser" => "test:prepare"

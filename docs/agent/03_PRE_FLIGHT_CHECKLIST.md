@@ -61,3 +61,11 @@ Release preflight update: owner confirms domain/public repository/MIT/private re
 - Current evidence: 0.1.0 already published; no component generator or retention API; HTML rejections render fragments; replay emits action.executed. These are observed code facts, not inferred missing features.
 - Classification: implementation-aligned docs corrections plus a PROPOSED roadmap. Proposed lifecycle/notification changes require scoped owner decisions and deltas before implementation; publishing the plan does not approve them. No external Specs edits.
 - Validate links, guide style/build and executable tutorial examples. No runtime suite needed for prose-only changes; do not change version, tag, dependencies, schema or published artifact. No temporary server required.
+
+## WORK-20261018-06..09 — AI-assisted 0.2 development
+
+Owner explicitly authorizes improving the local agent development/testing foundation, then implementing 0.2 steadily with incremental commits until acceptance. Base `c90fd8d`, clean main. Read entrypoint, pinned baseline/current docs, roadmap, delta/maintenance, runtime/controllers/views/generator and current tests/package checks. All 59 Specs copies match pinned 0ea28b1; the live Specs checkout differs, so pinned objects were read.
+
+Scope: (06) repeatable browser/screenshot and fully isolated packaged-host verification; (07) deny-by-default Partial component generator; (08) full non-Turbo HTML error page with authorized correction and unchanged JSON/Turbo semantics; (09) final version/docs/matrix/browser/package acceptance. No retention, new adapter, notification catalog or schema change. 0.2 implementation and local commits are authorized; no future gem upload is inferred. Existing demo is the canonical browser/test host; no separate long-lived application is required.
+
+Browser tests bind loopback, use disposable test data, preserve offline core tests, and close driver/server processes. Screenshots contain fixtures only. Generator must reject unsafe names and never overwrite host files. HTML errors retain status/validation values only after server authorization, never from Referrer or client targets. Run focused failing regressions before features, then core/adapter/matrix/package/docs/browser checks. New public behavior gets guides in the same commit.

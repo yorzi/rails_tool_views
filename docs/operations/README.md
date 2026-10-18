@@ -4,6 +4,7 @@
 
 - [Runbook](01_RUNBOOK.md)：本地运行、环境、监控、事故、备份恢复、维护与退出。
 - [Release checklist](02_RELEASE_CHECKLIST.md)：发布前检查及每次发布证据。
+- [Agent validation](03_AGENT_VALIDATION.md)：sample、浏览器截图、打包宿主与隔离安装的重复验证。
 - 验收证据引用 `../agent/06_ACCEPTANCE_MATRIX.md`；日常进度引用 `../human/05_PROGRESS_LEDGER.md`。
 
 N/A 必须解释原因；尚未执行写 NOT_RUN，不得写成 PASS。敏感数据/凭证不写入文档或日志。

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 Rails.application.config.to_prepare do
-  unless Rails.env.test?
+  if !Rails.env.test? || ENV["RAILS_TOOL_VIEWS_SYSTEM_TEST"] == "1"
     RailsToolViews.reset!
     RailsToolViews.configure do |config|
       config.scope_resolver = DemoV1::Session.method(:scope)

@@ -71,3 +71,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Whitespace check and staged ledger linkage required before commit. Runtime/adapter/database suites not rerun locally: no code, schema, dependency or API change.
 - [x] Current status/work shortened; completed history remains in ledger/evidence/Git. No external Specs edits or new approved product-intent delta. Architecture/runtime diagrams unchanged because behavior is unchanged.
 - [x] No migration or data/privacy/accessibility impact; no temporary server or background process started. Proposed security/lifecycle/telemetry work is not labelled implemented or approved.
+
+## WORK-20261018-06 — agent verification foundation
+
+- [x] 复用 dummy；真实 Chrome 三场景 18 assertions，移动端错误截图检查通过。CSRF 开启，只有 loopback 允许 TCP；Selenium 端口探测也限制 loopback。
+- [x] core 89/723、eager load、adapter 7/45、docs examples、打包 host 与隔离 GEM_HOME full host + activated audit 通过。CI 已配置，尚未推送/远程运行。
+- [x] 无 runtime API/schema/迁移；浏览器依赖独立 bundle。59 个 Specs 文件与 pinned revision 完全一致，未编辑。FR-07/08 测试基础，implementation aligned。
+- [x] 更新操作手册、贡献说明、当前工作、状态、验收与 ledger。无运行时架构变化，无需改图。浏览器子进程退出，临时 host/数据库自动清理，无保留服务。

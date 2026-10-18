@@ -9,6 +9,8 @@ bundle install
 bin/check
 ```
 
+For browser changes, install `BUNDLE_GEMFILE=gemfiles/browser.gemfile bundle install` and run `bin/check --browser`. Chrome is required; Selenium manages its driver. Fixture screenshots are written under `tmp/browser/`. Follow [the agent verification loop](docs/operations/03_AGENT_VALIDATION.md) for browser review and isolated installation.
+
 Run database-backed suites sequentially because they share the dummy test database. Reproduce behavior through the public API, cover successful and rejected requests, and run the relevant [compatibility and package checks](docs/operations/02_RELEASE_CHECKLIST.md). Offline fixtures do not prove live-provider behavior.
 
 Each authored commit includes a Progress Ledger section and a matching `Work-ID:` trailer, as described in [the maintenance contract](docs/agent/07_DOCUMENTATION_MAINTENANCE.md). Use `main` unless the owner requests a branch. Pushes and releases require owner authorization; never contact other maintainers on the owner's behalf without it.

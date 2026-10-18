@@ -1,19 +1,12 @@
 # Current work
 
-## WORK-20261018-05 — concise documentation and proposed 1.0 roadmap
+## 0.2.0 — owner-authorized implementation
 
-Owner requests a shorter GitHub README, a clear split between repository Markdown and the hosted guides, and iterative planning from 0.2.0 to 1.0.0. Scope: documentation and planning, including its GitHub delivery. No future feature or gem release is authorized by this work unit.
+Andy authorizes improving the local AI-agent testing foundation, then implementing 0.2 with incremental commits until acceptance. Public 0.1.0 remains unchanged. Local development/commits are authorized; future gem publication is not inferred.
 
-- [x] Inspect 0.1.0 release evidence, current code gaps, pinned baseline and documentation ownership.
-- [x] Shorten README and contributor/docs entrypoints; correct stale unpublished/license statements.
-- [x] Write one canonical ROADMAP with a small 0.2 scope, later iterations and measurable 1.0 conditions.
-- [x] Keep future commands/APIs explicitly proposed and product-intent decisions open.
-- [x] Validate local links, guide style, versioned build and executable tutorial examples; record the ledger and submit this documentation update.
+- [x] WORK-20261018-06: browser/system tests with screenshots and cleanup; full packaged-host workflow in isolated dependencies; document the agent verification loop.
+- [ ] WORK-20261018-07: safe Partial component generator, generated tests and fresh-host usage guide.
+- [ ] WORK-20261018-08: complete accessible non-Turbo error/correction pages without changing JSON/Turbo/authentication boundaries.
+- [ ] WORK-20261018-09: version/docs, focused and full/matrix checks, actual browser review, packaged fresh host, acceptance evidence, stop all temporary processes.
 
-## Recommended next unit — not started
-
-Use ROADMAP's **0.2.0** section: first exercise the existing guide in a separate Rails host, then design the Partial component generator and complete non-Turbo error feedback. Confirm implementation scope before coding. New lifecycle and notification semantics in later versions need their own contract decisions; do not infer approval from the plan.
-
-Current public gem stays **0.1.0**. No date or future release is promised. Independent security review, MySQL/provider qualification, external trials and formal baseline gates remain open as described in [current status](../human/01_PROJECT_STATUS.md).
-
-Completed work and authorization history live in [Progress Ledger](../human/05_PROGRESS_LEDGER.md); release outcome is in [RELEASE_0_1_0](../evidence/RELEASE_0_1_0.md). Keep this file to the immediate unit rather than accumulating completed milestones.
+No retention, telemetry catalog, new adapter or 1.0 expansion. External developer trials/production adoption are separate from automated host tests and do not block starting 0.2. Read [ROADMAP](../../ROADMAP.md) for later proposals and [status](../human/01_PROJECT_STATUS.md) for current reality.

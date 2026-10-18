@@ -98,3 +98,7 @@ FR-08/NFR-03 的精确发布证据：`v0.1.0` / `f2d4303` 的 [release run 39117
 ## Documentation ownership and proposed roadmap — WORK-20261018-05
 
 FR-08 documentation: README now routes to canonical hosted tutorials/API; contribution/maintenance/roadmap material stays in the repository. Markdown links, 15-guide style check, executable examples and the stable/next build with 2,152 generated links pass. No runtime acceptance changes. ROADMAP's 0.2..1.0 exit conditions are proposals and cannot be counted as delivered functionality or completed baseline gates.
+
+## 0.2 development foundation — WORK-20261018-06
+
+FR-07/08 LOCAL_PASS: `bin/check-browser` Chrome 3/18，Partial/ViewComponent 保存刷新、移动端字段错误及纠正；截图保存在 ignored tmp/browser，CI 配置上传。`clean_install_smoke.rb --audit` 在空 GEM_HOME 外部 Bundler 完成完整 Rails host 行为与激活依赖审计；不再只加载入口。core 89/723、adapter 7/45、eager load、package/docs examples 通过。远程 CI、外部采用、provider 和完整辅助技术审核未运行。
