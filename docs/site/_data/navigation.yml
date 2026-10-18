@@ -10,3 +10,5 @@
     - reference
 - title: Releases
   url: https://github.com/yorzi/rails_tool_views/releases
+- title: Roadmap
+  url: https://github.com/yorzi/rails_tool_views/blob/main/ROADMAP.md

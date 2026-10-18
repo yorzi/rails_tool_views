@@ -53,3 +53,11 @@ Owner asked in this session for a full review and audit and for real problems to
 - Security: inspect gem/site manifests; exclude internal Specs, databases, credentials and tests; no API key added to GitHub. Temporary previews bind loopback and stop before completion.
 
 Release preflight update: owner confirms domain/public repository/MIT/private reports and completes RubyGems reauthentication. Explicit at-action confirmation authorizes creating the scoped OIDC publisher. Release audit found Rails 7.2.3 and Ruby 3.3 default-gem advisories; this work therefore also updates the 7.2 test target to 7.2.3.2 and requires patched CGI/ERB/Resolv/URI/Zlib. This is dependency hardening inside the existing runtime contract, not a feature or schema change. Audit activated isolated-install specs in addition to lockfiles.
+
+## WORK-20261018-05 — concise docs and a proposed 1.0 roadmap
+
+- Owner requests a shorter GitHub README, clear repo/site responsibilities and iterative planning from simple 0.2.0 features to 1.0.0. Documentation/planning only; no feature implementation or new gem publication. The request to update GitHub authorizes committing/pushing this documentation update.
+- Base `9f0bbd3`, clean tree. Read entrypoint, baseline, human status, implementation/current work, delta/maintenance, release evidence, upstream pinned roadmap, current controller/runtime/models/generator and contribution/site docs.
+- Current evidence: 0.1.0 already published; no component generator or retention API; HTML rejections render fragments; replay emits action.executed. These are observed code facts, not inferred missing features.
+- Classification: implementation-aligned docs corrections plus a PROPOSED roadmap. Proposed lifecycle/notification changes require scoped owner decisions and deltas before implementation; publishing the plan does not approve them. No external Specs edits.
+- Validate links, guide style/build and executable tutorial examples. No runtime suite needed for prose-only changes; do not change version, tag, dependencies, schema or published artifact. No temporary server required.

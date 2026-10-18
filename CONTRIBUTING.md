@@ -1,5 +1,26 @@
-# Contributing to the local draft
+# Contributing
 
-Start with AGENTS.md and docs/agent/00_ENTRYPOINT.md. Keep the single-component contract and RubyLLM-free core; V1 business services remain host-owned examples. Changes need a public-API reproduction, focused positive/negative tests, relevant acceptance rows and one Progress Ledger section plus Work-ID trailer per authored commit. Run bin/check and the relevant version matrix sequentially; do not label local results as remote CI or live-provider proof.
+Keep the core independent of RubyLLM. Host applications own their business services and permissions. Start coding work with [AGENTS.md](AGENTS.md) and the [agent entrypoint](docs/agent/00_ENTRYPOINT.md).
 
-Use main unless the owner asks for a branch. Do not push, merge, publish, contact maintainers or change license/name without authorization. This unpublished draft has no approved OSS license; external contribution and distribution terms must be settled before public release.
+## Develop
+
+```sh
+bundle install
+bin/check
+```
+
+Run database-backed suites sequentially because they share the dummy test database. Reproduce behavior through the public API, cover successful and rejected requests, and run the relevant [compatibility and package checks](docs/operations/02_RELEASE_CHECKLIST.md). Offline fixtures do not prove live-provider behavior.
+
+Each authored commit includes a Progress Ledger section and a matching `Work-ID:` trailer, as described in [the maintenance contract](docs/agent/07_DOCUMENTATION_MAINTENANCE.md). Use `main` unless the owner requests a branch. Pushes and releases require owner authorization; never contact other maintainers on the owner's behalf without it.
+
+## Write documentation
+
+README introduces the project and links to the guides. Write tutorials, options and API behavior in `docs/site/`; do not duplicate them in the README. See [documentation ownership and build commands](docs/README.md).
+
+Update the relevant guide in the same commit as a public API change. Record breaking changes in Upgrading and release changes in CHANGELOG. Maintain proposed work in [ROADMAP.md](ROADMAP.md), not as implemented features in the guides.
+
+## Report a problem
+
+Include Ruby, Rails and adapter versions, reproduction steps, and an anonymized example. Never include API keys, customer data or raw production payloads. Use [private vulnerability reporting](SECURITY.md) for security issues.
+
+Contributions use the project's [MIT license](LICENSE.txt).

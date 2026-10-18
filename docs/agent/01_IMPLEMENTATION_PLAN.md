@@ -1,4 +1,6 @@
-# v0 implementation map
+# Completed implementation map
+
+This file records completed implementation sequencing. Future version proposals live in [ROADMAP.md](../../ROADMAP.md); executable scope lives in [Current Work](02_CURRENT_WORK.md). Historical V1 below is a feature milestone, not public version 1.0.0.
 
 Purpose: reuse a trusted host Partial/ViewComponent as a persistent interactive tool. Actors and tenants are host-resolved opaque references; permissions deny by default. No account model or AI provider is required.
 
@@ -23,4 +25,4 @@ Promoted by explicit owner authorization after V0, without changing the external
 4. UC-04: host-owned immutable artifact versions, deterministic edit/accept/export, explicit regeneration, current domain-version guards and crash-safe host receipts.
 5. Full regression/SDK/matrix/package checks, separate-process durability, privacy and browser/mobile/restart/download evidence; update ADR/human/operations docs and local ledger-linked commit.
 
-Current acceptance is in 08_V1_ACCEPTANCE.md. UC-06..09 and external release/adoption work remain outside this completed implementation unit. The next action is Andy's manual inspection.
+Feature-milestone acceptance is in 08_V1_ACCEPTANCE.md. Version 0.1.0 publication is recorded in ../evidence/RELEASE_0_1_0.md; remaining adoption/formal gaps and the next unit are tracked in the current status and Current Work.

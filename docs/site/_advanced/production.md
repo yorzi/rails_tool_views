@@ -34,9 +34,9 @@ Keep translations under `rails_tool_views.errors`, `rails_tool_views.surface`, a
 
 ## Choose a Database and Integration
 
-SQLite and PostgreSQL have local verification records. MySQL is unverified. The bundled migration bounds every indexed identifier column to 150 bytes, so the five-column presentation index needs 3000 bytes, inside utf8mb4's 3072-byte limit. The runtime also bounds identifiers in bytes and matches stored identities byte for byte, so a case-insensitive collation cannot resolve another actor's or tenant's row. Run your own migration and concurrency checks on the actual deployment database.
+SQLite and PostgreSQL have local and release-CI verification records. MySQL is unverified. The bundled migration bounds every indexed identifier column to 150 bytes, so the five-column presentation index needs 3000 bytes, inside utf8mb4's 3072-byte limit. The runtime also bounds identifiers in bytes and matches stored identities byte for byte, so a case-insensitive collation cannot resolve another actor's or tenant's row. Run your own migration and concurrency checks on the actual deployment database.
 
-OddlyDock is a planned reference host, not a runtime dependency or a completed integration. There are no built-in ActionCable subscriptions, remote UI protocols, billing, or hosted services. RubyLLM remains optional. No public gem release or license grant is implied by these prerelease docs.
+Host examples and local integration work do not establish production adoption. OddlyDock is not a runtime dependency. There are no built-in ActionCable subscriptions, remote UI protocols, billing, or hosted services. RubyLLM remains optional. The gem is published under MIT; publication does not establish independent security review, live-provider qualification or external adoption.
 
 ## Next Steps
 

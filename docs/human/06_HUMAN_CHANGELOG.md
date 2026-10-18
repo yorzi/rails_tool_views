@@ -33,3 +33,9 @@ A full review of the gem found two real defects. The first is the biggest one be
 首次公开版本从 0.1.0 开始；原来的 0.2/0.3 只是内部候选标记。代码能力不变，分发方式变为 MIT gem、公开 GitHub 仓库及自定义域名 Pages。发布由匹配标签触发，通过兼容性、依赖安全、实际独立安装与文档检查后使用 GitHub OIDC 上传，随后刷新稳定版与 next 文档。私密安全报告通过 GitHub 接收。当前上传状态及未完成证据见 RELEASE_0_1_0；没有把发布授权当作正式 H2 或外部采用证明。
 
 发布结果：0.1.0 于 2026-10-18 发布，精确标签的全部 CI 与发布后 Pages 成功。稳定版/next、DNS/HTTPS、RubyGems/GitHub 校验和一致已核验。后续版本沿用此流程；开放证据边界不变。
+
+## 2026-10-18 — Documentation roles and the proposed road to 1.0
+
+README 只保留定位、安装、demo 和入口；使用细节由文档站统一维护，贡献/安全/变更/版本计划留在仓库 Markdown。修正 CONTRIBUTING 与 Production 中未发布/未选许可证的旧说法，压缩当前状态和任务清单，历史仍在 ledger/evidence 与 Git。
+
+新增 ROADMAP 提案：0.2 接入便利与错误页面，0.3 生命周期，0.4 恢复/诊断，1.0 RC 冻结契约、审查、外部试用与升级验证。未来功能尚未实现，内部历史 V1 不等于公开 1.0。架构和业务流程无变化。

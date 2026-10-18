@@ -61,3 +61,13 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Pages/domain/DNS, private security reporting and the scoped OIDC publisher configured and observed. No long-lived secret added.
 - [x] Operations, status, acceptance, delta, evidence and human changelog updated; architecture/runtime diagrams unchanged because behavior is unchanged.
 - [x] Exact-tag compatibility/PostgreSQL/package/advisory checks, gem publication, release assets, versioned hosted docs and HTTPS verified. WORK-20261018-04 records actual delivery in RELEASE_0_1_0.
+
+## WORK-20261018-05 — documentation and proposed roadmap
+
+- [x] README shortened from 90 to 34 lines; API/tutorial detail stays in the site. CONTRIBUTING and docs/README own developer commands and documentation responsibilities.
+- [x] ROADMAP is the single proposed version plan: bounded 0.2/0.3/0.4, rc1 and 1.0 conditions. Future commands/APIs are marked proposed; runtime and public gem stay 0.1.0.
+- [x] Stale release/license statements corrected in CONTRIBUTING and next Production guide. Site navigation links to GitHub ROADMAP without duplicating it. Stable docs remain the immutable tagged snapshot.
+- [x] 32 local Markdown links checked, zero broken; 15 guide pages with zero style errors/warnings; executable tutorial examples PASS; stable/next build and 2,152 generated links PASS.
+- [x] Whitespace check and staged ledger linkage required before commit. Runtime/adapter/database suites not rerun locally: no code, schema, dependency or API change.
+- [x] Current status/work shortened; completed history remains in ledger/evidence/Git. No external Specs edits or new approved product-intent delta. Architecture/runtime diagrams unchanged because behavior is unchanged.
+- [x] No migration or data/privacy/accessibility impact; no temporary server or background process started. Proposed security/lifecycle/telemetry work is not labelled implemented or approved.

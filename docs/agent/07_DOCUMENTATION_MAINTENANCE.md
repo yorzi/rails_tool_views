@@ -18,6 +18,10 @@ For a new repository's root commit, use `<root-sha>^!` as the range. An amend up
 
 Merge commits require an added section and trailer by default. An unchanged tree-only merge may use `Ledger-Exempt: topology-only` after human verification. An automated metadata-only commit may use `Ledger-Exempt: automation-metadata` only with explicit review confirming no authored change; the mechanical checker reports, but cannot semantically verify, such exemptions. Never exempt docs or a manual dependency upgrade.
 
+## Public documentation responsibilities
+
+README provides purpose, minimal installation, demo and navigation. `docs/site/` owns user tutorials and API behavior, including their generated Markdown copies. CONTRIBUTING, SECURITY and CHANGELOG own contribution instructions, disclosure and release changes. Root ROADMAP.md is the single maintained proposed version plan; link to it from the site instead of duplicating a roadmap guide. Mark future features as proposed and keep them out of delivered API examples. Internal status and Current Work summarize the present and next action; completed detail stays in the ledger/evidence.
+
 ## Keep a single owner for each fact
 
 | Fact | Canonical living location | Update trigger |

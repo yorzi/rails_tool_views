@@ -94,3 +94,7 @@ FR-08/NFR-03 分发与文档：首次公开版本 0.1.0，MIT、自定义域名 
 ### Verified release delivery — WORK-20261018-04
 
 FR-08/NFR-03 的精确发布证据：`v0.1.0` / `f2d4303` 的 [release run 39117821018](https://github.com/yorzi/rails_tool_views/actions/runs/39117821018) 全绿，三组 SQLite 与 PostgreSQL 各 89/723，adapter 7/45；包检查、lockfile/实际激活依赖审计、独立网络安装和 2,152 文档链接均通过。RubyGems 0.1.0 与 GitHub Release 附件/SHA256SUMS 一致。发布后的 Pages run 39118079958 全绿；稳定/next、API、llms、搜索、DNS 与强制 HTTPS 已验证。MIT、MFA/OIDC、私密安全报告属于已观察的配置/发布事实，不替代独立安全审核或正式产品门槛。完整证据见 RELEASE_0_1_0。
+
+## Documentation ownership and proposed roadmap — WORK-20261018-05
+
+FR-08 documentation: README now routes to canonical hosted tutorials/API; contribution/maintenance/roadmap material stays in the repository. Markdown links, 15-guide style check, executable examples and the stable/next build with 2,152 generated links pass. No runtime acceptance changes. ROADMAP's 0.2..1.0 exit conditions are proposals and cannot be counted as delivered functionality or completed baseline gates.

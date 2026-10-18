@@ -233,3 +233,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Impact / alignment:** 本 commit 只记录交付，不改包或 tag；无 API/schema/数据变更。MIT、MFA、OIDC 与私密安全报告已观察；未使用长期发布 key。正式 H2/C/R、独立安全审查、MySQL/provider 与外部采用仍开放。未启动临时服务，所有临时安装进程已完成。
 
 **Docs / next:** 更新 evidence、status、at-a-glance、feature map、human changelog、current work/post-flight、acceptance 和 operations。架构与运行序列无需改图。无剩余发布任务；后续按用户优先级处理。
+
+### WORK-20261018-05 — Simplify project docs and propose the road to 1.0
+
+**What / why:** Andy 要求精简 GitHub README、平衡仓库 Markdown 和 doc site，并安排简单的 0.2.0 功能与 1.0 前迭代。README 从 90 行缩为 34 行；使用说明归 doc site，贡献/安全/变更/计划归各自 Markdown。修正 CONTRIBUTING 与 next Production 中未发布/无许可证的陈旧说法；当前状态和任务不再堆积已完成历史。FR-08 文档维护，无运行时修改。
+
+**Plan / human review:** ROADMAP 是唯一版本计划：0.2 组件生成器/完整 HTML 错误反馈，0.3 生命周期/保留，0.4 续接恢复/诊断，rc1 冻结契约和升级/外部验证，再满足条件发布 1.0。对照当前缺口审阅每版 scope、done/stop 条件与 1.0 兼容/安全/接入证据；不要把提案当作已实现或已批准的新契约。新增导航链接，不复制一套站内路线图。
+
+**Validation:** 32 个仓库 Markdown 本地链接，零断链；15 篇指南检查零错误/警告；可执行文档示例通过；stable/next 构建成功，2,152 生成链接零断链，内部记录未进入站点。`git diff --check` 通过；提交前 staged linkage，提交后 range linkage。未本地重跑 runtime/adapter/数据库套件，原因是仅 prose/navigation 变化；现有 CI 会按提交运行。
+
+**Impact / alignment:** gem 仍为 0.1.0，未改依赖/API/schema/数据或发布新 gem。原 Specs 的 pinned roadmap/launch 两文件已比对；没有改外部 Specs，也没有把生命周期/通知/新适配器决策视为批准。当前状态和计划的角色变化写入 human changelog 与 maintenance；架构/流程不变，无需改图。没有启动临时服务。
+
+**Next:** 提交推送本次 GitHub 文档更新并核验。开发下一单元前先走一次独立 host 接入，建议优先组件生成器；本次不开始 0.2 实现。稳定站点保留 v0.1.0 快照，main 文档更新在 next。
