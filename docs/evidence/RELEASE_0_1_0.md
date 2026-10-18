@@ -41,7 +41,7 @@ The old Rails 7.2 test bundle pinned 7.2.3 and matched upstream Rails advisories
 
 ## Delivery verification
 
-Exact-commit remote CI, RubyGems upload, GitHub Release assets, stable/next Pages deployment and HTTPS enforcement are verified separately below when completed. No publication success is inferred from local checks.
+Actual delivery is verified below. Publication success comes from RubyGems, the release workflow and downloaded artifacts, not from local checks.
 
 ## Remaining evidence gaps
 
@@ -52,3 +52,26 @@ No live AI provider call or external customer contact. No real MySQL migration, 
 [CI 39117565282](https://github.com/yorzi/rails_tool_views/actions/runs/39117565282) passed Ruby 3.3 / Rails 8.1 and 7.2, optional adapter and PostgreSQL. Ruby 4 failed **before tests**: its local default CGI 0.5.2 had left an empty CHECKSUMS entry; Linux's frozen bundle install requires the registry checksum. WORK-20261018-03 regenerates it with `bundle lock --add-checksums`; no version or runtime code changes. Frozen Ruby 4 local dependency verification passes.
 
 [Docs 39117565347](https://github.com/yorzi/rails_tool_views/actions/runs/39117565347) built and deployed successfully. The custom domain serves HTTP 200. HTTPS certificate issuance is still pending, so HTTPS is not claimed yet and no certificate-validation bypass is used.
+
+### Successful publication — WORK-20261018-04
+
+- Candidate/tag commit: `f2d4303224f7a1bb07e793d930c67a6d0712358a`; annotated tag `v0.1.0`. No published tag was moved.
+- [Main CI 39117732144](https://github.com/yorzi/rails_tool_views/actions/runs/39117732144) and [Docs 39117732147](https://github.com/yorzi/rails_tool_views/actions/runs/39117732147): SUCCESS.
+- [Release 39117821018](https://github.com/yorzi/rails_tool_views/actions/runs/39117821018): SUCCESS. Three SQLite combinations and PostgreSQL each ran 89 tests / 723 assertions; optional adapter ran 7 / 45. Exact-tag package inspection, six lockfile audits, isolated install/activated dependency audit and versioned docs all passed. The double build checked 2,152 links, zero broken.
+- [RubyGems 0.1.0](https://rubygems.org/gems/rails_tool_views/versions/0.1.0): version, MIT, source/docs URLs, MFA-required and MFA-published confirmed. Its UI identifies GitHub Actions `yorzi/rails_tool_views @ .github/workflows/release.yml (release)` as publisher. No long-lived key used.
+- [GitHub Release](https://github.com/yorzi/rails_tool_views/releases/tag/v0.1.0): published 2026-10-18 18:08:25 Asia/Shanghai, with gem and SHA256SUMS.
+- RubyGems API checksum, downloaded registry gem, downloaded GitHub gem and SHA256SUMS all agree:
+
+```text
+85e3a516cc20700969edbf474d90e9e20c322334d942735882eabc699d95b166
+```
+
+The separate CI verification artifact has SHA-256 `33fab2b131e43baf55d736f7b67854eb29d6a56a39f6fee6b05b9bfb2d1b5a22`. Its tar timestamps are `1792317933`; the publication rebuild's are `1792318061`. All 25 extracted files match byte for byte, and gemspec YAML, dependency requirements, author/license/version/URL contracts match. The release asset and registry artifact are byte-identical; no cross-job reproducible-binary claim is made.
+
+- [Post-release Docs 39118079958](https://github.com/yorzi/rails_tool_views/actions/runs/39118079958): SUCCESS, triggered by successful Release Gem completion.
+- HTTPS 200 confirmed for `/`, `/getting-started/`, `/next/`, `/next/getting-started/`, `/api/`, `/api/RailsToolViews.md`, `/llms.txt`, `/llms-full.txt`, `/next/llms.txt` and `/sitemap.xml`. Stable shows `0.1.0 (stable)` and the version install command; next uses `--git ... --branch main`.
+- Browser confirmed search results for `idempotency` and navigation from the version menu to Next and back. The homepage renders without an error.
+- Pages API: `cname=rails-tool-views.wangyaodi.com`, `build_type=workflow`, `https_enforced=true`. HTTP returns 301 to HTTPS; certificate verification succeeds. Private vulnerability reporting API returns `enabled=true`.
+- No temporary server, watcher, tunnel or background service was started. Isolated installer processes finished and their temporary directories were removed.
+
+Open formal/security/provider/MySQL/adoption gaps above remain open after release.

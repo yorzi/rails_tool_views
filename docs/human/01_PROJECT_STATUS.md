@@ -1,6 +1,6 @@
 # 项目状态
 
-2026-10-18：**RELEASE_0_1_0_PREPARED / PUBLIC_REPOSITORY / PUBLICATION_IN_PROGRESS**。Andy 明确要求首次发布 `0.1.0`，选定 `rails-tool-views.wangyaodi.com`、MIT 和 GitHub 私密安全报告（WORK-20261018-02 / DELTA-005）。版本、文档、OIDC 发布工作流和 DNS 已准备。此前 `0.2/0.3` 为未公开开发候选。依赖审计发现的 Rails 7.2 与 Ruby 默认 gem 问题已通过修补版本约束解决；本地三组兼容性与适配器、打包主应用和文档验证通过。上传、精确提交的远端 CI、稳定/next 文档和 HTTPS 以 [发布证据](../evidence/RELEASE_0_1_0.md) 为准；下文是历史记录，不再代表当前发布授权。
+2026-10-18：**RELEASED_0_1_0 / PUSHED_PUBLIC / DOCS_LIVE_HTTPS**。`rails_tool_views` 0.1.0 已发布到 [RubyGems](https://rubygems.org/gems/rails_tool_views/versions/0.1.0)，tag `v0.1.0` 指向 `f2d4303`。[文档](https://rails-tool-views.wangyaodi.com) 由 GitHub Pages 托管，稳定版在根路径，main 在 `/next/`，DNS 和强制 HTTPS 已核验。MIT、GitHub 私密安全报告与精确限定的 OIDC 发布已落实。正式标签的完整兼容性、PostgreSQL、依赖安全、安装及文档检查通过；发布包和 GitHub 附件校验和一致。完整证据见 [RELEASE_0_1_0](../evidence/RELEASE_0_1_0.md)（WORK-20261018-02/03/04，DELTA-005）。独立安全审查、MySQL、真实 provider、外部采用和正式 H2/C/R 仍开放；没有把发布成功当作这些门槛的证明。下文是历史记录。
 
 2026-10-18：**SINGLE_IDENTITY_LOCAL_VERIFIED / COMMITTED_LOCAL / UNPUSHED / GEM_UNPUBLISHED**。Andy 选择保留 gem 名 `rails_tool_views`，并在首次发布前去掉全部 `ToolViews` 旧标识（WORK-20261018-01，ADR 006，DELTA-004）。版本改为 0.3.0.pre.v3：删除 `ToolViews` 常量、`toolviews`/`tool_views` 入口、`tool_views:install` 和 `tool_views_*` helper；表、索引、I18n、通知、DOM/CSS/Stimulus 和续接 delivery key 统一改为 `rails_tool_views` 前缀。组件契约、Surface ID、revision 与回放语义不变。0.2 主应用的升级步骤（一个可回滚的改表迁移）写在 Upgrading 指南，已在 OddlyDock 开发库实际执行。验证见 `../evidence/IDENTITY_V3_VALIDATION.md`。
 

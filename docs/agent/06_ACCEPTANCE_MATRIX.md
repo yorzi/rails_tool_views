@@ -90,3 +90,7 @@ SEC-04, SEC-07, SEC-08, SEC-18 and NFR-02/03 gain executable coverage: the suite
 ## First public release — WORK-20261018-02
 
 FR-08/NFR-03 分发与文档：首次公开版本 0.1.0，MIT、自定义域名 GitHub Pages、私密安全报告及 GitHub OIDC 标签发布流程。三组本地核心套件各 89/723、适配器 7/45、打包主应用、文档与六份 lockfile 安全审计通过。Rails 7.2 样例更新到 7.2.3.2，并显式约束五个易被旧 Ruby 默认版本满足的运行时依赖。精确提交的远端验证、实际发布和 HTTPS 见 `../evidence/RELEASE_0_1_0.md`；先前 NOT_RUN 的历史行不替代本次证据，开放的 MySQL/provider/adoption/H2 等边界不变。
+
+### Verified release delivery — WORK-20261018-04
+
+FR-08/NFR-03 的精确发布证据：`v0.1.0` / `f2d4303` 的 [release run 39117821018](https://github.com/yorzi/rails_tool_views/actions/runs/39117821018) 全绿，三组 SQLite 与 PostgreSQL 各 89/723，adapter 7/45；包检查、lockfile/实际激活依赖审计、独立网络安装和 2,152 文档链接均通过。RubyGems 0.1.0 与 GitHub Release 附件/SHA256SUMS 一致。发布后的 Pages run 39118079958 全绿；稳定/next、API、llms、搜索、DNS 与强制 HTTPS 已验证。MIT、MFA/OIDC、私密安全报告属于已观察的配置/发布事实，不替代独立安全审核或正式产品门槛。完整证据见 RELEASE_0_1_0。

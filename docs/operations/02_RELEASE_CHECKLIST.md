@@ -2,6 +2,8 @@
 
 The owner authorized the first public `rails_tool_views` release as **0.1.0** on 2026-10-18, including commit/push/tag, GitHub Pages and DNS. The owner selected MIT and GitHub private vulnerability reporting. This replaces the historical no-publication scope; it does not invent H2/C/R, independent security review, external adoption or live-provider results. See DELTA-005 and [release evidence](../evidence/RELEASE_0_1_0.md).
 
+0.1.0 publication, checksum comparison and stable/next HTTPS deployment are complete. The release tag is `v0.1.0` at `f2d4303`; see the evidence above before changing a release.
+
 ## One-time setup
 
 - Public repository: `yorzi/rails_tool_views`; keep private vulnerability reporting enabled.

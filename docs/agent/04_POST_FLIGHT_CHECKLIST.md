@@ -60,4 +60,4 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Six dependency lock audits and a clean network-resolved installation plus activated/default-gem audit pass. Security findings repaired by patched dependency floors and Rails 7.2.3.2 test target.
 - [x] Pages/domain/DNS, private security reporting and the scoped OIDC publisher configured and observed. No long-lived secret added.
 - [x] Operations, status, acceptance, delta, evidence and human changelog updated; architecture/runtime diagrams unchanged because behavior is unchanged.
-- [ ] Exact-commit remote checks, gem publication, release assets, versioned hosted docs and HTTPS verification follow the candidate commit. Evidence must be updated after actual delivery.
+- [x] Exact-tag compatibility/PostgreSQL/package/advisory checks, gem publication, release assets, versioned hosted docs and HTTPS verified. WORK-20261018-04 records actual delivery in RELEASE_0_1_0.

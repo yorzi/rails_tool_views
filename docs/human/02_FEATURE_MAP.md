@@ -5,11 +5,11 @@
 | FR-01 Registry/schema | IMPLEMENTED | lib/rails_tool_views/core.rb |
 | FR-02 present/render | IMPLEMENTED | runtime.rb、SurfacesHelper |
 | FR-03 可选工具 | IMPLEMENTED；仅离线 provider 夹具 | adapters/ruby_llm.rb |
-| FR-04 持久化/恢复 | IMPLEMENTED；SQLite | Surface、Presentation |
+| FR-04 持久化/恢复 | IMPLEMENTED；SQLite 与 PostgreSQL 通过本地/CI 验证 | Surface、Presentation |
 | FR-05 授权动作 | IMPLEMENTED | dispatch、ActionExecution |
 | FR-06 Agent 后续交互 | IMPLEMENTED；远端去重由 host 提供 | AgentInteraction、deliver、Continuation |
 | FR-07 Rails UI | IMPLEMENTED；JSON/Turbo，无 ActionCable | SurfacesController、Stimulus factory |
-| FR-08 安装/文档 | 本地实现完成；公共发布门槛待审 | installer、test/dummy、README |
+| FR-08 安装/文档 | 0.1.0 已发布，GitHub Pages 文档已上线；外部采用与正式验收证据仍开放 | installer、test/dummy、README、release.yml、docs/site |
 
 v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 

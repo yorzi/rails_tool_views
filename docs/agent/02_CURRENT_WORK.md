@@ -71,5 +71,7 @@ Owner requests `0.1.0`, hosted gem guides on GitHub Pages, DNS configuration and
 - [x] Align version, release docs, license, gem metadata and security disclosure.
 - [x] Validate core/adapter/matrix, packaged host, clean dependency installation, docs and package boundaries.
 - [x] Configure Pages/domain/DNS and RubyGems Trusted Publisher.
-- [ ] Commit with ledger, push, verify exact-candidate remote checks, then tag/release.
-- [ ] Verify RubyGems artifact, GitHub Release assets, stable/next docs and HTTPS; record outcome and stop previews.
+- [x] Commit with ledger, push, verify exact-candidate remote checks, then tag/release.
+- [x] Verify RubyGems artifact, GitHub Release assets, stable/next docs and HTTPS; record outcome. No preview service started.
+
+Delivery: 0.1.0 is published under `v0.1.0` at `f2d4303`. Release run 39117821018 and post-release Pages run 39118079958 succeeded. Registry/release gem checksums agree; stable/next, search, API, llms and enforced HTTPS verified. WORK-20261018-03 fixes the initial candidate's missing checksum; WORK-20261018-04 records actual delivery. See `../evidence/RELEASE_0_1_0.md`. No speculative adjacent work is active.

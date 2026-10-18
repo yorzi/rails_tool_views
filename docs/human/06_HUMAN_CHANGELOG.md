@@ -31,3 +31,5 @@ A full review of the gem found two real defects. The first is the biggest one be
 ## 2026-10-18 — First public release path
 
 首次公开版本从 0.1.0 开始；原来的 0.2/0.3 只是内部候选标记。代码能力不变，分发方式变为 MIT gem、公开 GitHub 仓库及自定义域名 Pages。发布由匹配标签触发，通过兼容性、依赖安全、实际独立安装与文档检查后使用 GitHub OIDC 上传，随后刷新稳定版与 next 文档。私密安全报告通过 GitHub 接收。当前上传状态及未完成证据见 RELEASE_0_1_0；没有把发布授权当作正式 H2 或外部采用证明。
+
+发布结果：0.1.0 于 2026-10-18 发布，精确标签的全部 CI 与发布后 Pages 成功。稳定版/next、DNS/HTTPS、RubyGems/GitHub 校验和一致已核验。后续版本沿用此流程；开放证据边界不变。

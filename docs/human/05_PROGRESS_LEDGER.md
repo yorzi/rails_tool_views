@@ -221,3 +221,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Review / validation:** diff 仅增加 CGI 0.5.2 checksum；本地 Ruby 4 frozen `bundle check` 通过。前一候选其它四组 CI 和 Docs 部署成功；修补候选需重新通过远端 CI 后才打标签。详见 RELEASE_0_1_0。
 
 **Impact / docs / alignment:** 无运行时代码、API/schema/数据变化，保持冻结与校验和检查。更新发布证据与本 ledger；架构和用户文档无需变化。下一步：验证本提交的完整 CI，随后发布并检查证书。
+
+### WORK-20261018-04 — Record verified 0.1.0 publication
+
+**What / why:** 完成 Andy 已授权的正式交付：`v0.1.0` / `f2d4303` 通过 OIDC 发布到 RubyGems，GitHub Release 带 gem 与 SHA256SUMS；Pages 稳定版与 next 上线，指定 DNS 与强制 HTTPS 生效。更新真实当前状态，FR-08/NFR-03，DELTA-005。
+
+**Human review:** 打开 https://rails-tool-views.wangyaodi.com，检查版本菜单与安装命令，搜索 idempotency；打开 RubyGems 0.1.0 和 GitHub Release，比对 SHA256SUMS。后续发布操作见 operations/02_RELEASE_CHECKLIST。
+
+**Validation:** 精确标签 release run 39117821018 全绿：三组 SQLite 与 PostgreSQL 各 89 tests / 723 assertions；adapter 7/45；metadata/package、六份 lockfile 与实际激活依赖安全审计、独立网络安装、稳定/next 构建及 2,152 链接通过。post-release Pages run 39118079958 全绿，10 个 HTTPS 入口返回 200；浏览器搜索/版本切换与首页已检验。RubyGems API、registry 下载、Release 附件与 SHA256SUMS 均为 `85e3a516cc20700969edbf474d90e9e20c322334d942735882eabc699d95b166`。与前置验证 artifact 的 25 个文件及 gemspec 一致，tar 时间戳不同，不声称跨 job 二进制可重现。
+
+**Impact / alignment:** 本 commit 只记录交付，不改包或 tag；无 API/schema/数据变更。MIT、MFA、OIDC 与私密安全报告已观察；未使用长期发布 key。正式 H2/C/R、独立安全审查、MySQL/provider 与外部采用仍开放。未启动临时服务，所有临时安装进程已完成。
+
+**Docs / next:** 更新 evidence、status、at-a-glance、feature map、human changelog、current work/post-flight、acceptance 和 operations。架构与运行序列无需改图。无剩余发布任务；后续按用户优先级处理。

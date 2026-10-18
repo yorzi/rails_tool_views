@@ -1,6 +1,6 @@
 # Local/host operations
 
-Owner: Andy Wang. This is a Rails gem; no hosted service, production deploy, worker or backup service has been configured by this task.
+Owner: Andy Wang. This is a Rails gem; applications run it inside their own Rails host. Version 0.1.0 is on RubyGems, and static documentation is hosted on GitHub Pages at https://rails-tool-views.wangyaodi.com. No hosted application, worker or backup service is provided by this repository. See 02_RELEASE_CHECKLIST.md for gem/docs deployment and recovery.
 
 Run local demo with bin/demo; it binds 127.0.0.1:3100. Stop with Ctrl-C. PORT can change the port but not the loopback binding. Tests use storage/test.sqlite3; the demo uses storage/development.sqlite3. Both are ignored. To run either on PostgreSQL, set `BUNDLE_GEMFILE=gemfiles/postgres.gemfile` and a `DATABASE_URL` for an existing database. Never use the dummy session identity in production.
 
@@ -30,9 +30,9 @@ V1's accepted text download checks role/tenant again and uses the exact persiste
 
 Before uninstall, back up/export using the host's approved procedure, remove mounts/helpers/jobs/adapter code, then remove the gem. Drop namespaced tables only after an explicit owner-approved retention decision. The gem does not silently delete data or manage credentials/backups.
 
-## Single identity upgrade (0.3.0.pre.v3)
+## Upgrade an unpublished development host to 0.1.0
 
-0.3 removes the `ToolViews` aliases that 0.1/0.2 carried before any release (ADR 006). A 0.2 host: drain pending/failed agent continuations (delivery keys change to `rails_tool_views:interaction:<id>`), back up, then run one host migration that renames the custom indexes and the four tables from `tool_views_*` to `rails_tool_views_*` (snippet in the Upgrading guide). Rename helpers, I18n keys, notification subscribers, the Stimulus registration/asset and CSS selectors; mount as `:rails_tool_views`. Do not rerun the installer. Reload pages rendered before the deploy, because Surface DOM ids change. Rollback: restore the 0.2 gem and reverse the migration (`rename_table`/`rename_index` are reversible) before any 0.3-only writes depend on new names.
+The first public release includes the identity change prepared in unpublished candidate 0.3.0.pre.v3 (ADR 006). For a host using an earlier 0.2 prerelease: drain pending/failed agent continuations (delivery keys change to `rails_tool_views:interaction:<id>`), back up, then run one host migration that renames the custom indexes and the four tables from `tool_views_*` to `rails_tool_views_*` (snippet in the Upgrading guide). Rename helpers, I18n keys, notification subscribers, the Stimulus registration/asset and CSS selectors; mount as `:rails_tool_views`. Do not rerun the installer. Reload pages rendered before the deploy, because Surface DOM ids change. Rollback: restore the unpublished 0.2 checkout and reverse the migration (`rename_table`/`rename_index` are reversible) before host code depends on the new names.
 
 ## Bounded identifiers (audit hardening, 2026-10-17)
 
