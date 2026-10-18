@@ -213,3 +213,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Risk / data / security:** 无 API/schema/业务数据迁移。修复发布依赖隐患：Rails 7.2 测试补丁及 CGI/ERB/Resolv/URI/Zlib 下限；25 个 gem 文件排除内部记录、数据库与凭证。DNS 仅新增指定子域名，发布凭证由 OIDC 临时取得。无 provider 调用或临时服务。开放的独立安全审查、MySQL、真实 provider、外部采用与正式 H2/C/R 未被改为 PASS。
 
 **Docs / alignment / next:** 更新 README、用户指南、release checklist、baseline 授权补充、delta、acceptance、status、human changelog 与 evidence；架构/运行序列不变。下一步：推送候选并验证其远端 CI，推送匹配标签、核验 RubyGems 与 stable/next Pages、HTTPS，然后记录实际交付结果。
+
+### WORK-20261018-03 — Complete Ruby 4 registry checksum
+
+**What / why:** 0.1.0 候选 4f2d6fc 的 Linux Ruby 4 在冻结安装阶段失败：macOS Ruby 4 的默认 CGI 0.5.2 留下空 CHECKSUMS，Linux 需要远端校验和。用 `bundle lock --add-checksums` 从 RubyGems 再生成唯一缺失的 SHA-256；没有更改依赖版本。FR-08/NFR-03 发布兼容性修复。
+
+**Review / validation:** diff 仅增加 CGI 0.5.2 checksum；本地 Ruby 4 frozen `bundle check` 通过。前一候选其它四组 CI 和 Docs 部署成功；修补候选需重新通过远端 CI 后才打标签。详见 RELEASE_0_1_0。
+
+**Impact / docs / alignment:** 无运行时代码、API/schema/数据变化，保持冻结与校验和检查。更新发布证据与本 ledger；架构和用户文档无需变化。下一步：验证本提交的完整 CI，随后发布并检查证书。

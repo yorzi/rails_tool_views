@@ -46,3 +46,9 @@ Exact-commit remote CI, RubyGems upload, GitHub Release assets, stable/next Page
 ## Remaining evidence gaps
 
 No live AI provider call or external customer contact. No real MySQL migration, independent security review, external setup/adoption trial or formal H2/C/R was completed by this work. The published package and documentation must retain those limits. No temporary preview service was started.
+
+### Candidate 4f2d6fc: remote feedback
+
+[CI 39117565282](https://github.com/yorzi/rails_tool_views/actions/runs/39117565282) passed Ruby 3.3 / Rails 8.1 and 7.2, optional adapter and PostgreSQL. Ruby 4 failed **before tests**: its local default CGI 0.5.2 had left an empty CHECKSUMS entry; Linux's frozen bundle install requires the registry checksum. WORK-20261018-03 regenerates it with `bundle lock --add-checksums`; no version or runtime code changes. Frozen Ruby 4 local dependency verification passes.
+
+[Docs 39117565347](https://github.com/yorzi/rails_tool_views/actions/runs/39117565347) built and deployed successfully. The custom domain serves HTTP 200. HTTPS certificate issuance is still pending, so HTTPS is not claimed yet and no certificate-validation bypass is used.
