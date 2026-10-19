@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**0.3 release preparation, 2026-10-19.** Versions 0.1.0 and 0.2.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner now authorizes 0.3 candidate push, remote CI and publication after local acceptance. Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**0.3.0 published, 2026-10-19.** Versions 0.1.0, 0.2.0 and 0.3.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner-authorized 0.3 push, exact remote CI, publication and hosted verification are complete. Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -8,7 +8,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 0.1.0 already provides schemas, Partial/ViewComponent rendering, persistent Surfaces, authorized transactional actions, revision/replay protection, form validation and optional RubyLLM continuation. SQLite/PostgreSQL release CI, guides and gem publication are verified.
 
-0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). The 0.3 working tree adds authorized lifecycle and opt-in payload cleanup, with completed [local acceptance](docs/evidence/V0_3_VALIDATION.md); remote CI and publication remain separate. Remaining gaps include persistent status notices, indistinguishable replay telemetry and resolution of historically uncertain deliveries. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
+0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). 0.3 adds authorized lifecycle and opt-in payload cleanup, with completed [local acceptance](docs/evidence/V0_3_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_3_0.md). Remaining gaps include persistent status notices, indistinguishable replay telemetry and resolution of historically uncertain deliveries. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
 
 ## Version sequence
 
@@ -20,7 +20,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 | 1.0.0.rc1 | Frozen contract | Upgrade, independent review and setup trials | All 1.0 conditions below are evidenced |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 0.2.0; future publication needs separate authorization.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 0.3.0; future publication needs separate authorization.
 
 ## 0.2.0: two small improvements
 
@@ -37,9 +37,9 @@ Use the existing `test/dummy` as the maintained demo/test host. Verify installat
 
 ## 0.3.0: lifecycle before deletion
 
-The local implementation follows ADR 008: explicit close/abandon, first-termination retention deadline, closed reads and authorized historical replay. No automatic expiry or reopening.
+The published implementation follows ADR 008: explicit close/abandon, first-termination retention deadline, closed reads and authorized historical replay. No automatic expiry or reopening.
 
-The local `purge_closed` implementation uses explicit scope/cutoff, dry-run counts and bounded batches. Never prune retryable receipts independently. Pending and retryable failed work requires explicit abandonment; delivering or historically uncertain interactions always remain protected. Surface/Presentation tombstones preserve correlation guards; this is payload cleanup rather than full erasure. No automatic deletion on installation or by default.
+The published `purge_closed` implementation uses explicit scope/cutoff, dry-run counts and bounded batches. Never prune retryable receipts independently. Pending and retryable failed work requires explicit abandonment; delivering or historically uncertain interactions always remain protected. Surface/Presentation tombstones preserve correlation guards; this is payload cleanup rather than full erasure. No automatic deletion on installation or by default.
 
 **Done when:** dry run makes no writes; cross-tenant, concurrent action/delivery, crash/retry and upgrade checks pass; host business records survive. Document recovery/backup limits. If a safe retention boundary is unresolved, leave cleanup disabled and resolve it before 1.0.
 
@@ -62,7 +62,7 @@ The local `purge_closed` implementation uses explicit scope/cutoff, dry-run coun
 
 At rc1, freeze features and prefer fixes. Observe the non-dummy host for at least two weeks, including normal use, restart and recovery; elapsed time alone is not acceptance. A contract change needs another candidate and affected checks.
 
-Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish 0.2.0 does not authorize future releases.
+Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish 0.3.0 does not authorize future releases.
 
 ## Outside 1.0
 

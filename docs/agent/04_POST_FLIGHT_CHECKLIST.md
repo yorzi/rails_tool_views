@@ -147,3 +147,11 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] date/released/version/history/What's New/upgrading与授权/operations同步，runtime冻结，59 Specs不变。
 - [x] actual package host/generated1/2、正式package gate、guide code、19-guide lint/build/2,571links PASS。
 - [x] staging/commit linkage与whitespace检查；remote CI/tag/registry/Pages实际结果留WORK-05。无本地服务，架构不变。
+
+## WORK-20261019-05 — verified 0.3 delivery
+
+- [x] main/tag/Release成功，三组114/988、PG116/1000、adapter7/45、Chrome5/40；真实upgrade/installed/isolated与七份锁/activated audit及2,692links通过。
+- [x] registry API/direct/client/Release/checksum同SHA，35files相同，gemspec契约一致；MFA/限定publisher公开页核验。
+- [x] Release非draft/prerelease；post-release Pages成功，stable0.3/next安装/搜索/导航/16 HTTPS入口与canonical/重定向确认。
+- [x] status/map/at-a-glance/roadmap/operations/acceptance/ledger/evidence/current work同步；无runtime/API/schema/依赖/通知/权限/DNS变化，Specs不改，架构不变无需重画图。
+- [x] 临时浏览器页已关闭，无本地server；workflow watchers结束，临时extract目录清理。最终交付记录的CI/Docs在提交推送后核验。

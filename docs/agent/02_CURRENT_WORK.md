@@ -1,8 +1,8 @@
 # Current work
 
-## Owner-authorized 0.3.0 release
+## Completed 0.3.0 delivery
 
-- [ ] WORK-20261019-04: release metadata/docs, actual package checks, commit/push, exact remote CI then annotated tag/OIDC publication.
-- [ ] WORK-20261019-05: verify registry/Release artifact hashes and hosted stable/next docs; record actual delivery, commit/push and check final CI.
+- [x] WORK-20261019-04: release metadata/docs, actual package checks, commit/push, exact remote CI then annotated tag/OIDC publication.
+- [x] WORK-20261019-05: registry/Release/client hashes and hosted stable/next verified; actual delivery recorded and submitted.
 
-0.3 local acceptance is complete in ../evidence/V0_3_VALIDATION.md. Publication is now explicitly authorized; do not label it complete before verification. No automatic 0.4 work or provider calls; external adoption/MySQL/independent security/formal gates remain open.
+Public version is 0.3.0 at immutable d12996e; see ../evidence/RELEASE_0_3_0.md. Final delivery-record commit CI/Docs is verified after pushing and reported in the final handoff. No remaining publication operation. Future work follows owner priority; no automatic 0.4/provider/notification work. External adoption/MySQL/independent security/formal gates remain open.

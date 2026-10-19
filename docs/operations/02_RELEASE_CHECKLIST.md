@@ -6,7 +6,7 @@ The owner authorized the first public `rails_tool_views` release as **0.1.0** on
 
 Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; 0.2.0 delivery is complete; [actual evidence](../evidence/RELEASE_0_2_0.md) records the exact commit, runs and checksum. The v0.1.0 tag remains immutable.
 
-Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. WORK-20261019-04 prepares the frozen candidate, then WORK-05 records observed delivery. Prior tags remain immutable.
+Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. 0.3 delivery is verified; [actual evidence](../evidence/RELEASE_0_3_0.md) records the immutable tag, remote runs, published checksums and hosted checks. Prior tags remain immutable.
 
 ## One-time setup
 
@@ -65,7 +65,7 @@ Do not move or reuse a tag after a successful RubyGems upload. If checks fail be
 - Post-release Docs workflow succeeds; stable home/Getting Started name the new release, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
 - Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
 
-## Evidence limits retained after 0.2.0
+## Evidence limits retained after 0.3.0
 
 Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit release instruction is recorded separately.
 

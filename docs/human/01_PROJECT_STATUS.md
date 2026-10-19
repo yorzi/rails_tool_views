@@ -1,25 +1,25 @@
 # 项目状态
 
-2026-10-19：**0.2.0 保持已发布；owner 已授权推进 0.3.0 推送、远端验证与发布。**
+2026-10-19：**0.3.0 已发布，RubyGems、GitHub Release、精确标签 CI 与稳定文档已核验。**
 
 ## 已交付
 
-- [RubyGems 0.2.0](https://rubygems.org/gems/rails_tool_views/versions/0.2.0)，[GitHub Release](https://github.com/yorzi/rails_tool_views/releases/tag/v0.2.0)；tag 指向 `3156fd3`，MIT、MFA、现有 GitHub OIDC。
-- 新增安全 Partial 生成器、完整无 Turbo HTML 纠错与安全返回。已有 schema/Surface/授权事务/回放/可选 RubyLLM 能力保持；无 migration 或新 runtime dependency。
-- 精确标签远端：三个 Ruby/Rails 与 PostgreSQL 各 97/837、adapter 7/45、Chrome 4/28；实际安装、生成测试、依赖审计与 2,450 文档链接通过。
-- [文档站](https://rails-tool-views.wangyaodi.com) 稳定版 0.2.0，next 跟随 main；搜索、版本切换、15 个 HTTPS 入口与实际客户端 gem 下载验证通过。
+- [RubyGems 0.3.0](https://rubygems.org/gems/rails_tool_views/versions/0.3.0)、[GitHub Release](https://github.com/yorzi/rails_tool_views/releases/tag/v0.3.0)，tag 指向 `d12996e`。MIT、MFA 与既有 OIDC 发布。
+- close/abandon、scoped retention preview/apply、关联 tombstone 与不确定投递保护。需要加法迁移、停止旧 writers 与备份；业务表不删，nil 保留无限期。
+- 精确标签三组 SQLite 各114/988，PG116/1000，adapter7/45，Chrome5/40；真实0.2数据升级、实际包/隔离安装/审计与2,692文档链接通过。
+- [文档站](https://rails-tool-views.wangyaodi.com)稳定0.3/next，16个HTTPS入口、安装指令/搜索/版本切换已验证；registry/API/client/Release四方SHA一致。
 
-完整记录：[发布证据](../evidence/RELEASE_0_2_0.md)；[本地实现验收](../evidence/V0_2_VALIDATION.md)。历史版本保持不可变，不把旧内部 V1 名称当成公共 1.0。
+详见[发布证据](../evidence/RELEASE_0_3_0.md)与[本地候选验证](../evidence/V0_3_VALIDATION.md)。旧标签和发布保持不可变。
 
 ## 当前工作与下一步
 
-0.3 本地候选已完成：close/abandon、加法迁移、scoped retention preview/apply、correlation tombstone 和不确定投递保护。三个 SQLite 组合各 114/988，PostgreSQL 116/1000（含真实锁竞争），adapter 7/45，Chrome 5/40、三个旧数据升级/实际包 host、隔离网络安装/审计和文档通过。详见 [0.3 验证](../evidence/V0_3_VALIDATION.md)。正准备发布标记与文档，随后推送并等待精确候选 CI，再经既有 OIDC 发布并核验；未提前声明发布完成。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+完成 owner 授权的0.3推送/远端CI/发布。最终交付记录提交后的CI/Docs在提交后核验；没有剩余gem上传或DNS工作。执行状态见[Current Work](../agent/02_CURRENT_WORK.md)。0.4恢复/诊断仍在路线图，不自动开始。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
-| 数据生命周期 | close/abandon 与清理本地候选通过。旧租约不确定投递受持久保护，不能据时间强删；恢复方案留 0.4 |
+| 数据生命周期 | close/abandon 与清理已发布。旧租约不确定投递受持久保护，不能据时间强删；恢复方案留 0.4 |
 | 运行反馈与遥测 | state message 会持久化，回放仍发 action.executed；拟在 0.4 处理，新通知契约需 owner 决定 |
 | 实际采用 | 缺少外部开发者试验和实测定制实现对照；dummy/本地接入不是外部采用 |
 | 支持边界 | MySQL、真实 provider、独立安全审核未验证；正式 H2/C/R 仍开放 |

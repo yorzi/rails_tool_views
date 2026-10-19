@@ -132,3 +132,7 @@ FR-04/05/06/07/08 LOCAL_PASS：默认 deny、严格 true policy、preview 零写
 ## WORK-20261019-03 — 0.3 本地候选验收
 
 FR-04/05/06/07/08 LOCAL_PASS：三个 Ruby/Rails SQLite 组合各 114/988/eager load；PostgreSQL 116/1000（真实双 cleaner 和 action/close 锁竞争）；adapter 7/45。真实 v0.2 runtime 的五组持久数据在三个组合迁移/replay/correlation/backfill/rollback/purge 保留业务验证通过；三个 installed host 与 generated Minitest 1/2，空 GEM_HOME network/full host/activated audit PASS。Chrome 5/40（生命周期原生无 JS），core/adapter guide snippets PASS；19 guides zero errors、两条预期 unreleased warning，stable/next build/2,571 links PASS。七份 locks audit clean。35-file candidate package gate PASS；formal gate 因 released:false 正确拒绝。详见 ../evidence/V0_3_VALIDATION.md，原始失败/修复与证据边界不隐藏。远端 CI/发布、provider/MySQL/adoption/独立审核/正式 gates 未完成。
+
+## WORK-20261019-05 — 0.3 verified public delivery
+
+FR-08/NFR-03 RELEASE_PASS：immutable v0.3.0→d12996e，main CI39229304949/Docs39229304982，tag CI39229612275/Release39229612284全绿。精确tag三组114/988、PG116/1000、adapter7/45、Chrome5/40，真实0.2升级/包/isolated安装/审计、2,692文档链接通过。registry API/direct/client/Release/SHA256SUMS均为01e004ba5deb2cba23d175a3d8110d1ed3cbbcc6c128cc9b735c0f380aed76a3；35files与本地一致，normalized gemspec契约相同。Pages39230070227全绿，stable0.3/next、16 HTTPS/搜索/版本切换/API/migration docs/MFA/OIDC observed PASS。详见../evidence/RELEASE_0_3_0.md。此记录自己的post-push CI在提交后检查，不提前声称。formal/security/MySQL/provider/adoption/full a11y gaps保持。

@@ -327,3 +327,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 实际35-file artifact 新Rails host install/migration/HTTP/actions/closed replay/preview/apply/410/标准迁移去重/eager load PASS，生成Minitest1/2；正式release package gate与可执行guide PASS。19 guides零错误，一条预期pre-tag warning；stable0.2/next build、2,571 links及内部内容排除 PASS。完整本地矩阵/PG/upgrade/isolated/browser见V0_3_VALIDATION，本单元不重标为remote。Refetch确认v0.3.0未占用，repo PUBLIC、release环境、DOCS_PUBLISH、Pages HTTPS和私密报告已观察。
 
 **影响/下一步：** 0.3需迁移/停旧writers/备份，uncertain与tombstone边界不变；本commit只准备正式发布，不声明远端或上传成功。无新权限/DNS/provider/长期key/架构变化，无需重画图。无本地服务。提交推送后等精确CI，再annotated v0.3.0触发现有OIDC；实际交付由WORK-05记录，不移动已发布tag。
+
+### WORK-20261019-05 — 记录已核验的 0.3.0 发布
+
+**内容/映射：** 完成Andy明确授权的0.3候选推送、远端CI后发布。immutable v0.3.0→d12996ed2dc6a0dbf3d5041ac4d31da789789a9b，既有OIDC上传RubyGems，GitHub Release与stable0.3/next Pages上线。FR-08/NFR-03；此记录不改runtime/API/schema/依赖/通知/Specs，也不移动tag。
+
+**复查/验证：** main CI39229304949/Docs39229304982，tag CI39229612275/Release39229612284，post-release Pages39230070227全绿。精确tag三组SQLite各114/988、PG116/1000（真实锁竞争）、adapter7/45、Chrome5/40；三个真实旧runtime升级/installed host与generated1/2、隔离network/full host/activated audit、七份locks审计与2,692links PASS。RubyGems API/direct/client fetch、GitHub gem/SHA256SUMS均为01e004ba5deb2cba23d175a3d8110d1ed3cbbcc6c128cc9b735c0f380aed76a3；35个文件逐字节与本地相同，normalized gemspec契约一致，工具/时间序列化不同不声称二进制复现。
+
+**Hosted/复查入口：** RubyGems版本页显示MIT/MFA与限定release.yml/release publisher；Release非draft/prerelease。16 HTTPS入口返回200，stable安装0.3、next main、lifecycle search/API/upgrade/canonical/HTTP→HTTPS PASS；真实Chrome搜索进入Lifecycle，version菜单切Next。详见RELEASE_0_3_0，review前先读升级停旧writers/备份/不可危险downgrade与retention tombstone/uncertainty边界。
+
+**影响/文档/下一步：** 更新status/map/at-a-glance/roadmap/operations/acceptance/checklists/evidence/current work；架构不变，无需改图。无新权限/DNS/长期key/provider/host生产迁移，正式H2/C/R、安全/MySQL/adoption gaps保持。未启动本地服务，workflow watchers完成，临时extract清理、Chrome核验页关闭；下载证据保留ignored tmp。提交推送本记录并检查它自己的CI/Docs，在最终回复交接实际结果；无剩余gem发布操作，不自动开始0.4。
