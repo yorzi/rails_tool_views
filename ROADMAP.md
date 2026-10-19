@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**0.3 local development, 2026-10-19.** Versions 0.1.0 and 0.2.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner now authorizes 0.3 local implementation and tests. Provider calls, pushes and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**0.3 release preparation, 2026-10-19.** Versions 0.1.0 and 0.2.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner now authorizes 0.3 candidate push, remote CI and publication after local acceptance. Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 

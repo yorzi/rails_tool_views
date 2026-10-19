@@ -35,3 +35,7 @@ Owner explicitly authorizes pushing the completed 0.2 candidate, checking remote
 ## 2026-10-19 — 0.3 execution alignment
 
 Andy explicitly authorizes continued 0.3 development and tests. FR-04/05/06/07/08 host-controlled retention is implemented through explicit lifecycle and opt-in scoped cleanup; no automatic deletion, domain ownership, transcript write or notification catalog change. ADR 008 records implementation decisions and uncertainty protection. 59 copied Specs files match pinned 0ea28b1 exactly. No external Specs edit or new product-intent delta; recovery/telemetry, formal gates and publication remain separate.
+
+## 2026-10-19 — public 0.3 release authorization
+
+Andy explicitly authorizes publication and related documentation/commits after local candidate acceptance. Candidate push/remote CI/tag/OIDC/Release/Pages verification is in scope. No new product-intent/API/schema/dependency change is added to the accepted candidate. Original 59 Specs remain pinned and equal; previous local-only authorization is superseded for this release.

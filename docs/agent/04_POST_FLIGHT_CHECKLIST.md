@@ -140,3 +140,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] 修复 Rails7.2 SQLite bool default；共享 SQLite 测试干扰后串行重跑，browser inspector 问题与原生 lifecycle 覆盖边界记录。
 - [x] status/map/at-a-glance/changelog/roadmap/architecture/flow/operations/acceptance/evidence/current work 与 ledger 同步；Specs 不改。
 - [x] 无保留 server/driver/Puma，临时 PG DB 已删，既有 PG 服务不动；本地提交，不推送/tag/发布/provider。
+
+## WORK-20261019-04 — release preparation
+
+- [x] owner明确发布/提交授权；既有release环境、Pages HTTPS/开关、public repo/private reporting复核。
+- [x] date/released/version/history/What's New/upgrading与授权/operations同步，runtime冻结，59 Specs不变。
+- [x] actual package host/generated1/2、正式package gate、guide code、19-guide lint/build/2,571links PASS。
+- [x] staging/commit linkage与whitespace检查；remote CI/tag/registry/Pages实际结果留WORK-05。无本地服务，架构不变。

@@ -36,3 +36,7 @@ After reviewing local acceptance, Andy explicitly authorizes pushing the candida
 ## 2026-10-19 public 0.3 development authorization
 
 Andy requests continuing 0.3 development with high-quality tests, against the roadmap's lifecycle/opt-in retention scope. Reversible local implementation, verification and incremental commits are authorized. Host controls deadlines and authorization; no automatic deletion, guessed delivery quiescence, notification change or future publication is inferred. Original Specs remain pinned and unmodified.
+
+## 2026-10-19 public 0.3 release authorization
+
+After local candidate acceptance, Andy explicitly requests advancing and publishing 0.3.0, synchronizing documentation and committing. This authorizes candidate commit/push, exact remote CI, annotated v0.3.0, existing OIDC publication, GitHub Release and versioned Pages verification. It supersedes the earlier local-only limitation for this release. Runtime scope, MIT/disclosure and external pinned Specs stay unchanged; provider, adoption, formal and independent security gaps remain open.

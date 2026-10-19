@@ -13,7 +13,7 @@ guide: false
 
 | Version | Date | Highlights |
 | --- | --- | --- |
-| 0.3.0 (unreleased) | Not published | [Explicit lifecycle]({% link _getting_started/whats-new-in-0-3.md %}). |
+| [0.3.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.3.0) | 2026-10-19 | [Explicit lifecycle and scoped retention]({% link _getting_started/whats-new-in-0-3.md %}). |
 | [0.2.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.2.0) | 2026-10-18 | [Partial generator and complete HTML correction pages]({% link _reference/whats-new-in-0-2.md %}). |
 | [0.1.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.1.0) | 2026-10-18 | [First public release]({% link _reference/whats-new.md %}): trusted components, durable Surfaces, authorized actions and optional RubyLLM integration. |
 

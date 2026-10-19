@@ -6,6 +6,8 @@ The owner authorized the first public `rails_tool_views` release as **0.1.0** on
 
 Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; 0.2.0 delivery is complete; [actual evidence](../evidence/RELEASE_0_2_0.md) records the exact commit, runs and checksum. The v0.1.0 tag remains immutable.
 
+Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. WORK-20261019-04 prepares the frozen candidate, then WORK-05 records observed delivery. Prior tags remain immutable.
+
 ## One-time setup
 
 - Public repository: `yorzi/rails_tool_views`; keep private vulnerability reporting enabled.
@@ -24,6 +26,7 @@ This follows ruby_llm-browser's successful OIDC release workflow. Optional exper
 ```sh
 bundle exec rake test zeitwerk:check
 bundle exec ruby scripts/package_smoke.rb
+bundle exec ruby scripts/upgrade_smoke.rb
 bundle exec ruby scripts/docs_examples.rb
 BUNDLE_GEMFILE=gemfiles/rails72.gemfile bundle exec rake test zeitwerk:check
 BUNDLE_GEMFILE=gemfiles/adapter.gemfile bundle exec rake test:adapter
@@ -47,8 +50,8 @@ For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb
 For this release, after the exact candidate passes remote CI:
 
 ```sh
-git tag -a v0.2.0 -m "Release RailsToolViews 0.2.0"
-git push origin v0.2.0
+git tag -a v0.3.0 -m "Release RailsToolViews 0.3.0"
+git push origin v0.3.0
 ```
 
 The `Release Gem` workflow runs the full reusable compatibility CI (Ruby 3.3 and 4.0, Rails 7.2 and 8.1, optional RubyLLM and PostgreSQL), metadata/package checks, independent dependency resolution, dependency advisories and versioned documentation builds. Only then can the `release` environment publish through OIDC and create the GitHub Release with the gem and SHA256SUMS.
@@ -69,3 +72,5 @@ Formal H2/C/R and independent security review remain open. MySQL has arithmetic/
 ## Rollback
 
 Revert documentation source and rerun Docs for a site correction; use Pages deployment history to inspect the prior deployment. Do not delete DNS while Pages still claims the live domain. If retiring the site, remove DNS first and then detach the Pages domain to avoid a dangling custom-domain record. RubyGems publication cannot be undone by a Git revert; issue a corrected version and consider yanking only for a concrete broken or unsafe package with owner authorization.
+
+0.3 includes a lifecycle migration. Stop old web/workers and back up before upgrading; do not mix old writers or downgrade after closure. Use the public Upgrading and Surface Lifecycle guides for protected deliveries, host policy and retained tombstones.

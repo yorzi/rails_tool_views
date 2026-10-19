@@ -319,3 +319,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/文档/人工复查：** 审阅 ADR008 与生命周期/升级指南，按 demo 保存→关闭→预览→到期 apply 检查业务日志，再查 evidence 三组 upgrade/PG 竞争边界。需要加法迁移、停旧 writers 与完整备份；元数据 tombstones/uncertain 隔离不声称完全抹除或 exactly-once。更新状态/功能图/一眼图景/路线图/操作手册/验收/checklist/ledger；architecture/flow 已在前两单元同步。无依赖版本、新通知或产品意图扩张，Specs 不改。临时包/DB/Chrome/driver/Puma 清理，已有 PostgreSQL 服务保留。
 
 **下一步：** 0.3 本地候选完成，main 第三提交；owner 审阅后再授权推送、远端 CI 和发布。本地证据不等于远端/发布；MySQL/provider/adoption/独立安全/full a11y/正式 H2/C/R 仍开放，不自动开始0.4。
+
+### WORK-20261019-04 — 推进已授权的 0.3 发布
+
+**内容/映射：** Andy 明确要求发布0.3、同步文档与提交，授权 candidate push/remote CI/tag/OIDC/Release/Pages。FR-08/NFR-03；设置日期与 released:true，What's New/History/upgrading、release procedure、baseline/delta/current work/status/roadmap 同步。Runtime/API/schema/依赖与已验收候选不变，外部59 Specs仍与 pinned0ea28b1相同。
+
+**复查/验证：** 实际35-file artifact 新Rails host install/migration/HTTP/actions/closed replay/preview/apply/410/标准迁移去重/eager load PASS，生成Minitest1/2；正式release package gate与可执行guide PASS。19 guides零错误，一条预期pre-tag warning；stable0.2/next build、2,571 links及内部内容排除 PASS。完整本地矩阵/PG/upgrade/isolated/browser见V0_3_VALIDATION，本单元不重标为remote。Refetch确认v0.3.0未占用，repo PUBLIC、release环境、DOCS_PUBLISH、Pages HTTPS和私密报告已观察。
+
+**影响/下一步：** 0.3需迁移/停旧writers/备份，uncertain与tombstone边界不变；本commit只准备正式发布，不声明远端或上传成功。无新权限/DNS/provider/长期key/架构变化，无需重画图。无本地服务。提交推送后等精确CI，再annotated v0.3.0触发现有OIDC；实际交付由WORK-05记录，不移动已发布tag。

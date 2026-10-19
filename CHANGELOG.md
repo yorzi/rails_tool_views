@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0] - Unreleased
+## [0.3.0] - 2026-10-19
 
 - Opt-in scoped `purge_closed` preview/apply with deadlines, bounded batches, atomic receipt cleanup and durable correlation tombstones. Host business records stay intact.
 

@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Close a finished view without repeating its business actions.
 * Abandon pending follow-up explicitly.
 * Upgrade persisted data before using lifecycle APIs.
+* Preview and apply scoped cleanup while retaining replay guards.
 
 ## End a View from the Host
 
@@ -31,7 +32,7 @@ Closure and delivery claims coordinate through the Surface lock. Provider callba
 
 ## Upgrade First
 
-This release adds a migration and lifecycle snapshot fields. Stop old workers, install missing engine migrations and restart only the new runtime. See [Upgrading]({% link _reference/upgrading.md %}) for rollback limits. The public gem remains 0.2.0 until a separately authorized release.
+This release adds a migration and lifecycle snapshot fields. Stop old workers, install missing engine migrations and restart only the new runtime. See [Upgrading]({% link _reference/upgrading.md %}) for rollback limits.
 
 ## Preview Retention Cleanup
 

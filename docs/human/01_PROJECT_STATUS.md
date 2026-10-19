@@ -1,6 +1,6 @@
 # 项目状态
 
-2026-10-19：**0.2.0 保持已发布；按 owner 授权本地开发 0.3.0 生命周期与保留。**
+2026-10-19：**0.2.0 保持已发布；owner 已授权推进 0.3.0 推送、远端验证与发布。**
 
 ## 已交付
 
@@ -13,7 +13,7 @@
 
 ## 当前工作与下一步
 
-0.3 本地候选已完成：close/abandon、加法迁移、scoped retention preview/apply、correlation tombstone 和不确定投递保护。三个 SQLite 组合各 114/988，PostgreSQL 116/1000（含真实锁竞争），adapter 7/45，Chrome 5/40、三个旧数据升级/实际包 host、隔离网络安装/审计和文档通过。详见 [0.3 验证](../evidence/V0_3_VALIDATION.md)。尚未推送、运行远端 CI 或发布。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+0.3 本地候选已完成：close/abandon、加法迁移、scoped retention preview/apply、correlation tombstone 和不确定投递保护。三个 SQLite 组合各 114/988，PostgreSQL 116/1000（含真实锁竞争），adapter 7/45，Chrome 5/40、三个旧数据升级/实际包 host、隔离网络安装/审计和文档通过。详见 [0.3 验证](../evidence/V0_3_VALIDATION.md)。正准备发布标记与文档，随后推送并等待精确候选 CI，再经既有 OIDC 发布并核验；未提前声明发布完成。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
