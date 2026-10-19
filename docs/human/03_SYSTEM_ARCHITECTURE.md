@@ -40,4 +40,4 @@ ValidationError 是受限的展示反馈，包含字段错误和批准的提交�
 
 ## 0.3 生命周期
 
-Surface 是动作、投递认领与生命周期转换的共同锁边界，顺序为 Surface → AgentInteraction；外部回调仍在事务外。close 保留数据并拒绝新动作；abandon 显式终止 pending/failed，二者都拒绝 delivering 和持久 delivery_uncertain。该标记保护曾经被回收的租约，不能用终态回写证明旧回调停止。关闭时间、保留截止和清理时间独立记录，nil 截止代表无限保留。详见 ADR 008；清理入口尚在开发。
+Surface 是动作、投递认领与生命周期转换的共同锁边界，顺序为 Surface → AgentInteraction；外部回调仍在事务外。close 保留数据并拒绝新动作；abandon 显式终止 pending/failed，二者都拒绝 delivering 和持久 delivery_uncertain。该标记保护曾经被回收的租约，不能用终态回写证明旧回调停止。关闭时间、保留截止和清理时间独立记录，nil 截止代表无限保留。详见 ADR 008；purge_closed 在同一锁内复检 host retention policy、scope、截止，原子删除终态 receipt/interaction 并清空 props/state/context；Surface 和 Presentation 保留身份/关联 tombstone，业务表不动。

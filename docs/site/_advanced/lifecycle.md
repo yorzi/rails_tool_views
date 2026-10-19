@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Close or abandon a view from trusted host code.
 * Preserve replay receipts and choose a retention deadline.
 * Protect unfinished and uncertain delivery.
+* Preview and apply scoped payload cleanup.
 
 ## Close a Finished View
 
@@ -57,3 +58,39 @@ A delivering interaction blocks close and abandon, even after its lease expires.
 A takeover sets the durable `delivery_uncertain` flag. It remains set if a stale callback later writes a terminal status. Such a Surface stays protected from lifecycle cleanup. The migration also marks old delivering or multiple-attempt rows conservatively, since their history cannot prove which attempts overlapped. An ordinary explicit retry after a known failure does not introduce this flag in the new runtime.
 
 There is no force option to clear uncertainty in this release. Stop automatic retention for these views and investigate the host delivery process and durable deduplication records. Do not rewrite the flag merely because enough time passed. The [continuation guide]({% link _advanced/continuation.md %}) explains the host's remote deduplication responsibility.
+
+## Preview Eligible Payloads
+
+Enable a host policy first. It receives `:purge` and the scoped Surface. Return exactly `true` to authorize cleanup. Keep this policy free of writes, including during preview. It owns retention authority independently of the component registry, so you can clean an obsolete component without registering its renderer again.
+
+```ruby
+RailsToolViews.configure do |config|
+  config.retention_policy = ->(access) {
+    access.operation == :purge &&
+      RetentionPermissions.allowed?(access.actor, access.tenant, access.surface.id)
+  }
+end
+
+summary = RailsToolViews.purge_closed(scope: scope,
+  closed_before: 7.days.ago, batch_size: 100)
+# => { examined: 3, eligible: 2, purged: 0, protected: 1, dry_run: true }
+```
+
+The default policy is unset and rejects the call with `NOT_ALLOWED`. Pass a real `Scope`, an explicit past cutoff and a batch size from 1 to 1000. Candidates must belong to that exact actor and tenant, have closed strictly before the cutoff, and have reached their non-null retention deadline. Active views and indefinite retention are excluded. Pending, failed, delivering, unknown or historically uncertain interactions remain protected even if a host edited lifecycle columns directly.
+
+## Apply a Bounded Batch
+
+```ruby
+summary = RailsToolViews.purge_closed(scope: scope,
+  closed_before: 7.days.ago, batch_size: 100, dry_run: false)
+```
+
+Each Surface is locked and eligibility is checked again. The batch bounds the number of Surfaces examined, not their child receipt count. Cleanup removes terminal interactions and action receipts, clears props, state and the Surface context reference, and sets `purged_at` in the same transaction. A database error rolls back that Surface. Earlier completed Surfaces in the batch stay committed; rerun the same request after resolving the error. Policy-denied or unsafe candidates count as protected. Inspect these before repeating full batches, since protected rows can fill a batch.
+
+Preview makes no Engine writes and reserves nothing. Apply may see different eligibility after concurrent work. Coordinate host policy changes and maintenance jobs accordingly. There is no automatic scheduler or tenant discovery. Choose a conservative batch size for large graphs and iterate known scopes in your own job.
+
+## Understand the Tombstone
+
+Cleanup keeps the Surface identity, owner, component digest and lifecycle timestamps, plus Presentation correlation identifiers and request digests. These are durable replay guards, not a complete data-erasure mechanism. Host backups and retained opaque identifiers require their own policy. Cleanup does not shrink database files or remove host business records, logs or remote provider data.
+
+After cleanup, authorized-owner `restore`, dispatch and matching correlated presentation return `SURFACE_PURGED` with HTTP 410. Another scope still receives 404. A deleted interaction returns 404 on delivery. A repeated cleanup skips the already-purged view. Keep correlation guards; deleting them could allow an old tool request to recreate the view and execute business work again.

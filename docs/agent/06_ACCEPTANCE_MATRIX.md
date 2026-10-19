@@ -124,3 +124,7 @@ FR-08/NFR-03 RELEASE_PASS: exact tag 3156fd3 CI and OIDC publication complete, R
 ## WORK-20261019-01 — 生命周期本地验证
 
 FR-04/05/06/07/08 LOCAL_PASS：close/abandon 专用授权、跨租户拒绝、关闭后旧回执/关联重放、新动作拒绝；pending/failed 显式放弃，delivering/持久 uncertain 保护。两个并行回调的过期租约测试证明旧回写不能移除保护，callback 在事务外。core 106/923 + eager load、实际 package host + generated Minitest 1/2 PASS；19 guides zero errors/two expected unreleased warnings。完整矩阵、迁移旧数据、清理、browser 留后续单元；未推送或运行远端 CI。
+
+## WORK-20261019-02 — 保留清理本地验证
+
+FR-04/05/06/07/08 LOCAL_PASS：默认 deny、严格 true policy、preview 零写入、cutoff/deadline/batches、跨 scope/锁后变更、stale restore 后 dispatch、未知/unfinished/uncertain 保护、删除故障事务回滚。core 114/988 + eager load、实际 package host 生命周期/preview/apply/410 + generated Minitest 1/2 PASS。Chrome 5/40，closed-preview 和 cleaned-business-log 截图检查；host Effect 保留。19 guides zero errors/two expected unreleased warnings。旧版本升级/完整 matrix 与 PG 并发由下一单元完成。

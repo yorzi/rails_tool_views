@@ -13,6 +13,50 @@ module RailsToolViews
       finish_surface(id, scope: scope, retain_until: retain_until, abandon: true)
     end
 
+    # Scrubs eligible closed payloads in one bounded batch, preserving replay
+    # tombstones. Requires an explicit scope, cutoff and host retention policy.
+    # Defaults to a read-only preview. Each applied Surface commits atomically.
+    def purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true)
+      check_scope!(scope)
+      valid_time = closed_before.is_a?(Time) || closed_before.is_a?(ActiveSupport::TimeWithZone)
+      unless valid_time && closed_before <= Time.current && batch_size.is_a?(Integer) && batch_size.between?(1, 1000) && [true, false].any? { |v| dry_run.equal?(v) }
+        raise Error.new("INVALID_RETENTION_REQUEST")
+      end
+      policy = configuration.retention_policy
+      raise Error.new("NOT_ALLOWED", status: 403) unless policy.respond_to?(:call)
+      now = Time.current
+      candidates = Surface.where(actor_ref: scope.actor, tenant_ref: scope.tenant, purged_at: nil)
+        .where("closed_at < ? AND retain_until <= ?", closed_before, now).order(:closed_at, :id).limit(batch_size).pluck(:id)
+      counts = { examined: 0, eligible: 0, purged: 0, protected: 0, dry_run: dry_run }
+      candidates.each do |id|
+        surface = Surface.find_by(id: id)
+        next unless surface
+        surface.with_lock do
+          counts[:examined] += 1
+          eligible = exact_match?(surface, actor_ref: scope.actor, tenant_ref: scope.tenant) &&
+            !surface.purged? && surface.closed? && surface.closed_at < closed_before &&
+            surface.retain_until && surface.retain_until <= now
+          if eligible
+            request = access(scope, :purge, surface: surface, props: surface.props, context_ref: surface.context_ref)
+            eligible = policy.call(request) == true && !protected_interactions?(surface, abandon: false)
+          end
+          unless eligible
+            counts[:protected] += 1
+            next
+          end
+          counts[:eligible] += 1
+          next if dry_run
+          # The Surface lock excludes action commits, delivery claims and other
+          # cleanup workers. Only known terminal children are removed together.
+          surface.agent_interactions.delete_all
+          surface.action_executions.delete_all
+          surface.update!(props: {}, state: {}, context_ref: nil, purged_at: now)
+          counts[:purged] += 1
+        end
+      end
+      counts
+    end
+
     private
     def finish_surface(id, scope:, retain_until:, abandon:)
       validate_retention_deadline!(retain_until, future: false)
@@ -25,9 +69,7 @@ module RailsToolViews
         next if surface.closed?
         validate_retention_deadline!(retain_until, future: true)
         interactions = surface.agent_interactions
-        protected_delivery = interactions.where(status: "delivering").exists? || interactions.where(delivery_uncertain: true).exists?
-        allowed = abandon ? %w[completed skipped pending failed abandoned] : %w[completed skipped abandoned]
-        raise Error.new("LIFECYCLE_BUSY", status: 409) if protected_delivery || interactions.where.not(status: allowed).exists?
+        raise Error.new("LIFECYCLE_BUSY", status: 409) if protected_interactions?(surface, abandon: abandon)
         if abandon
           interactions.where(status: %w[pending failed]).update_all(status: "abandoned", claimed_at: nil, error_code: nil, updated_at: Time.current)
         end
@@ -35,6 +77,11 @@ module RailsToolViews
         surface.update!(closed_at: now, abandoned_at: abandon ? now : nil, retain_until: retain_until, revision: surface.revision + 1)
       end
       surface
+    end
+    def protected_interactions?(surface, abandon:)
+      interactions = surface.agent_interactions
+      allowed = abandon ? %w[completed skipped pending failed abandoned] : %w[completed skipped abandoned]
+      interactions.where(delivery_uncertain: true).exists? || interactions.where.not(status: allowed).exists?
     end
     def validate_retention_deadline!(deadline, future:)
       return if deadline.nil?

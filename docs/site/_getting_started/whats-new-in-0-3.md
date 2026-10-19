@@ -32,3 +32,7 @@ Closure and delivery claims coordinate through the Surface lock. Provider callba
 ## Upgrade First
 
 This release adds a migration and lifecycle snapshot fields. Stop old workers, install missing engine migrations and restart only the new runtime. See [Upgrading]({% link _reference/upgrading.md %}) for rollback limits. The public gem remains 0.2.0 until a separately authorized release.
+
+## Preview Retention Cleanup
+
+The opt-in `purge_closed` API checks host authorization, exact scope, closing cutoff and the elapsed retention deadline. Preview is the default. Apply scrubs payloads and removes terminal receipt graphs atomically per view, while keeping correlation guards and business records. Read [Surface Lifecycle]({% link _advanced/lifecycle.md %}) before scheduling host maintenance.

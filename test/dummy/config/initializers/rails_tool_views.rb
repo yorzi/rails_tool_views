@@ -3,6 +3,7 @@ Rails.application.config.to_prepare do
   if !Rails.env.test? || ENV["RAILS_TOOL_VIEWS_SYSTEM_TEST"] == "1"
     RailsToolViews.reset!
     RailsToolViews.configure do |config|
+      config.retention_policy = ->(access) { access.operation == :purge && access.tenant == "local-demo" && access.actor.start_with?("demo:") }
       config.scope_resolver = DemoV1::Session.method(:scope)
       # A deterministic host callback, never a simulated live provider claim.
       config.agent_adapter = ->(payload, delivery_key:) {

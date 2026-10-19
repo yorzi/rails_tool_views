@@ -2,6 +2,8 @@
 
 ## [0.3.0] - Unreleased
 
+- Opt-in scoped `purge_closed` preview/apply with deadlines, bounded batches, atomic receipt cleanup and durable correlation tombstones. Host business records stay intact.
+
 - Add explicit host-authorized `close` and `abandon`, with read-only closed rendering, preserved exact action replay and first-termination retention deadlines.
 - Add lifecycle snapshot metadata and an additive migration. Stop old workers before upgrading; rollback refuses once a Surface was closed.
 - Coordinate delivery claims and lifecycle changes through the Surface lock while keeping callbacks outside transactions. Quarantine ambiguous lease takeovers and legacy multiple-attempt histories from cleanup.

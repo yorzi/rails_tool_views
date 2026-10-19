@@ -117,6 +117,17 @@ client.get("/rails_tool_views/surfaces/#{review.id}", headers: { "Accept" => "te
 raise "Installed closed view still accepts forms" unless client.response.body.include?("View closed.") && !client.response.body.include?("<form")
 replay = RailsToolViews.dispatch(review.id, scope: scope, action: "set_value", arguments: { value: "reviewed" }, base_revision: 1, idempotency_key: "generated-1")
 raise "Installed closed receipt failed" unless replay[:revision] == 2 && review.reload.revision == 3
+RailsToolViews.configure { |config| config.retention_policy = ->(access) { access.operation == :purge && access.actor == "alice" } }
+# The fixture advances its clock after exercising the real future-deadline API.
+require "active_support/testing/time_helpers"
+Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(2.days.from_now) do
+  preview = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current)
+  raise "Installed preview mutated data" unless preview[:eligible] == 1 && preview[:purged] == 0 && review.reload.props.any?
+  applied = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: false)
+  raise "Installed cleanup failed" unless applied[:purged] == 1 && review.reload.purged? && review.props.empty? && review.state.empty? && review.action_executions.count.zero?
+  client.get("/rails_tool_views/surfaces/#{review.id}", headers: { "Accept" => "text/html" })
+  raise "Installed tombstone response failed" unless client.response.status == 410
+end
 require "rake"
 Rails.application.load_tasks
 ENV["FROM"] = "rails_tool_views"
@@ -134,7 +145,7 @@ load registration
 ActiveRecord.maintain_test_schema = false
 load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> closed replay/migration task -> generated scaffold/test -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> closed replay/payload cleanup/migration task -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

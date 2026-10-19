@@ -4,8 +4,21 @@ class DemoController < ApplicationController
     session.delete(:v1_identity)
     session[:demo_actor] ||= "demo:#{SecureRandom.uuid}"
     @scope = RailsToolViews::Scope.new(actor: session[:demo_actor], tenant: "local-demo")
-    @surfaces = RailsToolViews::Surface.where(actor_ref: @scope.actor, tenant_ref: @scope.tenant).order(:created_at).map { |surface| RailsToolViews.restore(surface.id, scope: @scope) }
-    @effects = DemoEffect.where(surface_id: @surfaces.map(&:id)).order(:id)
+    all = RailsToolViews::Surface.where(actor_ref: @scope.actor, tenant_ref: @scope.tenant).order(:created_at)
+    @purged_count = all.where.not(purged_at: nil).count
+    @surfaces = all.where(purged_at: nil).map { |surface| RailsToolViews.restore(surface.id, scope: @scope) }
+    @effects = DemoEffect.where(surface_id: all.pluck(:id)).order(:id)
+  end
+  def lifecycle
+    scope = RailsToolViews.configuration.scope_resolver.call(self)
+    operation = params[:operation] == "abandon" ? :abandon : :close
+    RailsToolViews.public_send(operation, params[:surface_id], scope: scope, retain_until: 1.day.from_now)
+    redirect_to root_path, status: :see_other
+  end
+  def cleanup
+    scope = RailsToolViews.configuration.scope_resolver.call(self)
+    result = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: params[:apply] != "yes")
+    redirect_to root_path, status: :see_other, notice: "Cleanup: #{result[:eligible]} eligible, #{result[:purged]} purged."
   end
   def create
     scope = RailsToolViews.configuration.scope_resolver.call(self)

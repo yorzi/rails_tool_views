@@ -301,3 +301,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 聚焦测试先失败再实现；core 106 tests / 923 assertions + eager load PASS，覆盖重复关闭、跨 scope、专用 policy、pending/failed abandon、两个过期并行回调的保护。实际包新 Rails host 安装两个迁移、HTML 关闭与旧回执重放、标准 migration copy 去重、生成 Minitest 1/2 PASS；19 guides zero errors/two expected unreleased warnings。完整 matrix/upgrade/清理/browser/build 留后续，不称远端通过。
 
 **影响/文档/下一步：** 升级需停旧 web/workers；已有 delivering 和历史多尝试可能永久受保护，没有强制清理或自动重开。旧 acknowledgement 的 exactly-once 不在本版修复范围。ADR 008、独立指南/升级/What’s New、human architecture/flow/map/status、acceptance/checklists 同步；59 Specs pinned 文件一致，无 intent delta、通知或依赖扩张。无长期进程，main 本地提交；下一单元显式保留策略和 payload 清理，不推送/发布。
+
+### WORK-20261019-02 — 授权的 payload 清理与真实 demo
+
+**内容/映射：** FR-04/05/06/07/08，purge_closed 默认 preview，config.retention_policy 默认 deny。限定 exact owner scope、past cutoff、已到期非 nil deadline、1..1000 Surfaces；锁内复查策略和终态，原子删除 interaction/receipt 并 scrub props/state/context。Surface/Presentation tombstone 保留，旧关联/动作 410，不重建业务动作；host 表不动。dummy 加 CSRF/session scope 控件，清理后 gallery 不 restore tombstone，日志仍读 host Effect。
+
+**复查/验证：** 新 retention 测试先因缺少入口失败，再覆盖 preview no writes、strict policy、跨 scope、cutoff/deadline/batch、锁后 scope 变化、stale action、未知/未终止/uncertain 保护、注入 update failure 全图回滚与重试。完整 core 114/988 + eager load PASS；实际 installed host preview/apply/410 与 generated Minitest 1/2 PASS。Chrome 5/40 PASS，检查 closed-preview/cleaned-business-log 截图。初次 browser 期望文案错误，纠正为实际 View closed 后通过。19 guides zero errors/two expected unreleased warnings。PG 并发/旧 runtime 升级与完整 matrix 留 WORK-03。
+
+**影响/文档/下一步：** 非完整删除/磁盘回收，opaque metadata 与 host backups 仍需保留政策；policy 必须无副作用，批次不保证 child 行数，protected rows 可占满一批。没有自动 job/force/恢复绕过。public lifecycle/config/API/What’s New/changelog、ADR/architecture/flow/acceptance/checklists 同步；implementation aligned，Specs 不改。browser/Puma/driver 随 runner 退出，无保留进程。main 本地第二提交，不推送/发布；继续升级与完整验收。

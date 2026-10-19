@@ -64,3 +64,7 @@ Use `RailsToolViews.reset_registry!` in a reload hook to clear definitions while
 
 * [Production Boundaries]({% link _advanced/production.md %}) covers host responsibilities.
 * [Agent Continuation]({% link _advanced/continuation.md %}) configures deferred delivery.
+
+## Authorize Retention
+
+`config.retention_policy` defaults to `nil`, which disables payload cleanup. Set a callable that returns exactly `true` for authorized `:purge` access. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}) for deadlines, dry runs and tombstone retention.

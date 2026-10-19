@@ -17,7 +17,7 @@ The module-level methods orchestrate registration, persistence, actions, and del
 
 | Task | Reference |
 | --- | --- |
-| Register, present, restore, dispatch, deliver, close, abandon | [RailsToolViews]({{ '/api/RailsToolViews.html' | relative_url }}) |
+| Register, present, restore, dispatch, deliver, close, abandon, purge_closed | [RailsToolViews]({{ '/api/RailsToolViews.html' | relative_url }}) |
 | Resolve identity | [Scope]({{ '/api/RailsToolViews/Scope.html' | relative_url }}) |
 | Configure limits | [Configuration]({{ '/api/RailsToolViews/Configuration.html' | relative_url }}) |
 | Return field feedback | [ValidationError]({{ '/api/RailsToolViews/ValidationError.html' | relative_url }}) |

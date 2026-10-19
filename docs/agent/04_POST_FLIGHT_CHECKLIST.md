@@ -124,3 +124,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] lifecycle API/schema、专用 policy、旧回执/关闭视图、Surface-first delivery 锁与持久 uncertainty 测试通过；106/923 eager load，package host + generated Minitest 1/2。
 - [x] ADR 008、public guide/What’s New/upgrading、human architecture/flow/map/status、验收同步；未修改 Specs，无新增通知契约。
 - [x] 无长期服务；只本地提交，不推送/发布。完整 matrix/upgrade/清理/E2E 未完成，不提前宣称候选通过。
+
+## WORK-20261019-02
+
+- [x] scoped/cutoff/deadline/batch/deny 默认明确，保留 tombstone；跨身份、锁后再检查、rollback、stale action 和旧 correlation 测试通过。
+- [x] core 114/988、installed package host 与 Chrome 5/40 PASS；截图检查到清理后业务日志仍在。
+- [x] public guide/config/API/What’s New/changelog、ADR/human flow/architecture/acceptance/ledger 更新。旧数据迁移与完整 matrix 留下一单元。
+- [x] browser/driver 随 runner 退出；无手动常驻服务，不推送/发布。

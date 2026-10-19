@@ -1,3 +1,4 @@
+<% if flash[:notice] %><p role="status"><%= flash[:notice] %></p><% end %>
 <header class="demo-header"><p class="demo-eyebrow">01 / COMPONENT PLAYGROUND</p><h1>Your Rails views.<br>A new way to interact.</h1><p class="demo-lead">Present a trusted component. Make a choice.<br>Come back to exactly where you left off.</p></header>
 <div class="playground-heading"><div><span class="section-kicker">PRESENT A COMPONENT</span><p>Choose a rendering scenario to add to your workspace.</p></div><span class="v1-badge"><%= pluralize(@surfaces.size, "saved view") %></span></div>
 <nav class="demo-toolbar" aria-label="Present a component">
@@ -15,6 +16,10 @@
       <article class="demo-presentation">
         <% if surface.context_ref == "demo-chat" %><p class="demo-chat-label">Assistant · select a workflow to continue</p><% end %>
         <%= rails_tool_views_surface(surface, scope: @scope) %>
+        <% unless surface.closed? %>
+          <%= button_to "Close view", demo_lifecycle_path, params: { surface_id: surface.id, operation: "close" }, data: { turbo: false } %>
+          <%= button_to "Abandon follow-up", demo_lifecycle_path, params: { surface_id: surface.id, operation: "abandon" }, data: { turbo: false } %>
+        <% end %>
       </article>
     <% end %>
   </section>
@@ -23,6 +28,10 @@
     <% if @effects.empty? %><p class="demo-muted">Waiting for your first selection.</p><% end %>
     <%= link_to "Refresh action log", root_path, data: { turbo: false } %>
     <ol><% @effects.each do |effect| %><li><strong>Selection saved</strong><span><%= effect.value %></span></li><% end %></ol>
+    <h2>Payload retention</h2><p>Close keeps a view read-only for at least one day. Cleanup preserves its identity and business action log.</p>
+    <%= button_to "Preview cleanup", demo_cleanup_path, data: { turbo: false } %>
+    <%= button_to "Clean eligible views", demo_cleanup_path, params: { apply: "yes" }, data: { turbo: false } %>
+    <p><%= @purged_count %> cleaned views</p>
     <p class="demo-note">Chat mode forwards the choice to a deterministic host callback. This demo does not contact an AI provider.</p>
   </aside>
 </div>

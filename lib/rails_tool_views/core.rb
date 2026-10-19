@@ -16,6 +16,7 @@ module RailsToolViews
       "SURFACE_CLOSED" => "This view is closed. Its saved actions cannot be changed.",
       "SURFACE_PURGED" => "This view has been cleaned up and cannot be restored.",
       "LIFECYCLE_BUSY" => "This view has unfinished or uncertain delivery. Resolve it before closing.",
+      "INVALID_RETENTION_REQUEST" => "Choose an explicit past cutoff and a batch size from 1 to 1000.",
       "INVALID_RETENTION_WINDOW" => "Choose a future retention deadline or keep this view indefinitely.",
       "VALIDATION_FAILED" => "Check the highlighted fields and try again.",
       "INCOMPATIBLE_COMPONENT" => "This view's contract changed. Ask the application owner to migrate or recreate it.",
@@ -253,7 +254,7 @@ module RailsToolViews
   # Process-local host hooks, request limits, and delivery settings.
   class Configuration
     attr_accessor :scope_resolver, :agent_adapter, :max_payload_bytes, :max_depth, :max_catalog_components, :max_actions_per_minute, :auto_deliver,
-      :parent_controller, :delivery_lease
+      :parent_controller, :delivery_lease, :retention_policy
     # Initializes conservative request limits with no host identity or agent adapter.
     def initialize
       @max_payload_bytes, @max_depth, @max_catalog_components, @max_actions_per_minute = 32_768, 16, 20, 60
