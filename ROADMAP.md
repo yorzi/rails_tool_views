@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**Updated after 0.2.0, 2026-10-18.** Versions 0.1.0 and 0.2.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. Later versions, provider calls and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**0.3 local development, 2026-10-19.** Versions 0.1.0 and 0.2.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner now authorizes 0.3 local implementation and tests. Provider calls, pushes and future releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -8,7 +8,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 0.1.0 already provides schemas, Partial/ViewComponent rendering, persistent Surfaces, authorized transactional actions, revision/replay protection, form validation and optional RubyLLM continuation. SQLite/PostgreSQL release CI, guides and gem publication are verified.
 
-0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). Remaining gaps: no retention API, persistent status notices and indistinguishable replay telemetry. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
+0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). The 0.3 working tree adds authorized lifecycle and opt-in payload cleanup, with completed [local acceptance](docs/evidence/V0_3_VALIDATION.md); remote CI and publication remain separate. Remaining gaps include persistent status notices, indistinguishable replay telemetry and resolution of historically uncertain deliveries. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
 
 ## Version sequence
 
@@ -37,9 +37,9 @@ Use the existing `test/dummy` as the maintained demo/test host. Verify installat
 
 ## 0.3.0: lifecycle before deletion
 
-Agree on active versus terminal/abandoned work, the host retry window, and close/expiry behavior for restore, correlation and replay before choosing API names or schema changes.
+The local implementation follows ADR 008: explicit close/abandon, first-termination retention deadline, closed reads and authorized historical replay. No automatic expiry or reopening.
 
-Then add opt-in cleanup with explicit scope/cutoff, dry-run counts and bounded batches. Never prune retryable receipts independently. Protect pending, delivering and retryable failed interactions unless explicitly abandoned. No automatic deletion on installation or by default.
+The local `purge_closed` implementation uses explicit scope/cutoff, dry-run counts and bounded batches. Never prune retryable receipts independently. Pending and retryable failed work requires explicit abandonment; delivering or historically uncertain interactions always remain protected. Surface/Presentation tombstones preserve correlation guards; this is payload cleanup rather than full erasure. No automatic deletion on installation or by default.
 
 **Done when:** dry run makes no writes; cross-tenant, concurrent action/delivery, crash/retry and upgrade checks pass; host business records survive. Document recovery/backup limits. If a safe retention boundary is unresolved, leave cleanup disabled and resolve it before 1.0.
 

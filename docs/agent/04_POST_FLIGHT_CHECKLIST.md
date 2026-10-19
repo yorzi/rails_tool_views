@@ -131,3 +131,12 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] core 114/988、installed package host 与 Chrome 5/40 PASS；截图检查到清理后业务日志仍在。
 - [x] public guide/config/API/What’s New/changelog、ADR/human flow/architecture/acceptance/ledger 更新。旧数据迁移与完整 matrix 留下一单元。
 - [x] browser/driver 随 runner 退出；无手动常驻服务，不推送/发布。
+
+## WORK-20261019-03 — local 0.3 candidate
+
+- [x] 三组 114/988、PG116/1000 与 eager load；adapter7/45；真实旧 runtime 三组升级与标准迁移/安全回退/拒绝危险降级/保留业务检查。
+- [x] 三个实际 artifact host、空 GEM_HOME network full host + activated audit、七份 locks audit PASS；35-file candidate gate，formal gate 对 unreleased 正确拒绝。
+- [x] Chrome5/40、两种 guide snippets、19-guide lint/build/2,571 links PASS；实际截图复查，CI matrix 接入 upgrade smoke。
+- [x] 修复 Rails7.2 SQLite bool default；共享 SQLite 测试干扰后串行重跑，browser inspector 问题与原生 lifecycle 覆盖边界记录。
+- [x] status/map/at-a-glance/changelog/roadmap/architecture/flow/operations/acceptance/evidence/current work 与 ledger 同步；Specs 不改。
+- [x] 无保留 server/driver/Puma，临时 PG DB 已删，既有 PG 服务不动；本地提交，不推送/tag/发布/provider。

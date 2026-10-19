@@ -59,3 +59,5 @@ Andy 授权推送和发布后，候选精确 CI 全绿才创建 v0.2.0；标签�
 ## 2026-10-19 — 0.3 生命周期本地实现
 
 关闭是保留数据的只读状态，abandon 是 host 明确放弃未投递续接，两者不等于数据删除。旧回执仍可重放；租约过期不等于旧回调已停止，不确定投递会阻止关闭。0.3 需要加法迁移，升级期间必须停止旧 worker/web，不能混合旧写入进程。清理与最终验证继续进行。
+
+0.3 本地候选完成 scoped preview/apply。清理保留身份/关联 tombstone，业务模型与 host 日志不删；不是完全抹除。已补真实 0.2 runtime 数据升级、PG 竞争 worker、installed/isolated host 与浏览器流程，修复 Rails7.2 对 Rails8.1 SQLite boolean default 的兼容问题。下一步 owner 审阅本地候选，再授权推送/CI/发布；不提前开发 0.4。

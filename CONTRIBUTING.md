@@ -26,3 +26,5 @@ Update the relevant guide in the same commit as a public API change. Record brea
 Include Ruby, Rails and adapter versions, reproduction steps, and an anonymized example. Never include API keys, customer data or raw production payloads. Use [private vulnerability reporting](SECURITY.md) for security issues.
 
 Contributions use the project's [MIT license](LICENSE.txt).
+
+`bundle exec ruby scripts/upgrade_smoke.rb` exercises the immutable `v0.2.0` runtime and the working runtime in separate processes against a disposable database. Fetch tags first. It verifies the standard existing-host migration task, saved payloads and receipts, correlation, uncertainty backfill, rollback refusal and business preservation. It runs in each core CI combination and `bin/check`. Run suites sharing `test/dummy/storage/test.sqlite3` sequentially.

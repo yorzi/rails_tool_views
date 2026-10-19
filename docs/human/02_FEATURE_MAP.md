@@ -28,4 +28,4 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 
 ## 0.3 本地开发
 
-`lib/rails_tool_views/lifecycle.rb` 提供授权的 close/abandon；Surface 新增生命周期时间戳和只读渲染。历史回执可重放，新的业务动作被拒绝。迁移/installer 同步，旧投递不确定性被保守标记；清理与升级最终验收仍待完成。
+`lib/rails_tool_views/lifecycle.rb` 提供授权的 close/abandon；Surface 新增生命周期时间戳和只读渲染。历史回执可重放，新的业务动作被拒绝。迁移/installer 同步，旧投递不确定性被保守标记；清理、真实旧数据升级、三个兼容组合与 PostgreSQL 并发/包/浏览器/独立安装已完成本地验收，见 V0_3_VALIDATION；未推送/发布。

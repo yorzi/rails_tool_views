@@ -128,3 +128,7 @@ FR-04/05/06/07/08 LOCAL_PASS：close/abandon 专用授权、跨租户拒绝、�
 ## WORK-20261019-02 — 保留清理本地验证
 
 FR-04/05/06/07/08 LOCAL_PASS：默认 deny、严格 true policy、preview 零写入、cutoff/deadline/batches、跨 scope/锁后变更、stale restore 后 dispatch、未知/unfinished/uncertain 保护、删除故障事务回滚。core 114/988 + eager load、实际 package host 生命周期/preview/apply/410 + generated Minitest 1/2 PASS。Chrome 5/40，closed-preview 和 cleaned-business-log 截图检查；host Effect 保留。19 guides zero errors/two expected unreleased warnings。旧版本升级/完整 matrix 与 PG 并发由下一单元完成。
+
+## WORK-20261019-03 — 0.3 本地候选验收
+
+FR-04/05/06/07/08 LOCAL_PASS：三个 Ruby/Rails SQLite 组合各 114/988/eager load；PostgreSQL 116/1000（真实双 cleaner 和 action/close 锁竞争）；adapter 7/45。真实 v0.2 runtime 的五组持久数据在三个组合迁移/replay/correlation/backfill/rollback/purge 保留业务验证通过；三个 installed host 与 generated Minitest 1/2，空 GEM_HOME network/full host/activated audit PASS。Chrome 5/40（生命周期原生无 JS），core/adapter guide snippets PASS；19 guides zero errors、两条预期 unreleased warning，stable/next build/2,571 links PASS。七份 locks audit clean。35-file candidate package gate PASS；formal gate 因 released:false 正确拒绝。详见 ../evidence/V0_3_VALIDATION.md，原始失败/修复与证据边界不隐藏。远端 CI/发布、provider/MySQL/adoption/独立审核/正式 gates 未完成。

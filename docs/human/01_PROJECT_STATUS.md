@@ -13,13 +13,13 @@
 
 ## 当前工作与下一步
 
-生命周期 close/abandon、加法迁移、关闭后的只读与历史回执重放已完成本地核心验证（106/923）。当前开发清理入口与升级/E2E 验证，尚未完成 0.3 候选验收或推送。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
+0.3 本地候选已完成：close/abandon、加法迁移、scoped retention preview/apply、correlation tombstone 和不确定投递保护。三个 SQLite 组合各 114/988，PostgreSQL 116/1000（含真实锁竞争），adapter 7/45，Chrome 5/40、三个旧数据升级/实际包 host、隔离网络安装/审计和文档通过。详见 [0.3 验证](../evidence/V0_3_VALIDATION.md)。尚未推送、运行远端 CI 或发布。执行状态见 [Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
-| 数据生命周期 | close/abandon 已本地实现；清理开发中。旧租约不确定投递受持久保护，不能据时间强删 |
+| 数据生命周期 | close/abandon 与清理本地候选通过。旧租约不确定投递受持久保护，不能据时间强删；恢复方案留 0.4 |
 | 运行反馈与遥测 | state message 会持久化，回放仍发 action.executed；拟在 0.4 处理，新通知契约需 owner 决定 |
 | 实际采用 | 缺少外部开发者试验和实测定制实现对照；dummy/本地接入不是外部采用 |
 | 支持边界 | MySQL、真实 provider、独立安全审核未验证；正式 H2/C/R 仍开放 |

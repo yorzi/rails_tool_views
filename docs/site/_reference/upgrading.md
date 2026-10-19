@@ -45,6 +45,6 @@ Lifecycle calls recheck normal read policy plus the component policy for `:close
 
 ## Verify Before Enabling Retention
 
-Restore a saved 0.2 Surface and replay its original action with the same key. Check current read/action policy and tenant isolation. Test closure, rejected new actions, permitted old receipts and explicit abandonment. Leave uncertain or delivering work protected. A nil retention deadline keeps data indefinitely.
+Restore a saved 0.2 Surface and replay its original action with the same key. Check current read/action policy and tenant isolation. Test closure, rejected new actions, permitted old receipts and explicit abandonment. Leave uncertain or delivering work protected. A nil retention deadline keeps data indefinitely. Configure the separate `retention_policy` before previewing `purge_closed`; it defaults to deny. Apply removes receipt payloads and preserves replay tombstones and business records.
 
 The migration can roll back only while no Surface has been closed. Once lifecycle is used, it refuses downgrade, since an old runtime could reopen work and payload cleanup cannot reconstruct data. Restore the complete pre-upgrade backup if a rollback is necessary; coordinate host business effects separately. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}).

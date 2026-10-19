@@ -30,6 +30,7 @@ jobs:
           bundler-cache: true
       - run: bundle exec rake test zeitwerk:check
       - run: bundle exec ruby scripts/package_smoke.rb
+      - run: bundle exec ruby scripts/upgrade_smoke.rb
       - run: bundle exec ruby scripts/docs_examples.rb
       - run: node scripts/check-progress-ledger.mjs --range HEAD
   adapter:

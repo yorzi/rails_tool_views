@@ -309,3 +309,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** 新 retention 测试先因缺少入口失败，再覆盖 preview no writes、strict policy、跨 scope、cutoff/deadline/batch、锁后 scope 变化、stale action、未知/未终止/uncertain 保护、注入 update failure 全图回滚与重试。完整 core 114/988 + eager load PASS；实际 installed host preview/apply/410 与 generated Minitest 1/2 PASS。Chrome 5/40 PASS，检查 closed-preview/cleaned-business-log 截图。初次 browser 期望文案错误，纠正为实际 View closed 后通过。19 guides zero errors/two expected unreleased warnings。PG 并发/旧 runtime 升级与完整 matrix 留 WORK-03。
 
 **影响/文档/下一步：** 非完整删除/磁盘回收，opaque metadata 与 host backups 仍需保留政策；policy 必须无副作用，批次不保证 child 行数，protected rows 可占满一批。没有自动 job/force/恢复绕过。public lifecycle/config/API/What’s New/changelog、ADR/architecture/flow/acceptance/checklists 同步；implementation aligned，Specs 不改。browser/Puma/driver 随 runner 退出，无保留进程。main 本地第二提交，不推送/发布；继续升级与完整验收。
+
+### WORK-20261019-03 — 真实升级与兼容性候选验收
+
+**内容/映射：** FR-04/05/06/07/08；新增 immutable v0.2 runtime → working runtime 的独立进程升级 fixture，验证标准 migration copy、旧数据/receipt/correlation、保守 backfill、未使用时 down/up、关闭后拒绝 downgrade、清理后五条业务记录保留。接入三个 core CI 组合与 bin/check。真实 PG 双 cleaner/action-close 测试；guide close/preview/apply 可执行。修复 Rails7.2 无法识别 Rails8.1 SQLite boolean default 引发 nil 的兼容问题，用明确模型 default:false。
+
+**复查/验证：** 三个 Ruby/Rails SQLite 组合各114/988/eager load；PG17.11独立临时 DB116/1000，adapter7/45；三组升级/实际包 host 与 generated Minitest1/2 PASS。空 GEM_HOME 网络解析/full host/activated audit PASS，SHA b82d0e09924d776e4f2e30de13c49cbed34299e9d80779f7ddb1072ea984fdcb，35 files。七份 locks 审计无已知漏洞（刷新公告 fa229525）。Chrome5/40、core/adapter 文档代码、19 guides零错误/两条预期版本警告、stable/next build/2,571 links PASS；candidate gate PASS，formal gate 按 unreleased 正确拒绝。V0_3_VALIDATION 记录具体范围/复现/失败修复；shared SQLite 并行干扰后全部串行重跑，browser inspector stale-document 错误后 lifecycle 使用原生 no-JS 流程，既有 Turbo 场景保留。
+
+**影响/文档/人工复查：** 审阅 ADR008 与生命周期/升级指南，按 demo 保存→关闭→预览→到期 apply 检查业务日志，再查 evidence 三组 upgrade/PG 竞争边界。需要加法迁移、停旧 writers 与完整备份；元数据 tombstones/uncertain 隔离不声称完全抹除或 exactly-once。更新状态/功能图/一眼图景/路线图/操作手册/验收/checklist/ledger；architecture/flow 已在前两单元同步。无依赖版本、新通知或产品意图扩张，Specs 不改。临时包/DB/Chrome/driver/Puma 清理，已有 PostgreSQL 服务保留。
+
+**下一步：** 0.3 本地候选完成，main 第三提交；owner 审阅后再授权推送、远端 CI 和发布。本地证据不等于远端/发布；MySQL/provider/adoption/独立安全/full a11y/正式 H2/C/R 仍开放，不自动开始0.4。

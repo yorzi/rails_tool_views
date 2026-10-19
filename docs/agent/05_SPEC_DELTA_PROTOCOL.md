@@ -31,3 +31,7 @@ WORK-20261013-01 repaired two IMPLEMENTATION_BUGs against the pinned contract: n
 ## 2026-10-18 — public 0.2 release authorization
 
 Owner explicitly authorizes pushing the completed 0.2 candidate, checking remote CI, then publishing 0.2.0. This extends DELTA-005's publication authorization to the bounded implementation in WORK-06..09; no product/API/schema intent changes. Formal/security/provider/MySQL/adoption evidence limits remain open. External Specs are unchanged. WORK-10/11 records preparation and observed delivery separately.
+
+## 2026-10-19 — 0.3 execution alignment
+
+Andy explicitly authorizes continued 0.3 development and tests. FR-04/05/06/07/08 host-controlled retention is implemented through explicit lifecycle and opt-in scoped cleanup; no automatic deletion, domain ownership, transcript write or notification catalog change. ADR 008 records implementation decisions and uncertainty protection. 59 copied Specs files match pinned 0ea28b1 exactly. No external Specs edit or new product-intent delta; recovery/telemetry, formal gates and publication remain separate.

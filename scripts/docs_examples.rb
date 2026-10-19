@@ -42,5 +42,18 @@ Dir.mktmpdir("rails-tool-views-docs-") do |temporary|
   controller.response = ActionDispatch::TestResponse.new
   html = RailsToolViews.render(eval("surface", context), view_context: controller.view_context, scope: eval("scope", context))
   raise "Tutorial form failed" unless html.include?("Next step") && html.include?("arguments[key]") && html.include?("select_option")
-  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, error wording, ERB form#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
+  close_code, close_path = snippets.fetch("close-surface")
+  eval(close_code, context, close_path)
+  raise "Documented closure failed" unless eval('closed.closed? && closed.revision == 3', context)
+  require "active_support/testing/time_helpers"
+  Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(31.days.from_now) do
+    preview_code, preview_path = snippets.fetch("retention-preview")
+    eval(preview_code, context, preview_path)
+    raise "Documented preview differs" unless eval('summary == { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true }', context)
+    raise "Preview deleted receipts" unless RailsToolViews::ActionExecution.count == 1
+    apply_code, apply_path = snippets.fetch("retention-apply")
+    eval(apply_code, context, apply_path)
+    raise "Documented cleanup failed" unless eval('summary[:purged] == 1 && closed.reload.purged? && closed.props.empty?', context)
+  end
+  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, error wording, ERB form, close, retention preview/apply#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
 end

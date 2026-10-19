@@ -20,6 +20,7 @@ After reading this guide, you will know:
 ## Close a Finished View
 
 ```ruby
+# docs-example: close-surface
 closed = RailsToolViews.close(surface.id, scope: scope,
   retain_until: 30.days.from_now)
 closed.lifecycle_status
@@ -40,7 +41,7 @@ RailsToolViews.close(surface.id, scope: scope)
 
 Without `retain_until`, data stays indefinitely. A deadline defines the earliest time payload cleanup may become eligible; it does not schedule deletion, expire a view or disable replay by itself. Nothing runs automatically on installation. Choose a window long enough for your jobs, browser retries and operational recovery. The gem does not guess a duration.
 
-Snapshots add a `lifecycle` object with status, closed_at, retain_until and purged_at. Times are ISO 8601 strings or null. Active views retain their existing action behavior. See [Upgrading]({% link _reference/upgrading.md %}) before updating strict JSON consumers.
+Use `surface.closed?` or `surface.purged?` to inspect a persisted record. `surface.lifecycle_status` returns `active`, `closed`, `abandoned` or `purged`. Snapshots add a `lifecycle` object with status, closed_at, retain_until and purged_at. Times are ISO 8601 strings or null. Active views retain their existing action behavior. See [Upgrading]({% link _reference/upgrading.md %}) before updating strict JSON consumers.
 
 ## Abandon Unfinished Follow-up
 
@@ -61,19 +62,20 @@ There is no force option to clear uncertainty in this release. Stop automatic re
 
 ## Preview Eligible Payloads
 
-Enable a host policy first. It receives `:purge` and the scoped Surface. Return exactly `true` to authorize cleanup. Keep this policy free of writes, including during preview. It owns retention authority independently of the component registry, so you can clean an obsolete component without registering its renderer again.
+The example uses the Getting Started fixture identity; replace it with your host authorization. Enable a host policy first. It receives `:purge` and the scoped Surface. Return exactly `true` to authorize cleanup. Keep this policy free of writes, including during preview. It owns retention authority independently of the component registry, so you can clean an obsolete component without registering its renderer again.
 
 ```ruby
+# docs-example: retention-preview
 RailsToolViews.configure do |config|
   config.retention_policy = ->(access) {
     access.operation == :purge &&
-      RetentionPermissions.allowed?(access.actor, access.tenant, access.surface.id)
+      access.actor == "alice" && access.tenant == "demo"
   }
 end
 
 summary = RailsToolViews.purge_closed(scope: scope,
   closed_before: 7.days.ago, batch_size: 100)
-# => { examined: 3, eligible: 2, purged: 0, protected: 1, dry_run: true }
+# => { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true }
 ```
 
 The default policy is unset and rejects the call with `NOT_ALLOWED`. Pass a real `Scope`, an explicit past cutoff and a batch size from 1 to 1000. Candidates must belong to that exact actor and tenant, have closed strictly before the cutoff, and have reached their non-null retention deadline. Active views and indefinite retention are excluded. Pending, failed, delivering, unknown or historically uncertain interactions remain protected even if a host edited lifecycle columns directly.
@@ -81,6 +83,7 @@ The default policy is unset and rejects the call with `NOT_ALLOWED`. Pass a real
 ## Apply a Bounded Batch
 
 ```ruby
+# docs-example: retention-apply
 summary = RailsToolViews.purge_closed(scope: scope,
   closed_before: 7.days.ago, batch_size: 100, dry_run: false)
 ```

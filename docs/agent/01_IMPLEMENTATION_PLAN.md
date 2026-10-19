@@ -30,3 +30,7 @@ Feature-milestone acceptance is in 08_V1_ACCEPTANCE.md. Version 0.1.0 publicatio
 ## Public 0.2 local acceptance
 
 WORK-20261018-06..09: browser/isolated-host foundation → deny-by-default Partial generator → complete authorized HTML correction → metadata/docs/matrix/package verification. No migration, retention, notification or adapter expansion. [Validation](../evidence/V0_2_VALIDATION.md) records local completion; push/remote CI/publication are separate next steps.
+
+## Owner-authorized 0.3 local sequence
+
+WORK-20261019-01 lifecycle/migration and Surface-first delivery coordination → WORK-02 opt-in payload cleanup and dummy E2E → WORK-03 genuine 0.2 data upgrade, PostgreSQL competing workers, compatibility/package/isolated/docs acceptance. ADR 008 fixes tombstone and quarantine boundaries. No new notification or recovery protocol; publication and provider calls remain separate. Evidence lives in V0_3_VALIDATION.
