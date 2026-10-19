@@ -37,3 +37,7 @@ Schema 注册时遍历每一个子 schema：每个取值位置必须声明 type/
 组件模板用 `rails_tool_views_action_form` / `rails_tool_views_action_button` 发起动作：字段名自动落在 `arguments[...]` 下，同页多个 Surface 的元素 id 不冲突，动作名、revision、幂等 key 和来源组件自动填入。ViewComponent 的构造函数如果声明了 `surface:`、`state:`、`error:` 关键字，就会收到对应的上下文，因此也能做成可交互组件；没有声明的组件行为不变。挂载控制器的父类由 `config.parent_controller` 指定（默认主应用的 ApplicationController）。数据库回滚整个动作事务时（死锁、序列化失败、锁超时）返回 CONFLICT，可用同一个 key 重试。SQLite 和 PostgreSQL 17 已在本地验证，MySQL 未验证。详见 ADR 004。
 
 ValidationError 是受限的展示反馈，包含字段错误和批准的提交值；拒绝动作不持久化这些值，也不提交业务写入或回执。授权 HTML/Turbo 重绘当前组件，JSON 返回 422。业务续接在提交后执行；示例 Agent 将新业务版本/回复与 DemoAgentReceipt 放在一个事务，使用持久化 delivery_key 处理已写入但未确认的重试。外部 provider 仍需要自身 durable deduplication。
+
+## 0.3 生命周期
+
+Surface 是动作、投递认领与生命周期转换的共同锁边界，顺序为 Surface → AgentInteraction；外部回调仍在事务外。close 保留数据并拒绝新动作；abandon 显式终止 pending/failed，二者都拒绝 delivering 和持久 delivery_uncertain。该标记保护曾经被回收的租约，不能用终态回写证明旧回调停止。关闭时间、保留截止和清理时间独立记录，nil 截止代表无限保留。详见 ADR 008；清理入口尚在开发。

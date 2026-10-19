@@ -35,6 +35,10 @@ A Surface exposes its `props`, `state`, `revision`, and `snapshot`. Treat the sn
 
 A server-owned `correlation:` has exactly `adapter:`, `call_id:`, and `context:`. Repeating the same presentation with the same scope and input returns the prior Surface. Reusing correlation with changed input rejects with `IDEMPOTENCY_CONFLICT`. The RubyLLM adapter supplies this correlation from a real ToolCall.
 
+## Close a Finished View
+
+Use [Surface Lifecycle]({% link _advanced/lifecycle.md %}) to stop new actions while keeping authorized reads and committed request replay. Closing is an explicit host decision, independent of business or delivery status.
+
 ## Next Steps
 
 * [Actions and Forms]({% link _core_features/actions.md %}) changes state safely.

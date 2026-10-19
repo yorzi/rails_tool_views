@@ -15,7 +15,8 @@ class PrivacyTest < ActiveSupport::TestCase
     token = ActiveSupport::Notifications.subscribe(/\.rails_tool_views\z/) { |*args| events << args.last }
     surface = present_card
     act(surface)
-    assert_equal %i[component component_digest id props revision state], surface.snapshot.keys.sort
+    assert_equal %i[component component_digest id lifecycle props revision state], surface.snapshot.keys.sort
+    assert_equal %i[closed_at purged_at retain_until status], surface.snapshot[:lifecycle].keys.sort
     refute_includes JSON.generate(events), "Choose a workflow"
     refute_includes JSON.generate(events), "alice"
     inspected = surface.reload.inspect + RailsToolViews::ActionExecution.first.inspect

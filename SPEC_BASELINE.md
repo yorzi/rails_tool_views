@@ -32,3 +32,7 @@ Andy explicitly authorizes improving AI-agent local development/testing, impleme
 ## 2026-10-18 public 0.2 release authorization
 
 After reviewing local acceptance, Andy explicitly authorizes pushing the candidate, checking remote CI, then publishing 0.2.0. This supersedes the previous local-only limitation for this release, including necessary metadata commits, annotated tag, OIDC upload, GitHub Release and versioned Pages deployment/verification. MIT, disclosure and scope stay unchanged; formal/security/provider/adoption gaps remain open.
+
+## 2026-10-19 public 0.3 development authorization
+
+Andy requests continuing 0.3 development with high-quality tests, against the roadmap's lifecycle/opt-in retention scope. Reversible local implementation, verification and incremental commits are authorized. Host controls deadlines and authorization; no automatic deletion, guessed delivery quiescence, notification change or future publication is inferred. Original Specs remain pinned and unmodified.

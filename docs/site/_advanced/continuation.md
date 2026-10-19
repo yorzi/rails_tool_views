@@ -33,6 +33,8 @@ An unfinished claim has a `delivery_lease`. After expiry it can be reclaimed. Th
 
 `RailsToolViews::Adapters::RubyLLM::Continuation` accepts `chat_resolver:` and `delivery:` callables. The resolver returns an authorized chat; the delivery callable performs durable deduplication around the provided block. The adapter starts a supported user turn with `Chat#ask`. The host owns its conversation and pending-tool lifecycle.
 
+A lease takeover now records durable uncertainty for [lifecycle protection]({% link _advanced/lifecycle.md %}#protect-uncertain-delivery). Do not close or clean up a view merely because a lease expired or a status became terminal.
+
 ## Next Steps
 
 * [Production Boundaries]({% link _advanced/production.md %}) covers outbox and retention choices.

@@ -120,3 +120,7 @@ FR-01/02/07/08 LOCAL_PASS: generator 默认展示/动作拒绝（公开 dispatch
 ## Public 0.2 delivery — WORK-20261018-11
 
 FR-08/NFR-03 RELEASE_PASS: exact tag 3156fd3 CI and OIDC publication complete, RubyGems/Release/client checksum agreement, full isolated installed host and dependency audits PASS. FR-01/02/07 remote regressions: three Ruby/Rails and PostgreSQL each 97/837; adapter 7/45; Chrome 4/28. Hosted stable0.2/next Pages, new feature search/version navigation, 15 HTTPS entries, 17-guide lint and 2,450 generated links PASS. No migration/runtime dependency change. Exact run/hash details in ../evidence/RELEASE_0_2_0.md. Formal H2/C/R, MySQL/provider/adoption/independent security/full a11y remain open.
+
+## WORK-20261019-01 — 生命周期本地验证
+
+FR-04/05/06/07/08 LOCAL_PASS：close/abandon 专用授权、跨租户拒绝、关闭后旧回执/关联重放、新动作拒绝；pending/failed 显式放弃，delivering/持久 uncertain 保护。两个并行回调的过期租约测试证明旧回写不能移除保护，callback 在事务外。core 106/923 + eager load、实际 package host + generated Minitest 1/2 PASS；19 guides zero errors/two expected unreleased warnings。完整矩阵、迁移旧数据、清理、browser 留后续单元；未推送或运行远端 CI。

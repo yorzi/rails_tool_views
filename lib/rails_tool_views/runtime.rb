@@ -44,6 +44,7 @@ module RailsToolViews
       # match may stand in for this scope's Surface, or a lookup could disclose
       # another actor's or tenant's record.
       raise Error.new("NOT_FOUND", status: 404) unless surface && exact_match?(surface, id: id.to_s, actor_ref: scope.actor, tenant_ref: scope.tenant)
+      ensure_not_purged!(surface)
       component = compatible_component!(surface)
       component.authorize!(access(scope, :read, surface: surface, props: surface.props, context_ref: surface.context_ref))
       surface
@@ -62,6 +63,7 @@ module RailsToolViews
       request_digest = Data.digest(action: definition.key, arguments: arguments, base_revision: base_revision)
       result = nil
       surface.with_lock do
+        ensure_not_purged!(surface)
         compatible_component!(surface).authorize!(access(scope, :read, surface: surface, props: surface.props, context_ref: surface.context_ref))
         request = access(scope, :action, surface: surface, props: surface.props, action: definition.key,
           arguments: arguments, context_ref: surface.context_ref)
@@ -74,6 +76,7 @@ module RailsToolViews
           result = prior.result.symbolize_keys
           next
         end
+        raise Error.new("SURFACE_CLOSED", status: 410) if surface.closed?
         raise Error.new("CONFLICT", status: 409) unless surface.revision == base_revision
         if surface.action_executions.where("created_at >= ?", 1.minute.ago).count >= configuration.max_actions_per_minute
           raise Error.new("RATE_LIMITED", status: 429)
@@ -114,25 +117,35 @@ module RailsToolViews
       interaction = AgentInteraction.find_by(id: id)
       raise Error.new("NOT_FOUND", status: 404) unless interaction
       surface = restore(interaction.surface_id, scope: scope)
-      definition = compatible_component!(surface).actions.fetch(interaction.payload.fetch("action")) { raise Error.new("INCOMPATIBLE_COMPONENT", status: 422) }
-      arguments = definition.schema.validate!(interaction.payload.fetch("values"), code: "INVALID_ARGUMENTS")
-      request = access(scope, :action, surface: surface, props: surface.props, action: definition.key, arguments: arguments, context_ref: surface.context_ref)
-      raise Error.new("NOT_ALLOWED", status: 403) unless definition.policy&.call(request) == true
       claimed = false
-      interaction.with_lock do
-        if %w[completed skipped].include?(interaction.status)
-          next
+      # Coordinate the claim with close/abandon/purge, using the same lock order
+      # as actions. Never hold a database transaction during the adapter call.
+      surface.with_lock do
+        ensure_not_purged!(surface)
+        component = compatible_component!(surface)
+        component.authorize!(access(scope, :read, surface: surface, props: surface.props, context_ref: surface.context_ref))
+        interaction.with_lock do
+          definition = component.actions.fetch(interaction.payload.fetch("action")) { raise Error.new("INCOMPATIBLE_COMPONENT", status: 422) }
+          arguments = definition.schema.validate!(interaction.payload.fetch("values"), code: "INVALID_ARGUMENTS")
+          request = access(scope, :action, surface: surface, props: surface.props, action: definition.key, arguments: arguments, context_ref: surface.context_ref)
+          raise Error.new("NOT_ALLOWED", status: 403) unless definition.policy&.call(request) == true
+          next if %w[completed skipped abandoned].include?(interaction.status)
+          raise Error.new("SURFACE_CLOSED", status: 410) if surface.closed?
+          if interaction.status == "delivering" && interaction.claimed_at && interaction.claimed_at > Time.current - configuration.delivery_lease
+            next
+          end
+          next if interaction.status == "failed" && !retry_failed
+          # Reclaiming a lease does not prove that the previous callback ended.
+          # This durable flag cannot be cleared by a stale worker's completion.
+          uncertain = interaction.delivery_uncertain? || interaction.status == "delivering"
+          if adapter.nil?
+            interaction.update!(status: "skipped", claimed_at: nil, delivery_uncertain: uncertain)
+            next
+          end
+          interaction.update!(status: "delivering", claimed_at: Time.current, attempts: interaction.attempts + 1,
+            error_code: nil, delivery_uncertain: uncertain)
+          claimed = true
         end
-        if interaction.status == "delivering" && interaction.claimed_at && interaction.claimed_at > Time.current - configuration.delivery_lease
-          next
-        end
-        next if interaction.status == "failed" && !retry_failed
-        if adapter.nil?
-          interaction.update!(status: "skipped")
-          next
-        end
-        interaction.update!(status: "delivering", claimed_at: Time.current, attempts: interaction.attempts + 1, error_code: nil)
-        claimed = true
       end
       return interaction.reload unless claimed
       begin
@@ -190,6 +203,9 @@ module RailsToolViews
     end
 
     private
+    def ensure_not_purged!(surface)
+      raise Error.new("SURFACE_PURGED", status: 410) if surface.purged?
+    end
     def check_scope!(scope)
       raise Error.new("INVALID_SCOPE", status: 403) unless scope.is_a?(Scope)
     end

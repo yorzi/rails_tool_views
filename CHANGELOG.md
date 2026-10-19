@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - Unreleased
+
+- Add explicit host-authorized `close` and `abandon`, with read-only closed rendering, preserved exact action replay and first-termination retention deadlines.
+- Add lifecycle snapshot metadata and an additive migration. Stop old workers before upgrading; rollback refuses once a Surface was closed.
+- Coordinate delivery claims and lifecycle changes through the Surface lock while keeping callbacks outside transactions. Quarantine ambiguous lease takeovers and legacy multiple-attempt histories from cleanup.
+
 ## [0.2.0] - 2026-10-18
 
 - Add `rails_tool_views:component NAME` for a Partial, closed registration schemas and a Minitest scaffold. Component and action policies deny by default. Existing paths, unsafe names and symlink escapes are refused before writing.

@@ -110,6 +110,18 @@ client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_
 raise "Generated HTML correction failed" unless client.response.status == 303 && client.response.location == "http://www.example.com/rails_tool_views/surfaces/#{review.id}" && review.reload.state["value"] == "reviewed"
 client.follow_redirect!
 raise "Generated saved view did not restore" unless client.response.status == 200 && client.response.body.include?('value="reviewed"')
+# Exercise actual lifecycle code from the installed artifact.
+RailsToolViews.close(review.id, scope: scope, retain_until: 1.day.from_now)
+raise "Installed lifecycle did not close" unless review.reload.closed? && review.revision == 3
+client.get("/rails_tool_views/surfaces/#{review.id}", headers: { "Accept" => "text/html" })
+raise "Installed closed view still accepts forms" unless client.response.body.include?("View closed.") && !client.response.body.include?("<form")
+replay = RailsToolViews.dispatch(review.id, scope: scope, action: "set_value", arguments: { value: "reviewed" }, base_revision: 1, idempotency_key: "generated-1")
+raise "Installed closed receipt failed" unless replay[:revision] == 2 && review.reload.revision == 3
+require "rake"
+Rails.application.load_tasks
+ENV["FROM"] = "rails_tool_views"
+Rake::Task["railties:install:migrations"].invoke
+raise "Standard migration task duplicated installer files" unless Dir[File.join(host, "db/migrate/*.rb")].size == 2
 # Run the actual generated Minitest file after restoring its safe default.
 File.write(registration, File.read(registration).gsub('->(access) { access.actor == "alice" && access.tenant == "acme" }', "->(_access) { false }"))
 FileUtils.mkdir_p(File.join(host, "test"))
@@ -122,7 +134,7 @@ load registration
 ActiveRecord.maintain_test_schema = false
 load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> generated scaffold/test -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> closed replay/migration task -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

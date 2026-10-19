@@ -293,3 +293,11 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **复查/验证：** main CI 39126752647、候选 Docs 39126752515、Release 39126933977、发布后 Pages 39127199725 全绿。标签三个 Ruby/Rails 与 PostgreSQL 各 97/837，adapter 7/45，Chrome 4/28；31-file package、生成测试、隔离安装/激活依赖审计、2,450 docs links PASS。registry API/实际 gem fetch/GitHub gem/SHA256SUMS 都是 5fd6a193dd9e69be3277ef34ff63802118031c51fee95ddcf4952af46d307367；31 个文件逐字节与本地一致、gemspec 契约相同（工具版本/文件排序不同，不声称跨 job 二进制复现）。版本页确认 MFA/精确 workflow publisher。稳定0.2/next 安装、搜索生成器指南、版本切换和 15 HTTPS 页面验证通过。详见 RELEASE_0_2_0；此记录自己的 post-push CI 需在提交后确认并在最终回复交接。
 
 **影响/下一步：** 无迁移、新权限/DNS/长期 key/provider/客户联系；既有正式/安全/MySQL/adoption gaps 不变。更新 status/map/roadmap/operations/acceptance/checklist/evidence/current work；架构/运行序列无改动。没有启动本地服务；watchers 已结束，客户端临时目录删除，浏览器页关闭，下载包和截图保留 ignored tmp。提交推送本记录并核验最终 CI；本次无剩余发布操作，不自动开始 0.3。
+
+### WORK-20261019-01 — 生命周期与安全关闭
+
+**内容/映射：** owner 授权推进 0.3；FR-04/05/06/07/08。新增 close/abandon、四个 Surface 时间戳与 delivery_uncertain 加法迁移，installer 同步。read 和专用 policy 授权、关闭只读、新动作 410，历史回执和关联重放保持。Surface-first 认领/关闭锁；callback 事务外。旧投递 delivering 或 attempts>1 升级保守标记；后续回写不能清除。nil 保留无限期，首次终止决定不变。
+
+**复查/验证：** 聚焦测试先失败再实现；core 106 tests / 923 assertions + eager load PASS，覆盖重复关闭、跨 scope、专用 policy、pending/failed abandon、两个过期并行回调的保护。实际包新 Rails host 安装两个迁移、HTML 关闭与旧回执重放、标准 migration copy 去重、生成 Minitest 1/2 PASS；19 guides zero errors/two expected unreleased warnings。完整 matrix/upgrade/清理/browser/build 留后续，不称远端通过。
+
+**影响/文档/下一步：** 升级需停旧 web/workers；已有 delivering 和历史多尝试可能永久受保护，没有强制清理或自动重开。旧 acknowledgement 的 exactly-once 不在本版修复范围。ADR 008、独立指南/升级/What’s New、human architecture/flow/map/status、acceptance/checklists 同步；59 Specs pinned 文件一致，无 intent delta、通知或依赖扩张。无长期进程，main 本地提交；下一单元显式保留策略和 payload 清理，不推送/发布。

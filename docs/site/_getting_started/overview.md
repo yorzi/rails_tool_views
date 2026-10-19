@@ -31,6 +31,10 @@ A Surface holds presentation props, UI state, revision, and an optional opaque c
 
 If a Transition requests an agent, `RailsToolViews.deliver` can call the host adapter after commit. Agent failure does not undo the completed business action. The optional RubyLLM adapter does not give models direct business authority.
 
+## End a View Explicitly
+
+Use [Surface Lifecycle]({% link _advanced/lifecycle.md %}) to distinguish active, closed and abandoned views. An action result or an agent status does not decide when host work is finished.
+
 ## Next Steps
 
 * [Registering Components]({% link _core_features/components.md %}) defines the view contract.

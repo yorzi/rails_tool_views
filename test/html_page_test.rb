@@ -99,4 +99,18 @@ class HtmlPageTest < ActionDispatch::IntegrationTest
     ActionController::Base.allow_forgery_protection = old
   end
 
+  test "a closed view is readable without actionable forms and new HTTP actions return gone" do
+    surface = present_card
+    RailsToolViews.close(surface.id, scope: scope)
+    get surface_path(surface)
+    assert_response :ok
+    assert_page
+    assert_select "h2", text: "View closed."
+    assert_select "form", count: 0
+    post "#{surface_path(surface)}/actions", params: arguments(revision: 2), as: :json
+    assert_response :gone
+    assert_equal "SURFACE_CLOSED", response.parsed_body["code"]
+    assert_equal 0, DemoEffect.count
+  end
+
 end

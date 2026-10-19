@@ -117,3 +117,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Release not draft/prerelease; post-release Pages successful; stable 0.2/next install commands, search/version menu, 15 HTTPS endpoints and redirect verified. Internal content remains excluded.
 - [x] Status/map/roadmap/operations/acceptance/evidence/current work and ledger reflect delivery. No runtime/API/schema/migration/new dependency/DNS/security grant/provider/contact. Specs unchanged; architecture/runtime flow unchanged.
 - [x] No temporary server; watchers finished, disposable client directory removed, browser tab closed. Downloaded evidence is retained in ignored tmp. This record's own post-push CI/Docs is checked after commit, without claiming future results inside it.
+
+## WORK-20261019-01
+
+- [x] owner 0.3 本地开发授权与 pre-flight，59 Specs pinned 文件比对相同。
+- [x] lifecycle API/schema、专用 policy、旧回执/关闭视图、Surface-first delivery 锁与持久 uncertainty 测试通过；106/923 eager load，package host + generated Minitest 1/2。
+- [x] ADR 008、public guide/What’s New/upgrading、human architecture/flow/map/status、验收同步；未修改 Specs，无新增通知契约。
+- [x] 无长期服务；只本地提交，不推送/发布。完整 matrix/upgrade/清理/E2E 未完成，不提前宣称候选通过。

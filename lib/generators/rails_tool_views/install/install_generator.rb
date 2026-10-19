@@ -12,6 +12,7 @@ module RailsToolViews
       end
       def install
         migration_template "create_rails_tool_views.rb", "db/migrate/create_rails_tool_views.rb"
+        migration_template "add_rails_tool_views_lifecycle.rb", "db/migrate/add_rails_tool_views_lifecycle.rb"
         template "rails_tool_views.rb", "config/initializers/rails_tool_views.rb"
         route 'mount RailsToolViews::Engine => "/rails_tool_views", as: :rails_tool_views'
       end

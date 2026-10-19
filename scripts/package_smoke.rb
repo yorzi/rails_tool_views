@@ -12,7 +12,7 @@ FileUtils.mkdir_p("pkg")
 spec = Gem::Specification.load("rails_tool_views.gemspec")
 package = Gem::Package.build(spec, true, false, "pkg/rails_tool_views-#{spec.version}.gem")
 contents = Gem::Package.new(package).contents
-%w[app/controllers/rails_tool_views/surfaces_controller.rb app/helpers/rails_tool_views/surfaces_helper.rb app/models/rails_tool_views/redacted_json.rb app/views/rails_tool_views/surfaces/_surface.html.erb app/assets/javascripts/rails_tool_views_controller.js lib/generators/rails_tool_views/install/templates/create_rails_tool_views.rb lib/generators/rails_tool_views/component/component_generator.rb].each do |path|
+%w[app/controllers/rails_tool_views/surfaces_controller.rb app/helpers/rails_tool_views/surfaces_helper.rb app/models/rails_tool_views/redacted_json.rb app/views/rails_tool_views/surfaces/_surface.html.erb app/assets/javascripts/rails_tool_views_controller.js lib/generators/rails_tool_views/install/templates/create_rails_tool_views.rb lib/generators/rails_tool_views/component/component_generator.rb lib/rails_tool_views/lifecycle.rb db/migrate/20261019000000_add_rails_tool_views_lifecycle.rb].each do |path|
   abort "Missing packaged runtime file: #{path}" unless contents.include?(path)
 end
 abort "Core depends on RubyLLM" if spec.runtime_dependencies.any? { |dependency| dependency.name == "ruby_llm" }

@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "What Is New in 0.2"
-nav_order: 4
+nav_order: 11
+parent: Release History
 description: "Generate safe Partial components and correct forms on complete HTML pages without Turbo."
 ---
 
@@ -36,4 +37,4 @@ The development suite uses real Chrome for Partial/ViewComponent persistence and
 
 ## Upgrade
 
-Version {{ site.version }} requires no database migration or new runtime dependency. Follow [Upgrading]({% link _reference/upgrading.md %}) if you override Engine HTML templates. {% if site.docs_unreleased %}This version is under development; use stable documentation for the published gem.{% endif %}
+Version 0.2.0 requires no database migration or new runtime dependency. Follow [Upgrading]({% link _reference/upgrading.md %}) if you override Engine HTML templates. {% if site.docs_unreleased %}This version is under development; use stable documentation for the published gem.{% endif %}

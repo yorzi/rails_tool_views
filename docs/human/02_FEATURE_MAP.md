@@ -25,3 +25,7 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 验收边界见 ../agent/08_V1_ACCEPTANCE.md。UC-06..09、真实 provider 与外部发送不在本次范围。
 
 组件注册不等于权限；工具确认不等于界面；Surface 状态不等于业务记录；已保存选项不等于 Agent 成功。详见架构与运行流程。
+
+## 0.3 本地开发
+
+`lib/rails_tool_views/lifecycle.rb` 提供授权的 close/abandon；Surface 新增生命周期时间戳和只读渲染。历史回执可重放，新的业务动作被拒绝。迁移/installer 同步，旧投递不确定性被保守标记；清理与升级最终验收仍待完成。

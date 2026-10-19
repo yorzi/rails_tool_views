@@ -13,6 +13,10 @@ module RailsToolViews
     MESSAGES = {
       "NOT_FOUND" => "This view is unavailable.", "NOT_ALLOWED" => "You do not have permission to use this view.",
       "CONFLICT" => "This view changed. Refresh to continue.", "INVALID_ARGUMENTS" => "Check the submitted values and try again.",
+      "SURFACE_CLOSED" => "This view is closed. Its saved actions cannot be changed.",
+      "SURFACE_PURGED" => "This view has been cleaned up and cannot be restored.",
+      "LIFECYCLE_BUSY" => "This view has unfinished or uncertain delivery. Resolve it before closing.",
+      "INVALID_RETENTION_WINDOW" => "Choose a future retention deadline or keep this view indefinitely.",
       "VALIDATION_FAILED" => "Check the highlighted fields and try again.",
       "INCOMPATIBLE_COMPONENT" => "This view's contract changed. Ask the application owner to migrate or recreate it.",
       "RENDER_FAILED" => "This view cannot be rendered. Your saved state is preserved.",

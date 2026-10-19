@@ -8,7 +8,7 @@
   </p>
   <% interaction = surface.agent_interactions.order(:id).last %>
   <% if interaction && interaction.status != "skipped" %>
-    <p role="status"><%= rails_tool_views_text({ "pending" => :agent_pending, "delivering" => :agent_pending, "completed" => :agent_completed, "failed" => :agent_failed }.fetch(interaction.status, :agent_unavailable)) %></p>
+    <p role="status"><%= rails_tool_views_text({ "pending" => :agent_pending, "delivering" => :agent_pending, "completed" => :agent_completed, "failed" => :agent_failed, "abandoned" => :agent_abandoned }.fetch(interaction.status, :agent_unavailable)) %></p>
     <% if interaction.status == "failed" %>
       <%= form_with url: rails_tool_views_routes.surface_continuation_path(surface, interaction_id: interaction.id), method: :post do %>
         <button type="submit"><%= rails_tool_views_text(:agent_retry) %></button>

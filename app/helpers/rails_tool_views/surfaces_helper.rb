@@ -5,6 +5,8 @@ module RailsToolViews
     # Engine-owned copy. Translate or reword any of it under rails_tool_views.surface.<key>.
     TEXT = {
       page_title: "Interactive view", page_error_title: "Unable to complete this request", reload: "Reload saved view",
+      closed_title: "View closed.", abandoned_title: "View abandoned.", closed_help: "Saved actions are read-only. Start a new view to continue.",
+      agent_abandoned: "AI follow-up abandoned by the application.",
       ready: "View ready.", saved: "Changes saved.", revision: "Saved revision %{revision}",
       saving: "Saving changes…", save_failed: "Changes could not be saved. Review the message and try again.",
       agent_pending: "AI follow-up pending.", agent_completed: "AI follow-up completed.",
@@ -56,6 +58,7 @@ module RailsToolViews
     end
 
     def rails_tool_views_body(surface, definition, error: nil) # :nodoc:
+      return render(partial: "rails_tool_views/surfaces/closed", formats: [:html], locals: { surface: surface }) if surface.closed?
       html = if definition.partial
         render(partial: definition.partial, locals: { props: surface.props, state: surface.state, surface: surface, error: error })
       else

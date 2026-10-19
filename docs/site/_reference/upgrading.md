@@ -2,7 +2,7 @@
 layout: default
 title: "Upgrading"
 nav_order: 2
-description: "Upgrade a RailsToolViews host from 0.1 to 0.2 without migrating saved data."
+description: "Upgrade from 0.2 with additive lifecycle columns while preserving saved views and replay receipts."
 ---
 
 # {{ page.title }}
@@ -12,47 +12,39 @@ description: "Upgrade a RailsToolViews host from 0.1 to 0.2 without migrating sa
 
 After reading this guide, you will know:
 
-* Update the gem without rerunning the installer.
-* Review full-page HTML responses and host overrides.
-* Add generated components without changing existing registrations.
+* Install the lifecycle migration on an existing host.
+* Stop old writers before enabling lifecycle operations.
+* Review delivery uncertainty and rollback limits.
 
-## Update the Gem
+## Stop Old Writers and Back Up
 
-Update the version requirement in your Gemfile, then run `bundle update rails_tool_views`:
+Back up the Engine tables and relevant host business data. Stop old web processes and delivery workers, then update the gem. Do not run a mixture of old and new writers: the old runtime does not enforce closed or purged states. Requests from old browser tabs must reach only the new server.
 
-```ruby
-gem "rails_tool_views", "~> {{ site.version }}"
+For an older upgrade, follow the [0.2 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.2.0/docs/site/_reference/upgrading.md) first.
+
+## Copy and Run Missing Migrations
+
+Existing hosts use the standard Rails task:
+
+```sh
+bin/rails railties:install:migrations FROM=rails_tool_views
+bin/rails db:migrate
 ```
 
-This release adds no database migration or runtime dependency. Do not rerun `rails_tool_views:install` on an existing host. Saved Surface IDs, revisions, component contracts and replay receipts remain unchanged. Keep host component definitions unchanged when verifying old saved Surfaces.
+Do not rerun `rails_tool_views:install` on an existing host. Rails skips the existing create migration by name and copies the lifecycle migration. New installations receive both migrations from the installer.
 
-If you still use an unpublished candidate with the old `ToolViews` identity, first follow the [0.1 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.1.0/docs/site/_reference/upgrading.md). Its table and delivery-key migration does not apply to a host already on public 0.1.0.
+The migration adds Surface lifecycle timestamps and an interaction uncertainty flag. Existing Surface IDs, props, state, revisions, correlation and replay receipts stay unchanged; existing views start active. No runtime dependency is added.
 
-## Review HTML Responses
+Old delivering interactions and rows with multiple attempts are marked uncertain. Their old history cannot distinguish an explicit failed retry from overlapping lease takeovers. The new runtime preserves delivery behavior but blocks lifecycle termination for these records, including after a terminal acknowledgment. Inspect them through host operations; do not clear the flag based on elapsed time.
 
-Direct Engine HTML reads and rejected HTML actions now return a full document. The Engine supplies a language, title, viewport, CSRF tags and main landmark. If your code fetched a direct Surface URL as an HTML fragment, use the embedded `rails_tool_views_surface` helper in a host view instead.
+## Review New Fields and Policies
 
-Embedded helpers still return fragments. JSON and Turbo response formats, HTTP error statuses, scope policies, revisions and replay protection retain their existing behavior.
+Snapshots add a `lifecycle` object. Update strict consumers that reject unknown response keys. Existing component contracts and digests are unchanged.
 
-Without Turbo, an authorized error page retains the component and approved validation values. Correct and submit the form again. After a correction, a POST-only Engine referrer redirects to the readable saved Surface. The **Reload saved view** link discards unsaved corrections. Unavailable identity does not expose component data or a correction form.
+Lifecycle calls recheck normal read policy plus the component policy for `:close` or `:abandon`. Review policies before wiring host routes; there are no built-in Engine lifecycle endpoints or AI tools. Existing active actions and optional continuation remain available.
 
-Review any host overrides at:
+## Verify Before Enabling Retention
 
-```text
-app/views/layouts/rails_tool_views/application.html.erb
-app/views/rails_tool_views/surfaces/page.html.erb
-```
+Restore a saved 0.2 Surface and replay its original action with the same key. Check current read/action policy and tenant isolation. Test closure, rejected new actions, permitted old receipts and explicit abandonment. Leave uncertain or delivering work protected. A nil retention deadline keeps data indefinitely.
 
-The Engine layout does not depend on instance variables or assets from the embedding controller. Preserve its document structure and CSRF tags when overriding it. Test successful, invalid, stale and denied requests with JavaScript disabled. See [Validation and Errors]({% link _core_features/validation.md %}).
-
-## Add a Generated Component
-
-Existing manual registrations need no changes. The optional [Partial generator]({% link _core_features/component-generator.md %}) creates three files and denies both presentation and actions until you configure host policies.
-
-Load its registration files in your existing shared `to_prepare` block after one `reset_registry!`. Do not reset for each file, since the next definition would remove earlier components. The generator refuses conflicting destinations, including `--force`; resolve them before retrying.
-
-## Verify the Host
-
-Restore an existing Surface, submit an action and replay its original request. Check that a different actor or tenant cannot read or act on it. For a form, test an invalid submission, correct the fields, and refresh after success. Your host owns business validation, trusted allowed values and field descriptions.
-
-Read [What Is New]({% link _getting_started/whats-new-in-0-2.md %}) for the new workflow and [Production Boundaries]({% link _advanced/production.md %}) for the unchanged operational responsibilities.
+The migration can roll back only while no Surface has been closed. Once lifecycle is used, it refuses downgrade, since an old runtime could reopen work and payload cleanup cannot reconstruct data. Restore the complete pre-upgrade backup if a rollback is necessary; coordinate host business effects separately. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}).
