@@ -2,6 +2,49 @@
 require_relative "../browser_test_helper"
 
 class BrowserWorkflowsTest < BrowserTest
+  test "keyboard submission exposes loading then an explicit continuation retry on mobile" do
+    mobile_viewport
+    visit "/v1/support"
+    click_link "Billing question · North Workshop"
+    entered, release = Queue.new, Queue.new
+    RailsToolViews.configuration.agent_adapter = ->(*) {
+      entered << true
+      release.pop
+      raise "offline browser fixture"
+    }
+    button = find_button("Request reply draft")
+    button.send_keys(:enter)
+    Timeout.timeout(5) { entered.pop }
+    assert_selector ".rails-tool-views-surface[aria-busy=true]"
+    assert_button "Requesting draft…", disabled: true
+    assert_selector "[data-rails-tool-views-target=status]", text: "Saving changes"
+    take_screenshot("continuation-loading-mobile")
+    release << true
+    assert_button "Retry AI follow-up"
+    assert_no_selector ".rails-tool-views-surface[aria-busy=true]"
+    assert_equal 0, DemoReply.uncached { DemoReply.count }
+    assert_equal 1, RailsToolViews::ActionExecution.uncached { RailsToolViews::ActionExecution.count }
+    assert_selector "[data-rails-tool-views-revision-value='2']"
+    assert_equal "status", page.evaluate_script("document.activeElement.dataset.railsToolViewsTarget")
+    take_screenshot("continuation-failed-mobile")
+    RailsToolViews.configuration.agent_adapter = DemoV1::Agent.new
+    find_button("Retry AI follow-up").send_keys(:enter)
+    assert_text "AI follow-up completed."
+    assert_field "Reply to review"
+    assert_no_button "Retry AI follow-up"
+    assert_equal 1, DemoReply.uncached { DemoReply.count }
+    assert_equal 1, DemoAgentReceipt.uncached { DemoAgentReceipt.count }
+    assert_equal 1, RailsToolViews::ActionExecution.uncached { RailsToolViews::ActionExecution.count }
+    assert_selector "[data-rails-tool-views-revision-value='2']"
+    assert_equal "status", page.evaluate_script("document.activeElement.dataset.railsToolViewsTarget")
+    assert page.evaluate_script("document.documentElement.scrollWidth <= window.innerWidth"), "Mobile page overflows horizontally"
+    page.refresh
+    assert_text "AI follow-up completed."
+    assert_equal 1, DemoReply.uncached { DemoReply.count }
+    take_screenshot("continuation-recovered-mobile")
+  ensure
+    release << true if release
+  end
   test "Turbo saves a Partial choice and restores it after refresh" do
     visit "/"
     click_button "Present ChoiceCard"
@@ -37,6 +80,7 @@ class BrowserWorkflowsTest < BrowserTest
     fill_in "Customer email", with: "not-an-email"
     click_button "Create customer"
     assert_selector "[aria-invalid='true']"
+    assert_selector "[data-rails-tool-views-target=error]:focus"
     assert_field "Customer name", with: "Browser customer"
     assert_field "Customer email", with: "not-an-email"
     assert_equal 0, DemoCustomer.uncached { DemoCustomer.where(name: "Browser customer").count }

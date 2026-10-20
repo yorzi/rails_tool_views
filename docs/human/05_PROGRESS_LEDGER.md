@@ -347,3 +347,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读ADR009、Continuation和Upgrading；在host事务外运行job，验证业务effect后进程中断、租约到期同key恢复。需停止旧workers，避免其无fence确认；无新迁移。fence只保护Engine状态，远端仍需host durable dedup，uncertain仍隔离，不能凭时间强清。更新版本为本地0.4候选/released:false、What's New历史导航、状态/功能图/流程/runbook/验收。架构实体不变，无新图。归类IMPLEMENTATION_BUG和技术实现；通知/临时notice兼容性决定已提问，尚未实施。临时包清理，无新长驻服务。
 
 **下一步：** 完成已确认的诊断/反馈范围与完整本地验收；不推送/发布0.4，不调用provider，不改外部Specs。
+
+### WORK-20261020-02 — 元数据诊断与真实界面反馈验证
+
+**内容/映射：** FR-07、SEC-11/18；以 sentinel 证实现有普通错误日志暴露 host 异常消息，改为event/class，不拷贝消息和栈；原异常仍由host Rails.error处理。新增Operational Diagnostics指南，列出现有event和metadata、观测非durable outbox、当前delivery排障方法与host日志隐私边界。
+
+**复查/验证：** 隐私回归先失败后通过，privacy8/67，完整core123/1063/eager load。Chrome6/61：键盘提交/重试、aria-busy/按钮禁用、字段错误焦点、更新后status焦点、390px失败/恢复/刷新，并验证只创建一份reply/host receipt/action receipt。loading/failed/recovered三张截图已人工检查。首轮sandbox loopback EPERM不是产品缺陷，获得执行许可后真实重跑通过。21-guide lint零错误/两条预期候选警告，stable0.3/next build与2,822links通过。
+
+**影响/人工复查：** 阅读diagnostics与upgrading；普通日志解析器改用event metadata或host Rails.error，原异常隐私仍需host控制。截图与browser操作只用合成数据；无provider/外部联系。无新schema/runtime依赖/客户端框架；兼容性决定尚未答复，故保留现有action.executed和持久state.message，未新增replayed字段或notice。Implementation bug/privacy hardening，无产品意图改动；ADR009/操作/验收/checklist/What's New同步，实体/流程不变无需新图。所有本轮Puma/Chrome/driver已结束。
+
+**下一步：** 完成实施部分的matrix/PG/实际包/旧数据升级/隔离安装/审计；重放与notice待owner选择后才实现，不能将0.4标为完整或发布。

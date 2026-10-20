@@ -15,11 +15,11 @@ Failure exercise: stop normal Puma, run `TOOLVIEWS_DEMO_AGENT_FAILURE=1 bin/demo
 | CONFLICT | Reload snapshot; retry an uncertain request with the same key and original arguments. Also returned when the database rolls the action back (deadlock, serialization failure, lock timeout) |
 | IDEMPOTENCY_CONFLICT | Investigate key reuse; do not replay a different action with the same key |
 | INCOMPATIBLE_COMPONENT | Preserve snapshot; restore the old contract or perform explicit host migration/re-presentation |
-| RENDER_FAILED | Read the `RailsToolViews surface.render_failed handled …` log line or the `Rails.error` report for the exception and template line; saved state remains |
+| RENDER_FAILED | Read the metadata-only `RailsToolViews surface.render_failed handled …` log line, then the host-controlled `Rails.error` report for the exception and template line; saved state remains |
 | VALIDATION_FAILED | Correct returned approved fields; no domain/Surface mutation committed; retain native field labels/error association |
 | REVIEW_REQUIRED | Review current reply/version first; privileged actions still need current role and explicit confirmation |
 | ALREADY_SUBMITTED/ALREADY_ACCEPTED | Use a new draft; completed records/accepted versions are preserved |
-| AGENT_UNAVAILABLE | Action is committed; the adapter exception is in the `agent_failed` log line and `Rails.error`; authorized explicit retry uses the same delivery key and rechecks domain version |
+| AGENT_UNAVAILABLE | Action is committed; the exception class is in the `agent_failed` log line; the original exception is in host-controlled `Rails.error`; authorized explicit retry uses the same delivery key and rechecks domain version |
 | delivering lease after crash | Reconcile host remote receipt; after `config.delivery_lease` seconds (default 300) deliver can reclaim, with host durable deduplication |
 | RATE_LIMITED | Wait for budget window; tune host configuration and public endpoint rate limiting |
 | INVALID_SCOPE / INVALID_CONTEXT / INVALID_CORRELATION / INVALID_IDEMPOTENCY_KEY | An actor, tenant, context, adapter, call or idempotency identifier is empty or longer than 150 bytes; shorten the value. INVALID_SCOPE is also raised for a malformed scope object |

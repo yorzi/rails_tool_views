@@ -31,3 +31,7 @@ A callback acknowledges only its own attempt. Stale success or failure cannot ov
 ## Verify Recovery
 
 Replay a saved action with the original arguments and key. Exercise pending delivery, explicit failed retry, a process exit after the host effect and an expired lease. Confirm that host deduplication produces one business effect with the same delivery key. Recheck authorization and cross-tenant rejection. See [Agent Continuation]({% link _advanced/continuation.md %}).
+
+## Review Error Reporting
+
+Handled-error log lines now contain the event and exception class, without raw messages or stack text. If an operator parsed the old line, use the notification metadata and the host-controlled `Rails.error` report instead. That report still receives the original exception; review privacy controls in its subscribers.

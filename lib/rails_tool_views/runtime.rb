@@ -209,7 +209,7 @@ module RailsToolViews
     def report(error, event, **payload) # :nodoc:
       notify(event, **payload, error_class: error.class.name)
       Rails.error.report(error, handled: true, severity: :error, context: payload, source: "rails_tool_views")
-      Rails.logger&.error("RailsToolViews #{event} handled #{error.class} (#{error.message}) - #{error.backtrace&.first}")
+      Rails.logger&.error("RailsToolViews #{event} handled #{error.class}; inspect the host Rails.error report")
     end
 
     private

@@ -40,3 +40,5 @@ Use [Surface Lifecycle]({% link _advanced/lifecycle.md %}) to distinguish active
 * [Registering Components]({% link _core_features/components.md %}) defines the view contract.
 * [Presenting and Restoring Surfaces]({% link _core_features/surfaces.md %}) manages persisted UI.
 * [Agent Continuation]({% link _advanced/continuation.md %}) separates commit from follow-up.
+
+* [Operational Diagnostics]({% link _advanced/diagnostics.md %}) explains metadata-only outcome events.

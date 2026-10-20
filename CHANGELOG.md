@@ -2,6 +2,8 @@
 
 ## [0.4.0] - Unreleased
 
+- Omit raw host exception messages and stack text from handled-error log lines; preserve the original exception in host-controlled `Rails.error`. Document the metadata-only event catalog.
+
 - Fence delivery acknowledgments with the existing attempt counter. Late callbacks cannot overwrite newer attempts or emit false terminal notifications. Keep durable uncertainty and host deduplication.
 - Refuse delivery inside an open host transaction with `DELIVERY_IN_TRANSACTION`; dispatch can still join it. Add host Active Job and process-death recovery checks. No new migration or runtime dependency.
 

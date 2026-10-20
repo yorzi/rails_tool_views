@@ -4,6 +4,22 @@ require "open3"
 require "stringio"
 
 class PrivacyTest < ActiveSupport::TestCase
+  test "handled exception log lines exclude raw host secrets while Rails error reports retain the exception" do
+    RailsToolViews.reset!; register_card(agent: true)
+    RailsToolViews.configuration.agent_adapter = ->(*) { raise "secret-provider-payload-sentinel" }
+    stream, reports = StringIO.new, []
+    subscriber = Class.new { define_method(:report) { |error, **| reports << error } }.new
+    Rails.error.subscribe(subscriber)
+    Rails.stub(:logger, ActiveSupport::Logger.new(stream)) do
+      interaction_id = act(present_card).fetch(:interaction_id)
+      assert_equal "failed", RailsToolViews.deliver(interaction_id, scope: scope).status
+    end
+    assert_includes stream.string, "agent_failed handled RuntimeError"
+    refute_includes stream.string, "secret-provider-payload-sentinel"
+    assert_equal "secret-provider-payload-sentinel", reports.one? && reports.first.message
+  ensure
+    Rails.error.unsubscribe(subscriber) if subscriber
+  end
   test "core load excludes RubyLLM even when separately installed" do
     program = 'require "rails_tool_views"; abort if defined?(RubyLLM); begin; require "ruby_llm"; abort; rescue LoadError; puts "isolated"; end'
     output, errors, status = Open3.capture3(RbConfig.ruby, "-Ilib", "-e", program)

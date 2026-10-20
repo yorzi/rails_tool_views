@@ -162,3 +162,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] 实际包临时Rails host、generated Minitest1/2 PASS；20 guides零错误，两条预期候选版本警告。完整matrix/PG/upgrade/browser在最终验收执行。
 - [x] 复用 attempts 条件确认，无 schema/runtime依赖/新队列；不放宽权限、不清 uncertainty、不改通知catalog。新增事务拒绝见升级指南。
 - [x] baseline/ADR009/current work/status/map/flow/runbook/What's New/history/upgrading/acceptance与本commit ledger同步；外部Specs59文件未改。临时包进程已结束，无手工服务。
+
+## WORK-20261020-02 — diagnostics and browser feedback
+
+- [x] Sentinel regression first exposes raw adapter secret in ordinary log, then passes with event/class only; Rails.error still receives the original exception. privacy8/67, core123/1063/eager load PASS.
+- [x] Chrome6/61 on disposable loopback host: native keyboard submit/retry, aria-busy, disabled loading button, error/status focus,390px failure/recovery/refresh and one host reply/receipt; screenshots checked. Initial sandbox bind EPERM was rerun with approved execution. Browser/driver/Puma ended.
+- [x] Diagnostic guide inventories actual existing events and limits, docs/upgrading/runbook/What's New updated.21 guides zero errors/two expected candidate warnings, stable0.3/next build and2,822links PASS.
+- [x] No new event name/payload field/notice behavior/schema/dependency. Owner compatibility questions remain pending; this commit does not claim those parts of0.4 complete.

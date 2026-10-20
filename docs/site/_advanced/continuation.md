@@ -59,3 +59,5 @@ A lease takeover now records durable uncertainty for [lifecycle protection]({% l
 
 * [Production Boundaries]({% link _advanced/production.md %}) covers outbox and retention choices.
 * [Configuration]({% link _getting_started/configuration.md %}) lists delivery settings.
+
+* [Operational Diagnostics]({% link _advanced/diagnostics.md %}) explains metadata-only outcome events.

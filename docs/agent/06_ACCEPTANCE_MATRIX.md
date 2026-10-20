@@ -140,3 +140,7 @@ FR-08/NFR-03 RELEASE_PASS：immutable v0.3.0→d12996e，main CI39229304949/Docs
 ## WORK-20261020-01 — 0.4 recovery local unit
 
 FR-05/06/07、SEC-04/06/11/18 LOCAL_PASS：stale success/failure 不覆盖新 attempt，late failure 不降级 completed 或发 false event；外层事务拒绝 delivery。host Active Job 重新解析 active staff/scope，独立 boot 恢复 pending，真实 process exit(73) 在 host effect/receipt commit 后恢复同一 key、无第二次 reply。原保护仍阻止 uncertain lifecycle。core122/1057/eager load、实际 installed-gem host/generated1/2 PASS；20-guide lint零错误/两条预期候选警告。PG/matrix/完整browser与最终包/upgrade由后续单元覆盖；无远端 CI/发布。
+
+## WORK-20261020-02 — diagnostics and browser feedback
+
+SEC-11/18、FR-07 LOCAL_PASS：ordinary handled-error log does not copy host exception sentinel; Rails.error retains exception behind host controls. privacy8/67, core123/1063/eager load。Chrome6/61 covers keyboard activation, busy/disabled loading, validation error focus, post-replacement status focus, mobile failed delivery/explicit retry/refresh, exactly one local reply/receipt. Three screenshots manually checked. Existing catalog documented with no payload/catalog change; replay/notice decisions pending.21-guide lint/build/2,822links PASS(two expected unreleased warnings)。Full a11y/screen reader/device testing NOT_RUN.

@@ -24,3 +24,7 @@ RailsToolViews.deliver(interaction_id, scope: scope, retry_failed: true)
 Call delivery after the host transaction commits. An outer transaction now raises `DELIVERY_IN_TRANSACTION` before any adapter call. A stale worker can no longer mark a newer attempt completed or failed. Stable delivery keys still require durable host deduplication. See [Agent Continuation]({% link _advanced/continuation.md %}).
 
 An expired lease does not prove that a previous callback stopped. The existing uncertainty flag continues to protect lifecycle cleanup. This development version adds no queue, migration or runtime dependency. See [Upgrading]({% link _reference/upgrading.md %}) before changing workers.
+
+## Inspect Failures Without Payloads
+
+[Operational Diagnostics]({% link _advanced/diagnostics.md %}) lists the existing notification catalog and recovery metadata. Handled-error log lines omit raw exception messages and stack text. The original exception remains in the host's `Rails.error` reporting pipeline, where the host configures privacy controls.
