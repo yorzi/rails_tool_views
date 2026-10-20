@@ -369,3 +369,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读新feedback指南/升级与ADR009，试demo临时反馈并刷新，对比旧持久message。notice的临时性是显示寿命，回执仍存储，不能放秘密或当作擦除保证；host负责Rails.error/flash访问。无新migration/runtime依赖/队列/frontend框架；旧worker需停止后切新fence。同步路线图已确认选择、status/map/flow/human changelog、验收/checklist与API/What's New；结构无新实体无需新图。外部Specs未改，浏览器/driver/Puma已结束。
 
 **下一步：** WORK-04对最终代码完成全部本地验收并提交证据；0.4不自动推送、tag或发布。
+
+### WORK-20261020-04 — 0.4 完整本地验收与交接
+
+**内容/映射：** FR-05/06/07/08、SEC-04/06/11/18；对最终runtime6d90216完成支持矩阵、真实旧runtime升级/包/隔离安装/审计/文档验收，记录V0_4_VALIDATION。升级提示明确drain旧web和worker回调，避免混用无fence确认。除文档/验收记录外，本commit不改runtime或包内容。
+
+**复查/验证：** Ruby3.3.5/Rails8.1.4、3.3.5/7.2.3.2、4.0.2/8.1.4三组SQLite各129/1129/eager load；PG17.11独立临时DB132/1145（fresh双claim、overlap、cleaner/action-close）；adapter7/45、Chrome8/77。三个组合actual包host/generated1/2、不可变0.2/0.3独立进程升级PASS，旧closed/purged guard/回执/关联与业务记录保留。空GEM_HOME network/full host/activated audit PASS，最终artifact SHA58fd80ccd37505015fada90c10b561e24167e30b391ada153eaef60a162ce86a，35 files，前后相同。七份锁审计无已知漏洞（刷新fa229525/1266），22-guide lint零错误/两条预期候选警告、stable0.3/next build/2,897links/internal exclusion PASS，candidate gate PASS；formal gate按released:false正确拒绝。
+
+**证据/影响：** V0_4_VALIDATION说明每个失败优先回归、PG query-cache测试修正、sandbox bind与RDoc link修正、fixture截图与可复现命令；不隐藏失败或把本地证明改写成remote。无新schema/migration/runtime依赖/queue/仪表盘/frontend framework。notice是响应显示寿命，回执仍留存；旧message兼容，fence不等于远端exactly-once，uncertain仍隔离。59 pinned Specs未改，DELTA-006已由owner明确批准。
+
+**文档/人工复查：** 更新Current Work、status/map/at-a-glance、implementation、roadmap、runbook/upgrade、acceptance/postflight与evidence；review先读反馈/续接/升级三指南，再试临时提示刷新和失败重试。结构/实体不变，无新diagram。Chrome/driver/Puma已结束，独立PG临时DB核验已删除，包/升级/隔离tempdirs清理；既有PG服务不动，无预览/watcher/tunnel遗留。
+
+**下一步：** 0.4本地候选完成，等待owner审阅后另行授权推送/精确远端CI及发布；本轮未推送、tag或上传，公共稳定0.3不变。provider/MySQL/外部采用/独立安全/full a11y/正式H2/C/R仍开放，不自动开展无关迭代。

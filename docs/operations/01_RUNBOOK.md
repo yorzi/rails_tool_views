@@ -1,6 +1,6 @@
 # Local/host operations
 
-Owner: Andy Wang. This is a Rails gem; applications run it inside their own Rails host. Version 0.1.0 is on RubyGems, and static documentation is hosted on GitHub Pages at https://rails-tool-views.wangyaodi.com. No hosted application, worker or backup service is provided by this repository. See 02_RELEASE_CHECKLIST.md for gem/docs deployment and recovery.
+Owner: Andy Wang. This is a Rails gem; applications run it inside their own Rails host. Public releases are on RubyGems, and static documentation is hosted on GitHub Pages at https://rails-tool-views.wangyaodi.com. No hosted application, worker or backup service is provided by this repository. See 02_RELEASE_CHECKLIST.md for gem/docs deployment and recovery.
 
 Run local demo with bin/demo; it binds 127.0.0.1:3100. Stop with Ctrl-C. PORT can change the port but not the loopback binding. Tests use storage/test.sqlite3; the demo uses storage/development.sqlite3. Both are ignored. To run either on PostgreSQL, set `BUNDLE_GEMFILE=gemfiles/postgres.gemfile` and a `DATABASE_URL` for an existing database. Never use the dummy session identity in production.
 
@@ -48,4 +48,4 @@ Stop all 0.2 web/worker writers, back up the complete host database and business
 
 ## 0.4 development recovery
 
-Drain old delivery workers before switching runtimes. Only new callbacks enforce attempt fencing. DELIVERY_IN_TRANSACTION means the host must move delivery/enqueue outside its transaction; dispatch can remain transactional. A host job re-resolves current identity and uses the stable delivery key. Cover the commit/enqueue gap with a durable host outbox or pending scan. Failed delivery needs explicit retry; fresh delivering leases skip, expired leases can be reclaimed. Host deduplication must survive process death after the business effect. Fencing never proves old callbacks have stopped; retain uncertainty quarantine. No new migration or built-in scheduler.
+Drain old web processes and delivery workers before switching runtimes. Only new callbacks enforce attempt fencing. DELIVERY_IN_TRANSACTION means the host must move delivery/enqueue outside its transaction; dispatch can remain transactional. A host job re-resolves current identity and uses the stable delivery key. Cover the commit/enqueue gap with a durable host outbox or pending scan. Failed delivery needs explicit retry; fresh delivering leases skip, expired leases can be reclaimed. Host deduplication must survive process death after the business effect. Fencing never proves old callbacks have stopped; retain uncertainty quarantine. No new migration or built-in scheduler.

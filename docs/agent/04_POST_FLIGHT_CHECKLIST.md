@@ -177,3 +177,12 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Database rollback diagnostic omission reproduced then fixed using existing action.conflict code-only event; three rollback classes covered.
 - [x] Built package host adds transaction guard/host receipt retry/notice check. Upgrade runner covers immutable0.2 and0.3, including old closed/purged guards. PostgreSQL competing fresh claims test added, prior126/1079 PASS after uncached reader correction; final expanded matrix belongs to WORK-04.
 - [x]22-guide lint zero errors/two expected candidate warnings; stable0.3/next build/2,897links/internal exclusion PASS. New feedback guide, What's New/upgrading/API/diagnostics/runbook and human mental model sync. RDoc constant link corrected to generated anchor. No schema/dependency/queue; task-created browser processes ended.
+
+## WORK-20261020-04 — 0.4 local acceptance
+
+- [x] Final runtime6d90216: threeSQLite combinations129/1129/eager load, PG132/1145, adapter7/45, Chrome8/77 PASS; failure-first/visual evidence retained in V0_4_VALIDATION.
+- [x] Actual0.2/0.3 separate-process upgrades and installed artifacts in allthree combinations PASS, including old lifecycle guards; final emptyGEM_HOME network/full host/activated audit PASS, SHA58fd80cc… unchanged afterward.
+- [x] Seven lock audits clean at refreshedfa229525, candidate35-file gate PASS; formal gate refuses unreleased.22guides/build/2,897links/internal exclusions PASS; private helper heuristic reviewed rather than documented as public.
+- [x] No schema/runtime dependency/queue or external Specs change. Upgrade docs clarify draining old web and worker callbacks. Current work/status/map/at-a-glance/implementation/roadmap/operations/acceptance/evidence/ledger updated. No new entity/flow requiring another diagram.
+- [x] Browser/driver/Puma ended, temporary PG databases verified absent, isolated/upgrade/package tempdirs cleaned; pre-existing PG service retained. No credentials/provider/contact/push/tag/publication.
+- [x] Local candidate complete and owner review next. Ledger linkage/clean tree verified with final commit; remote/hosted evidence remains NOT_RUN.

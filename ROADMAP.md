@@ -51,6 +51,8 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 
 **Done when:** recovery preserves committed results and produces no duplicate host effect; metadata-only diagnostics explain failures without exposing props/secrets. A dashboard or built-in queue is not required.
 
+**Local acceptance:** [0.4 validation](docs/evidence/V0_4_VALIDATION.md) covers recovery, compatibility, host jobs, actual packages and browser feedback. Published version remains0.3; remote CI and publication await separate owner authorization.
+
 ## 1.0 release conditions
 
 1. **Declared public contract.** Freeze registration, scope, present/restore/render/dispatch, helpers, validation/errors, adapter hooks and configuration. Include wire/snapshot fields, DOM/Stimulus identifiers, events, delivery keys and persisted-data expectations. Mark internals and document deprecations using [Semantic Versioning](https://semver.org/).

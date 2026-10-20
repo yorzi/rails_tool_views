@@ -148,3 +148,7 @@ SEC-11/18、FR-07 LOCAL_PASS：ordinary handled-error log does not copy host exc
 ## WORK-20261020-03 — approved compatibility implementation
 
 FR-05/07、SEC-04/06/11/18 LOCAL_PASS：action.executed adds replayed boolean under DELTA-006; exact receipt stays deterministic and metadata excludes notice. notice≤500bytes escaped/plain even SafeBuffer, invalid feedback rolls back host effects, state/snapshot independent, JSON/Turbo and exact scope-bound HTML flash once. feedback6/65; core129/1129/eager load, Chrome8/77(Turbo and JS-disabled refresh, existing message compatibility) PASS. Database rollback sends existing code-only action.conflict, failing regression reproduced/fixed.22 guides/build/2,897links PASS. Final matrix/package/upgrade/PG/isolated audit acceptance is WORK-04, not yet claimed.
+
+## WORK-20261020-04 — 0.4 full local acceptance
+
+FR-05/06/07/08、SEC-04/06/11/18 LOCAL_PASS：三个Ruby/Rails SQLite各129/1129/eager load，PG17.11独立DB132/1145（真实双claim/旧callback/cleaner/action-close），adapter7/45，Chrome8/77。真实0.2/0.3runtime→当前代码在三组合PASS，包括旧closed/purged/correlation/replay/业务记录保留；三组actual gem host/generated1/2与空GEM_HOME full host/activated audit PASS。最终35-file SHA58fd80ccd37505015fada90c10b561e24167e30b391ada153eaef60a162ce86a。七份locks无已知漏洞（刷新fa229525），22-guide lint/build/2,897links与internal exclusion PASS；formal gate因released:false正确拒绝。详见V0_4_VALIDATION。无新schema/runtime依赖；未推送/未跑remote CI/未发布，不关闭provider/MySQL/adoption/独立安全/full a11y/正式gates。

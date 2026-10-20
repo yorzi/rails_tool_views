@@ -18,7 +18,7 @@ After reading this guide, you will know:
 
 ## Replace Old Workers
 
-Stop and drain old delivery workers before restarting with {{ site.version }}. An old worker does not enforce attempt fencing and can overwrite a newer claim. An expired lease alone does not prove that a worker stopped.
+Stop and drain old web processes and delivery workers before restarting with {{ site.version }}. An old callback does not enforce attempt fencing and can overwrite a newer claim. An expired lease alone does not prove that a worker stopped.
 
 There is no new database migration or runtime dependency. Existing Surfaces, action receipts, component digests and delivery keys remain unchanged. Older hosts first follow the [0.3 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.3.0/docs/site/_reference/upgrading.md).
 

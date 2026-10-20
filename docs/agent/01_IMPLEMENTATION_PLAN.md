@@ -34,3 +34,7 @@ WORK-20261018-06..09: browser/isolated-host foundation → deny-by-default Parti
 ## Owner-authorized 0.3 local sequence
 
 WORK-20261019-01 lifecycle/migration and Surface-first delivery coordination → WORK-02 opt-in payload cleanup and dummy E2E → WORK-03 genuine 0.2 data upgrade, PostgreSQL competing workers, compatibility/package/isolated/docs acceptance. ADR 008 fixes tombstone and quarantine boundaries. No new notification or recovery protocol; publication and provider calls remain separate. Evidence lives in V0_3_VALIDATION.
+
+## Owner-authorized 0.4 local sequence
+
+WORK-20261020-01 attempt-fenced recovery/host job and crash boundary → WORK-02 metadata-only ordinary diagnostics/browser feedback → explicit DELTA-006 owner choices → WORK-03 additive replayed/notice and upgrade/installed-host fixtures → WORK-04 supported matrix/PG/browser/isolated/audit/docs acceptance. No new schema/dependency/queue. Completed locally; V0_4_VALIDATION records outcomes and remaining1.0 evidence limits. Push/publication need separate authorization.

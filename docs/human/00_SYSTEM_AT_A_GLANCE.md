@@ -18,3 +18,5 @@ flowchart LR
 先看 README 的离线演示；再看 01_PROJECT_STATUS 和 03_SYSTEM_ARCHITECTURE。0.2 发布的本地与远端 Ruby/Rails/PostgreSQL 兼容性已核验；最大的未证实部分是独立安全审核、MySQL/真实 provider 行为与外部接入价值。
 
 0.2 的安全生成器/完整 HTML 纠错延续到0.3。0.3已发布 close/abandon 与默认关闭的 payload 清理：明确完成/放弃、保留期限，先 scoped preview，再 apply，保留关联 tombstone 和业务记录。不确定投递不能按时间强删。需要迁移并停止旧 writers。精确标签远端 matrix/upgrade/安装/浏览器/审计和稳定0.3/next已验证，详见[发布记录](../evidence/RELEASE_0_3_0.md)。`bin/check --browser` 是本地验证入口。
+
+0.4已完成本地候选：既有attempts为投递确认加fence，host job验证中断恢复；action.executed新增replayed，notice只显示一次响应并保留旧message语义。无新schema/依赖/内置队列。完整本地验收见V0_4_VALIDATION，尚未推送或发布；下一步由owner审阅并决定远端CI/发布。

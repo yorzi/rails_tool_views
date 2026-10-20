@@ -1,6 +1,6 @@
 # 项目状态
 
-2026-10-20：**0.3.0 已发布；0.4 正在本地开发，未推送或发布。**
+2026-10-20：**0.3.0 已发布；0.4 本地候选验收完成，未推送或发布。**
 
 ## 已交付
 
@@ -13,14 +13,14 @@
 
 ## 当前工作与下一步
 
-按 owner 新授权执行0.4：先修复投递确认竞争与事务边界，再处理已确认的诊断/界面反馈选择，最后验证完整矩阵、真实升级/包、浏览器并记录本地验收。即时清单见 [Current Work](../agent/02_CURRENT_WORK.md)。owner 已确认保留action.executed并新增replayed，以及显式notice且保留state.message；实现与核心/browser验证完成，正在做最终验收。
+0.4按路线图完成恢复/诊断/临时反馈，owner批准DELTA-006。三个Ruby/Rails组合各129/1129，PG132/1145，adapter7/45，Chrome8/77；真实0.2/0.3升级、实际包/隔离安装/审计与2,897文档链接通过。详见[0.4本地验收](../evidence/V0_4_VALIDATION.md)。下一步是owner审阅后另行授权推送/远端CI和发布；没有自动发布或新功能任务。即时清单见[Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
-| 数据生命周期 | close/abandon 与清理已发布。旧租约不确定投递受持久保护，不能据时间强删；恢复方案留 0.4 |
-| 运行反馈与遥测 | owner 已批准 DELTA-006：action.executed + replayed；新增 transient notice，保留 state.message。核心/browser已通过，待最终候选验收 |
+| 数据生命周期 | close/abandon 与清理已发布。旧租约不确定投递受持久保护，不能据时间强删；0.4支持有fence的恢复，uncertain仍保守隔离；host负责reconcile/quiescence |
+| 运行反馈与遥测 | owner 已批准 DELTA-006：action.executed + replayed；新增 transient notice，保留 state.message。本地矩阵/包/Chrome验收通过，尚未发布 |
 | 实际采用 | 缺少外部开发者试验和实测定制实现对照；dummy/本地接入不是外部采用 |
 | 支持边界 | MySQL、真实 provider、独立安全审核未验证；正式 H2/C/R 仍开放 |
 
