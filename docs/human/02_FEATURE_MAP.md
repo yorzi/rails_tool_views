@@ -30,10 +30,10 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 
 `lib/rails_tool_views/lifecycle.rb` 提供授权的 close/abandon；Surface 新增生命周期时间戳和只读渲染。历史回执可重放，新的业务动作被拒绝。迁移/installer 同步，旧投递不确定性被保守标记；清理、真实旧数据升级、三个兼容组合与 PostgreSQL 并发/包/浏览器/独立安装已完成精确标签远端验收与发布；见 ../evidence/RELEASE_0_3_0.md。
 
-## 0.4 本地开发
+## 0.4 已发布
 
-投递使用已有 attempts 作为确认 fence，旧成功/失败不能覆盖新 claim；外层事务内 deliver 返回 DELIVERY_IN_TRANSACTION。dummy 的 DemoV1::ContinuationJob 重新解析当前 staff，独立进程中断/恢复验证主应用 receipt 去重。无新表、依赖或内置队列，尚未发布。
+投递使用已有 attempts 作为确认 fence，旧成功/失败不能覆盖新 claim；外层事务内 deliver 返回 DELIVERY_IN_TRANSACTION。dummy 的 DemoV1::ContinuationJob 重新解析当前 staff，独立进程中断/恢复验证主应用 receipt 去重。无新表、依赖或内置队列，已在0.4发布。
 
 WORK-20261020-03：action.executed 增加 replayed 布尔；Transition.notice 是≤500bytes的响应反馈，JSON/Turbo直接返回，HTML由匹配Surface/actor/tenant的Rails flash显示一次。Surface state/snapshot无notice，回执保留同一响应以便精确重放，现有state.message不变。
 
-0.4完整本地验收已完成，见 ../evidence/V0_4_VALIDATION.md；包含真实0.2/0.3升级（旧closed/purged guard）、三个installed host与空GEM_HOME、PG真实竞争和Chrome8场景。公共版本仍是0.3。
+0.4完整本地验收已完成，见 ../evidence/V0_4_VALIDATION.md；包含真实0.2/0.3升级（旧closed/purged guard）、三个installed host与空GEM_HOME、PG真实竞争和Chrome8场景。公共版本已是0.4；精确远端/registry/Pages证据见 ../evidence/RELEASE_0_4_0.md。

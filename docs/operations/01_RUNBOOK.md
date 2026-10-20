@@ -46,6 +46,6 @@ Stop all 0.2 web/worker writers, back up the complete host database and business
 
 `purge_closed` defaults to preview and requires a separate `retention_policy`, exact actor/tenant scope, past cutoff and reached non-nil deadline. Apply commits per Surface; retry after database errors, inspect protected rows that can occupy a full batch. Keep pending/failed work until explicit abandonment, and never bypass delivering/uncertain protection. Keep Surface/Presentation tombstones; deleting them defeats old-correlation protection. Cleanup does not remove business tables, backups, logs, opaque identifiers or compact files. No scheduler is installed. Public examples and full semantics live in the site's Surface Lifecycle guide.
 
-## 0.4 development recovery
+## 0.4 delivery recovery
 
 Drain old web processes and delivery workers before switching runtimes. Only new callbacks enforce attempt fencing. DELIVERY_IN_TRANSACTION means the host must move delivery/enqueue outside its transaction; dispatch can remain transactional. A host job re-resolves current identity and uses the stable delivery key. Cover the commit/enqueue gap with a durable host outbox or pending scan. Failed delivery needs explicit retry; fresh delivering leases skip, expired leases can be reclaimed. Host deduplication must survive process death after the business effect. Fencing never proves old callbacks have stopped; retain uncertainty quarantine. No new migration or built-in scheduler.

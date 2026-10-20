@@ -65,7 +65,7 @@ Do not move or reuse a tag after a successful RubyGems upload. If checks fail be
 - Post-release Docs workflow succeeds; stable home/Getting Started name the new release, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
 - Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
 
-## Evidence limits retained after 0.3.0
+## Evidence limits retained after 0.4.0
 
 Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit release instruction is recorded separately.
 
@@ -77,4 +77,4 @@ Revert documentation source and rerun Docs for a site correction; use Pages depl
 
 ## Authorized 0.4 publication
 
-2026-10-20: owner explicitly requests remote CI, release acceptance, related docs and publication. WORK-20261020-05..06 execute the existing flow without repeating permission. Runtime local evidence is V0_4_VALIDATION; publication evidence will be recorded separately after observation. 0.4 adds no migration or runtime dependency over0.3. Drain old web and delivery workers before switching, deliver after host commit, preserve host durable deduplication and conservative uncertainty. Older hosts follow the0.3 migration instructions first.
+2026-10-20: owner explicitly requests remote CI, release acceptance, related docs and publication. WORK-20261020-05..06 execute the existing flow without repeating permission. Runtime local evidence is V0_4_VALIDATION; [publication evidence](../evidence/RELEASE_0_4_0.md) records the observed successful exact-tag delivery, checksums and stable0.4/next acceptance. 0.4 adds no migration or runtime dependency over0.3. Drain old web and delivery workers before switching, deliver after host commit, preserve host durable deduplication and conservative uncertainty. Older hosts follow the0.3 migration instructions first.

@@ -69,3 +69,7 @@ owner授权的候选推送、精确标签远端CI、OIDC与GitHub/RubyGems发布
 ## 2026-10-20 — 0.4 恢复与反馈边界
 
 投递确认现在绑定具体attempt，旧worker不能把新claim改成completed/failed；业务副作用仍需host durable dedup。调用deliver必须在host事务提交后。action.executed保留名称，用replayed区分实际执行与历史回执。新增notice只控制一次响应的状态提示，刷新恢复state；既有message持久语义不变。notice为精确重放留在回执，不是隐私擦除。无新迁移、依赖或内置队列。
+
+## 2026-10-20 — 0.4 公开交付
+
+owner授权的远端main/tag CI、OIDC与GitHub/RubyGems发布、公开下载包重装和稳定0.4/next验收完成。恢复fence、metadata-only诊断、兼容replayed与临时notice已交付，无新migration/dependency。升级仍需drain旧web/worker和事务后投递，uncertain/durable dedup边界不变。详见RELEASE_0_4_0；1.0的契约/独立review/外部试用证据尚未完成，不自动开始下一迭代。

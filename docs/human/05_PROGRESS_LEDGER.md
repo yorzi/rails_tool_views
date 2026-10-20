@@ -391,3 +391,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读What's New/Upgrading/Feedback/Continuation，升级时drain旧web/worker，deliver置于host commit后；notice回执仍保留，旧message兼容。无新schema/runtime依赖/权限/DNS/provider调用；formal/MySQL/adoption/独立review缺口仍保留。文档版本与运行手册变化，不改结构图。未启动本地服务，isolated host临时目录已清理。
 
 **下一步：** 本commit推送后等待精确main CI/Docs；通过再annotated v0.4.0与既有OIDC发布，核验registry/Release/HTTPS。WORK-06另记真实交付结果并提交推送；当前不提前宣称远端或发布成功。
+
+### WORK-20261020-06 — 0.4 远端发布与公开验收
+
+**内容/映射：** 完成owner授权的0.4公开交付，FR-05/06/07/08、NFR-03；annotated v0.4.0固定e93f8df。新增RELEASE_0_4_0证据，更新Current Work/status/at-a-glance/feature map/implementation/roadmap/runbook/checklist/acceptance/human changelog；站点release日期/What's New/Upgrading已随候选提交。无新运行时代码或架构实体，无需新图。
+
+**验证：** mainCI39360489574/Docs39360489799，tagCI39360617577/Release39360617626全绿。精确tag三组SQLite129/1129、PG132/1145、adapter7/45、Chrome8/77；真实0.2/0.3升级/实际包host/生成测试1/2、七锁审计/isolated activated audit/3102links通过。registry/API/client/GitHub asset/digest/SHA256SUMS均7efc0b470a60aec8526cb110066ae308aace2d9793c620a4c3e858b561d3f627；35个包文件和规范化gemspec与准备包一致，不宣称跨job二进制可重现。下载的发布包再空GEM_HOME full Rails host/生成1/2/activated audit通过。Pages39360929392、18HTTPS入口、稳定安装0.4、next/main、搜索反馈指南与版本菜单真实Chrome通过；lint22guides零错误警告。首次registry404稍后成功，DevTools profile占用改用既有Chrome extension，两项不隐藏也不当作产品失败。
+
+**影响/人工复查：** 从0.3无新migration/runtime依赖；升级drain旧web/worker，deliver移到host commit之后；fence只保护Engine确认，host负责durable dedup/outbox/reconcile，uncertain仍隔离。notice不进入Surface state但回执保留，旧message兼容；host Rails.error仍需隐私控制。Specs/DELTA-006不变，既有OIDC/MIT/MFA/DNS复用，无新权限/凭证/provider或host生产数据变动。1.0仍缺外部试用/独立review/MySQL/provider/正式gates证据。
+
+**清理/下一步：** 未启动本地服务；临时isolated/compare目录自动删除，Chrome验收页关闭，任务watchers结束；ignored tmp保存下载证据。提交推送本记录并检查其自身CI/Docs，在最终回复报告实际状态；不预写未来SHA/成功，不自动开发下一版。

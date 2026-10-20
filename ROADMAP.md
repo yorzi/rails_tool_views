@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**0.3.0 published, 2026-10-19.** Versions 0.1.0, 0.2.0 and 0.3.0 are published. The owner authorized 0.2 implementation, push, exact remote CI and publication. The owner-authorized 0.3 push, exact remote CI, publication and hosted verification are complete. Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**0.4.0 published, 2026-10-20.** Versions 0.1.0 through0.4.0 are published. Owner-authorized0.4 candidate/tag CI, OIDC publication and registry/hosted verification are complete; see [delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -8,7 +8,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 0.1.0 already provides schemas, Partial/ViewComponent rendering, persistent Surfaces, authorized transactional actions, revision/replay protection, form validation and optional RubyLLM continuation. SQLite/PostgreSQL release CI, guides and gem publication are verified.
 
-0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). 0.3 adds authorized lifecycle and opt-in payload cleanup, with completed [local acceptance](docs/evidence/V0_3_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_3_0.md). Remaining gaps include persistent status notices, indistinguishable replay telemetry and resolution of historically uncertain deliveries. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
+0.2 delivers the Partial generator and complete non-Turbo correction pages; exact-tag remote evidence is in [release validation](docs/evidence/RELEASE_0_2_0.md). 0.3 adds authorized lifecycle and opt-in payload cleanup, with completed [local acceptance](docs/evidence/V0_3_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_3_0.md). 0.4 adds temporary response notices, replay metadata and fenced delivery recovery. Historically uncertain deliveries still require host reconciliation; the fence does not establish remote exactly-once effects. MySQL, live-provider behavior and external adoption remain unverified. See [current status](docs/human/01_PROJECT_STATUS.md) and [release evidence](docs/evidence/RELEASE_0_1_0.md).
 
 ## Version sequence
 
@@ -20,7 +20,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 | 1.0.0.rc1 | Frozen contract | Upgrade, independent review and setup trials | All 1.0 conditions below are evidenced |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 0.3.0; future publication needs separate authorization.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is0.4.0; future publication needs separate authorization.
 
 ## 0.2.0: two small improvements
 
@@ -51,7 +51,7 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 
 **Done when:** recovery preserves committed results and produces no duplicate host effect; metadata-only diagnostics explain failures without exposing props/secrets. A dashboard or built-in queue is not required.
 
-**Local acceptance:** [0.4 validation](docs/evidence/V0_4_VALIDATION.md) covers recovery, compatibility, host jobs, actual packages and browser feedback. Owner has now authorized remote CI, release acceptance and0.4 publication; delivery is in progress.
+**Delivered:** [0.4 validation](docs/evidence/V0_4_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_4_0.md) cover recovery, compatibility, host jobs, actual packages, browser feedback and stable0.4/next. The next planned milestone is contract/evidence preparation for rc1; unresolved1.0 conditions below remain open, and no next iteration is automatically authorized.
 
 ## 1.0 release conditions
 
@@ -64,7 +64,7 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 
 At rc1, freeze features and prefer fixes. Observe the non-dummy host for at least two weeks, including normal use, restart and recovery; elapsed time alone is not acceptance. A contract change needs another candidate and affected checks.
 
-Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish 0.3.0 does not authorize future releases.
+Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish0.4.0 does not authorize future releases.
 
 ## Outside 1.0
 
