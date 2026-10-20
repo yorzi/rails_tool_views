@@ -337,3 +337,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **Hosted/复查入口：** RubyGems版本页显示MIT/MFA与限定release.yml/release publisher；Release非draft/prerelease。16 HTTPS入口返回200，stable安装0.3、next main、lifecycle search/API/upgrade/canonical/HTTP→HTTPS PASS；真实Chrome搜索进入Lifecycle，version菜单切Next。详见RELEASE_0_3_0，review前先读升级停旧writers/备份/不可危险downgrade与retention tombstone/uncertainty边界。
 
 **影响/文档/下一步：** 更新status/map/at-a-glance/roadmap/operations/acceptance/checklists/evidence/current work；架构不变，无需改图。无新权限/DNS/长期key/provider/host生产迁移，正式H2/C/R、安全/MySQL/adoption gaps保持。未启动本地服务，workflow watchers完成，临时extract清理、Chrome核验页关闭；下载证据保留ignored tmp。提交推送本记录并检查它自己的CI/Docs，在最终回复交接实际结果；无剩余gem发布操作，不自动开始0.4。
+
+### WORK-20261020-01 — 0.4 有界投递恢复
+
+**内容/映射：** Andy 授权按路线图推进0.4并保持简单。FR-05/06/07、SEC-04/06/11/18；复用既有 attempts 为确认 fence，旧 success/failure 不能覆盖新 claim 或发误导终态通知；deliver 在 host 外层事务内明确拒绝。dummy 增加 host-owned Active Job，重新解析当前 staff/权限；独立 Rails 进程在 host effect/receipt 提交后退出，再以稳定 delivery_key 恢复。无新表、迁移、runtime依赖、内置队列或清理绕过。
+
+**复查/验证：** 基线114/988/eager load；新增四个行为回归在旧实现真实失败，修复后4/30；job/restart/crash/retry/revocation4/39，完整core122/1057/eager load PASS。实际构建gem的临时Rails host/HTTP/lifecycle/replay/cleanup/生成Minitest1/2 PASS。20-guide lint零错误，两条预期unreleased警告；docs构建与后续完整matrix/PG/browser/upgrade不提前标PASS。59 Specs与pinned0ea28b1逐字节匹配。
+
+**影响/人工复查：** 阅读ADR009、Continuation和Upgrading；在host事务外运行job，验证业务effect后进程中断、租约到期同key恢复。需停止旧workers，避免其无fence确认；无新迁移。fence只保护Engine状态，远端仍需host durable dedup，uncertain仍隔离，不能凭时间强清。更新版本为本地0.4候选/released:false、What's New历史导航、状态/功能图/流程/runbook/验收。架构实体不变，无新图。归类IMPLEMENTATION_BUG和技术实现；通知/临时notice兼容性决定已提问，尚未实施。临时包清理，无新长驻服务。
+
+**下一步：** 完成已确认的诊断/反馈范围与完整本地验收；不推送/发布0.4，不调用provider，不改外部Specs。

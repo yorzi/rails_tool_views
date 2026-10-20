@@ -16,6 +16,7 @@ module RailsToolViews
       "SURFACE_CLOSED" => "This view is closed. Its saved actions cannot be changed.",
       "SURFACE_PURGED" => "This view has been cleaned up and cannot be restored.",
       "LIFECYCLE_BUSY" => "This view has unfinished or uncertain delivery. Resolve it before closing.",
+      "DELIVERY_IN_TRANSACTION" => "Deliver the follow-up after the host transaction commits.",
       "INVALID_RETENTION_REQUEST" => "Choose an explicit past cutoff and a batch size from 1 to 1000.",
       "INVALID_RETENTION_WINDOW" => "Choose a future retention deadline or keep this view indefinitely.",
       "VALIDATION_FAILED" => "Check the highlighted fields and try again.",

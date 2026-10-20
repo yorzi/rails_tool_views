@@ -155,3 +155,10 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Release非draft/prerelease；post-release Pages成功，stable0.3/next安装/搜索/导航/16 HTTPS入口与canonical/重定向确认。
 - [x] status/map/at-a-glance/roadmap/operations/acceptance/ledger/evidence/current work同步；无runtime/API/schema/依赖/通知/权限/DNS变化，Specs不改，架构不变无需重画图。
 - [x] 临时浏览器页已关闭，无本地server；workflow watchers结束，临时extract目录清理。最终交付记录的CI/Docs在提交推送后核验。
+
+## WORK-20261020-01 — 0.4 recovery
+
+- [x] 四个行为回归先在旧实现失败（覆盖新 claim、降级终态、外层事务仍调用 adapter），修复后4/30；host job/process recovery4/39。完整 core122/1057和eager load PASS。
+- [x] 实际包临时Rails host、generated Minitest1/2 PASS；20 guides零错误，两条预期候选版本警告。完整matrix/PG/upgrade/browser在最终验收执行。
+- [x] 复用 attempts 条件确认，无 schema/runtime依赖/新队列；不放宽权限、不清 uncertainty、不改通知catalog。新增事务拒绝见升级指南。
+- [x] baseline/ADR009/current work/status/map/flow/runbook/What's New/history/upgrading/acceptance与本commit ledger同步；外部Specs59文件未改。临时包进程已结束，无手工服务。

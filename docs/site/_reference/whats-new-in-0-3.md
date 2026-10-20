@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "What Is New in 0.3"
-nav_order: 4
+parent: "Release History"
+nav_order: 3
 description: "End a Surface explicitly while preserving action replay and protecting unfinished delivery."
 ---
 

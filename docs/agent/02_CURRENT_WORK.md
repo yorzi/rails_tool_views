@@ -1,8 +1,11 @@
 # Current work
 
-## Completed 0.3.0 delivery
+## Owner-authorized 0.4 local development
 
-- [x] WORK-20261019-04: release metadata/docs, actual package checks, commit/push, exact remote CI then annotated tag/OIDC publication.
-- [x] WORK-20261019-05: registry/Release/client hashes and hosted stable/next verified; actual delivery recorded and submitted.
+Base: 3ed5e39, clean main; published version remains 0.3.0. Follow ROADMAP.md.
 
-Public version is 0.3.0 at immutable d12996e; see ../evidence/RELEASE_0_3_0.md. Final delivery-record commit CI/Docs is verified after pushing and reported in the final handoff. No remaining publication operation. Future work follows owner priority; no automatic 0.4/provider/notification work. External adoption/MySQL/independent security/formal gates remain open.
+- [x] WORK-20261020-01: fence stale delivery acknowledgments using the existing attempt counter; enforce delivery outside transactions; exercise host jobs, crash and durable deduplication. Keep uncertainty protection.
+- [ ] WORK-20261020-02: implement owner-approved metadata/feedback choices, with privacy and browser keyboard/focus/loading/mobile/retry coverage. Choices requested before dependent behavior changes.
+- [ ] WORK-20261020-03: candidate metadata/docs, real old-data upgrade and installed-host verification, supported matrix, adapter, PostgreSQL concurrency, browser and local acceptance.
+
+No built-in queue/dashboard, dependency or schema expansion is planned. No 0.4 push/publication authorization. Existing provider/MySQL/adoption/independent security/formal gaps remain open.

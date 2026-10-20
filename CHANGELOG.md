@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0] - Unreleased
+
+- Fence delivery acknowledgments with the existing attempt counter. Late callbacks cannot overwrite newer attempts or emit false terminal notifications. Keep durable uncertainty and host deduplication.
+- Refuse delivery inside an open host transaction with `DELIVERY_IN_TRANSACTION`; dispatch can still join it. Add host Active Job and process-death recovery checks. No new migration or runtime dependency.
+
 ## [0.3.0] - 2026-10-19
 
 - Opt-in scoped `purge_closed` preview/apply with deadlines, bounded batches, atomic receipt cleanup and durable correlation tombstones. Host business records stay intact.

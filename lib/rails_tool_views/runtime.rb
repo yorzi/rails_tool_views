@@ -113,7 +113,9 @@ module RailsToolViews
     # The adapter must deduplicate by delivery_key. A crash after remote acceptance
     # can leave a lease in delivering state; retry is explicit and keeps the key.
     # Delivers a saved interaction after authorization; retry_failed explicitly retries failed delivery.
+    # Call only after the host transaction commits. Stale attempts cannot acknowledge a newer claim.
     def deliver(id, scope:, adapter: configuration.agent_adapter, retry_failed: false)
+      raise Error.new("DELIVERY_IN_TRANSACTION", status: 409) if AgentInteraction.connection.transaction_open?
       interaction = AgentInteraction.find_by(id: id)
       raise Error.new("NOT_FOUND", status: 404) unless interaction
       surface = restore(interaction.surface_id, scope: scope)
@@ -148,13 +150,21 @@ module RailsToolViews
         end
       end
       return interaction.reload unless claimed
+      attempt = interaction.attempts
+      failure = nil
       begin
         adapter.call(Data.freeze_deep(Data.normalize(interaction.payload)), delivery_key: interaction.delivery_key)
-        interaction.update!(status: "completed", claimed_at: nil)
-        notify("agent_returned", surface_id: interaction.surface_id, interaction_id: interaction.id)
       rescue StandardError => error
-        interaction.update!(status: "failed", error_code: "AGENT_UNAVAILABLE", claimed_at: nil)
-        report(error, "agent_failed", surface_id: interaction.surface_id, interaction_id: interaction.id)
+        failure = error
+      end
+      # Compare-and-set fences both success and failure. The lease may expire
+      # while the callback runs; its acknowledgment belongs only to its attempt.
+      acknowledged = AgentInteraction.where(id: interaction.id, status: "delivering", attempts: attempt).update_all(
+        status: failure ? "failed" : "completed", error_code: failure ? "AGENT_UNAVAILABLE" : nil,
+        claimed_at: nil, updated_at: Time.current)
+      if acknowledged == 1
+        metadata = { surface_id: interaction.surface_id, interaction_id: interaction.id }
+        failure ? report(failure, "agent_failed", **metadata) : notify("agent_returned", **metadata)
       end
       interaction.reload
     end

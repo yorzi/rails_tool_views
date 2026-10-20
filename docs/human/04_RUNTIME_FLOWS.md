@@ -33,3 +33,7 @@ sequenceDiagram
 close/abandon：scoped restore → read 与专用 operation policy → Surface lock → 再授权/状态检查 → 保护 delivering/uncertain → 可选 abandon pending/failed → 一次关闭/revision。重复关闭保持最初决定。dispatch 在相同锁内先检查历史回执，再拒绝关闭后的新动作。deliver 在 Surface/interaction 锁内认领，回调在事务外；过期 delivering 被回收时持久标记不确定性。旧 worker 完成回写不清除标记。本版不声称修复投递 exactly-once。
 
 WORK-20261019-02：purge_closed 先限定 scope/cutoff/deadline 与 batch，再逐 Surface 加锁复查 retention policy 和终态安全性；预览零 Engine 写入，apply 删除两类子记录并清空 payload/标记 purged。单 Surface 失败整体回滚，已完成批次可重试。旧关联命中 tombstone 返回 410，不创建新 Surface；另一个 scope 仍 404。
+
+## 0.4 投递恢复
+
+claim（Surface→interaction lock，attempts+1）→ 提交 → adapter（无外层事务）→ 按 id/status/attempts 条件确认。仅当前 attempt 的成功/失败发终态通知；旧回调只读回当前结果，不覆盖新 claim。host job 从可信 staff 重新解析 scope；进程在业务 effect/receipt commit 后退出时，租约到期重试同一 key，由 host receipt 避免第二次 effect。uncertain 仍保护清理，不凭 fence 推断旧 worker 停止。

@@ -29,3 +29,7 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 ## 0.3 已发布
 
 `lib/rails_tool_views/lifecycle.rb` 提供授权的 close/abandon；Surface 新增生命周期时间戳和只读渲染。历史回执可重放，新的业务动作被拒绝。迁移/installer 同步，旧投递不确定性被保守标记；清理、真实旧数据升级、三个兼容组合与 PostgreSQL 并发/包/浏览器/独立安装已完成精确标签远端验收与发布；见 ../evidence/RELEASE_0_3_0.md。
+
+## 0.4 本地开发
+
+投递使用已有 attempts 作为确认 fence，旧成功/失败不能覆盖新 claim；外层事务内 deliver 返回 DELIVERY_IN_TRANSACTION。dummy 的 DemoV1::ContinuationJob 重新解析当前 staff，独立进程中断/恢复验证主应用 receipt 去重。无新表、依赖或内置队列，尚未发布。
