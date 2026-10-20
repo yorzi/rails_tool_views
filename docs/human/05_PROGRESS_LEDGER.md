@@ -357,3 +357,15 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读diagnostics与upgrading；普通日志解析器改用event metadata或host Rails.error，原异常隐私仍需host控制。截图与browser操作只用合成数据；无provider/外部联系。无新schema/runtime依赖/客户端框架；兼容性决定尚未答复，故保留现有action.executed和持久state.message，未新增replayed字段或notice。Implementation bug/privacy hardening，无产品意图改动；ADR009/操作/验收/checklist/What's New同步，实体/流程不变无需新图。所有本轮Puma/Chrome/driver已结束。
 
 **下一步：** 完成实施部分的matrix/PG/实际包/旧数据升级/隔离安装/审计；重放与notice待owner选择后才实现，不能将0.4标为完整或发布。
+
+### WORK-20261020-03 — 已批准的重放元数据与临时提示
+
+**内容/映射：** Andy 明确选择保留action.executed并增加replayed:false/true，新增显式notice并保留state.message；实现前记录DELTA-006。FR-05/07、SEC-04/06/11/18。Transition.notice限制500bytes纯文本，事务中校验，SafeBuffer也转为普通String后转义；不写Surface state/snapshot或通知。动作回执保存notice以保持精确重放；JSON/Turbo响应显示，HTML用既有Rails flash绑定Surface/actor/tenant一次消费，无URL载荷。demo增加临时反馈模式。
+
+**复查/验证：** 六个feedback测试先在旧实现失败，修复后6/65；完整core129/1129/eager load PASS。Chrome8/77，Turbo/禁用JS保存notice→刷新消失而选择仍在；旧message场景仍通过，截图已检查。核对诊断目录发现数据库回滚映射CONFLICT却漏发已有event，三类rollback回归先失败后补齐code-only通知。22-guide lint零错误/两条预期候选警告；stable0.3/next build、2,897links与内部排除PASS，RDoc常量链接由检查定位后修正。
+
+**恢复验证基础：** 实际包host增加事务拒绝、durable host receipt重试和notice核验；upgrade runner现在分别启动不可变0.2/0.3，再切当前runtime，覆盖0.3已closed/purged旧guard、旧state/receipt/correlation、uncertainty、rollback与业务保留；PG增加fresh双claim互斥。先前PG126/1079通过，首轮测试线程读query cache旧值后改uncached；最终增加feedback后的matrix/PG/包/隔离安装留WORK-04。
+
+**影响/人工复查：** 阅读新feedback指南/升级与ADR009，试demo临时反馈并刷新，对比旧持久message。notice的临时性是显示寿命，回执仍存储，不能放秘密或当作擦除保证；host负责Rails.error/flash访问。无新migration/runtime依赖/队列/frontend框架；旧worker需停止后切新fence。同步路线图已确认选择、status/map/flow/human changelog、验收/checklist与API/What's New；结构无新实体无需新图。外部Specs未改，浏览器/driver/Puma已结束。
+
+**下一步：** WORK-04对最终代码完成全部本地验收并提交证据；0.4不自动推送、tag或发布。

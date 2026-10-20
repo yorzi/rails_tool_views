@@ -44,3 +44,7 @@ After local candidate acceptance, Andy explicitly requests advancing and publish
 ## 2026-10-20 public 0.4 development authorization
 
 Andy requests executing the planned 0.4 recovery/diagnostics/UI feedback scope with high-quality tests and simple solutions. Reversible local implementation and incremental commits are authorized. Keep host-owned queues, authorization and durable deduplication; no provider calls, push, tag or publication is inferred. Notification/feedback compatibility choices follow the roadmap's explicit decision requirement; external Specs stay pinned and unchanged.
+
+## 2026-10-20 0.4 compatibility decisions
+
+Andy explicitly chooses to keep action.executed and add replayed:true/false metadata, and to add transient notice without changing persistent state["message"]. DELTA-006 records the notification supplement before implementation. This does not authorize an event rename, removal of old message behavior or publication.

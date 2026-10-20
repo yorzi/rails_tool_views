@@ -144,3 +144,7 @@ FR-05/06/07、SEC-04/06/11/18 LOCAL_PASS：stale success/failure 不覆盖新 at
 ## WORK-20261020-02 — diagnostics and browser feedback
 
 SEC-11/18、FR-07 LOCAL_PASS：ordinary handled-error log does not copy host exception sentinel; Rails.error retains exception behind host controls. privacy8/67, core123/1063/eager load。Chrome6/61 covers keyboard activation, busy/disabled loading, validation error focus, post-replacement status focus, mobile failed delivery/explicit retry/refresh, exactly one local reply/receipt. Three screenshots manually checked. Existing catalog documented with no payload/catalog change; replay/notice decisions pending.21-guide lint/build/2,822links PASS(two expected unreleased warnings)。Full a11y/screen reader/device testing NOT_RUN.
+
+## WORK-20261020-03 — approved compatibility implementation
+
+FR-05/07、SEC-04/06/11/18 LOCAL_PASS：action.executed adds replayed boolean under DELTA-006; exact receipt stays deterministic and metadata excludes notice. notice≤500bytes escaped/plain even SafeBuffer, invalid feedback rolls back host effects, state/snapshot independent, JSON/Turbo and exact scope-bound HTML flash once. feedback6/65; core129/1129/eager load, Chrome8/77(Turbo and JS-disabled refresh, existing message compatibility) PASS. Database rollback sends existing code-only action.conflict, failing regression reproduced/fixed.22 guides/build/2,897links PASS. Final matrix/package/upgrade/PG/isolated audit acceptance is WORK-04, not yet claimed.

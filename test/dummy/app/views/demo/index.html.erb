@@ -6,6 +6,7 @@
   <%= button_to "Present in chat", demo_present_path, params: { mode: "chat" }, data: { turbo: false } %>
   <%= button_to "Render ViewComponent", demo_present_path, params: { mode: "component" }, data: { turbo: false } %>
   <%= button_to "Show empty state", demo_present_path, params: { mode: "empty" }, data: { turbo: false } %>
+  <%= button_to "Try temporary feedback", demo_present_path, params: { mode: "notice" }, data: { turbo: false } %>
 </nav>
 <div class="demo-grid">
   <section aria-label="Persistent views">

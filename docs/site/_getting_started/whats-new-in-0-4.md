@@ -14,6 +14,8 @@ After reading this guide, you will know:
 
 * Recover pending and failed follow-up through a host job.
 * Protect newer delivery attempts from stale acknowledgments.
+* Distinguish receipt replay in existing notifications.
+* Display a temporary notice without changing saved UI state.
 
 ## Recover Committed Work
 
@@ -28,3 +30,9 @@ An expired lease does not prove that a previous callback stopped. The existing u
 ## Inspect Failures Without Payloads
 
 [Operational Diagnostics]({% link _advanced/diagnostics.md %}) lists the existing notification catalog and recovery metadata. Handled-error log lines omit raw exception messages and stack text. The original exception remains in the host's `Rails.error` reporting pipeline, where the host configures privacy controls.
+
+## Distinguish Replay and Display Temporary Feedback
+
+`action.executed` keeps its event name and adds the boolean `replayed`. Existing subscribers continue receiving successful dispatches. Count new executions with `replayed: false`. No private values are added to telemetry.
+
+Return `Transition.new(state: { selected: "compare" }, notice: "Selection saved.")` to acknowledge an action without persisting the message in Surface state. Existing `state["message"]` keeps its behavior. Read [Status and Temporary Feedback]({% link _core_features/feedback.md %}) for all transports and durable receipt semantics.

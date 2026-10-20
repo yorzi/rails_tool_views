@@ -62,6 +62,7 @@ module RailsToolViews
       idempotency_key = Data.identifier(idempotency_key, code: "INVALID_IDEMPOTENCY_KEY")
       request_digest = Data.digest(action: definition.key, arguments: arguments, base_revision: base_revision)
       result = nil
+      replayed = false
       surface.with_lock do
         ensure_not_purged!(surface)
         compatible_component!(surface).authorize!(access(scope, :read, surface: surface, props: surface.props, context_ref: surface.context_ref))
@@ -74,6 +75,7 @@ module RailsToolViews
           # exact key, and keep the digest check as the second gate.
           raise Error.new("IDEMPOTENCY_CONFLICT", status: 409) unless prior.idempotency_key == idempotency_key && prior.request_digest == request_digest
           result = prior.result.symbolize_keys
+          replayed = true
           next
         end
         raise Error.new("SURFACE_CLOSED", status: 410) if surface.closed?
@@ -84,8 +86,10 @@ module RailsToolViews
         transition = definition.handler.call(request)
         raise Error.new("INVALID_TRANSITION", status: 422) unless transition.is_a?(Transition) && transition.state.is_a?(Hash)
         state = Data.bounded(transition.state)
+        notice = normalize_notice(transition.notice)
         surface.update!(state: state, revision: base_revision + 1)
         result = { status: "completed", surface_id: surface.id, revision: surface.revision }
+        result[:notice] = notice unless notice.nil?
         execution = ActionExecution.create!(surface: surface, actor_ref: scope.actor, action_key: definition.key,
           base_revision: base_revision, idempotency_key: idempotency_key, request_digest: request_digest, result: result)
         if transition.agent
@@ -96,14 +100,14 @@ module RailsToolViews
           execution.update!(result: result)
         end
       end
-      notify("action.executed", surface_id: surface.id, revision: result[:revision], action: definition.key)
+      notify("action.executed", surface_id: surface.id, revision: result[:revision], action: definition.key, replayed: replayed)
       result
     rescue ActiveRecord::StaleObjectError, ActiveRecord::TransactionRollbackError, ActiveRecord::LockWaitTimeout
       # The database rolled the whole action back (deadlock, serialization failure,
       # lock timeout); retrying with the same key is safe.
-      raise Error.new("CONFLICT", status: 409)
+      raise_action_conflict!
     rescue ActiveRecord::StatementInvalid => error
-      raise Error.new("CONFLICT", status: 409) if error.cause.class.name.include?("Busy") || error.cause.class.name.include?("Locked")
+      raise_action_conflict! if error.cause.class.name.include?("Busy") || error.cause.class.name.include?("Locked")
       raise
     rescue Error => error
       notify(error.code == "CONFLICT" ? "action.conflict" : "action.rejected", code: error.code)
@@ -169,12 +173,13 @@ module RailsToolViews
       interaction.reload
     end
 
-    # Renders the trusted component after a fresh restore and authorization check.
-    def render(surface, view_context:, scope:, error: nil)
+    # Renders the trusted component after fresh authorization. Optional notice
+    # is plain-text response feedback; it never changes the Surface snapshot.
+    def render(surface, view_context:, scope:, error: nil, notice: nil)
       # Never trust an already-loaded object as an authorization decision.
       surface = restore(surface.id, scope: scope)
       component = compatible_component!(surface)
-      view_context.render(partial: "rails_tool_views/surfaces/surface", formats: [:html], locals: { surface: surface, definition: component, error: error })
+      view_context.render(partial: "rails_tool_views/surfaces/surface", formats: [:html], locals: { surface: surface, definition: component, error: error, notice: normalize_notice(notice) })
     rescue Error => failure
       view_context.render(partial: "rails_tool_views/surfaces/error", formats: [:html], locals: { error: failure })
     end
@@ -213,6 +218,16 @@ module RailsToolViews
     end
 
     private
+    def raise_action_conflict! # :nodoc:
+      notify("action.conflict", code: "CONFLICT")
+      raise Error.new("CONFLICT", status: 409)
+    end
+    def normalize_notice(notice) # :nodoc:
+      return if notice.nil?
+      raise Error.new("INVALID_TRANSITION", status: 422) unless notice.is_a?(String) && notice.bytesize <= 500
+      # A host SafeBuffer must still be rendered as escaped text.
+      Data.bounded(String.new(notice))
+    end
     def ensure_not_purged!(surface)
       raise Error.new("SURFACE_PURGED", status: 410) if surface.purged?
     end

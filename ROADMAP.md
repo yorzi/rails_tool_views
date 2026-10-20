@@ -46,8 +46,8 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 ## 0.4.0: recovery and diagnostics
 
 - Exercise host-owned jobs through commit, pending delivery, crash, expired lease and explicit retry. Preserve delivery keys and host outbox/deduplication; do not promise exactly-once network delivery.
-- Choose a replay event or metadata field. Changing the pinned notification catalog requires an owner decision and Spec Delta before implementation; do not silently replace `action.executed`.
-- Review persistent `state["message"]` with a real host. Change transient-notice semantics only with an explicit compatibility/migration decision. Verify keyboard, focus, loading, mobile and retry feedback.
+- Owner chose additive `replayed` metadata on `action.executed`; DELTA-006 records the approval. Keep event names and metadata-only payloads.
+- Owner chose explicit `Transition#notice` while preserving persistent `state["message"]`. Verify JSON/Turbo/scoped HTML flash, refresh and exact receipt replay, plus keyboard, focus, loading, mobile and retry feedback.
 
 **Done when:** recovery preserves committed results and produces no duplicate host effect; metadata-only diagnostics explain failures without exposing props/secrets. A dashboard or built-in queue is not required.
 

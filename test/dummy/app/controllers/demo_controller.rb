@@ -23,7 +23,7 @@ class DemoController < ApplicationController
   def create
     scope = RailsToolViews.configuration.scope_resolver.call(self)
     raise RailsToolViews::Error.new("NOT_ALLOWED", status: 403) unless scope
-    context = params[:mode] == "chat" ? "demo-chat" : "demo-page"
+    context = { "chat" => "demo-chat", "notice" => "demo-notice" }.fetch(params[:mode], "demo-page")
     key = params[:mode] == "component" ? :component_card : :choice_card
     options = params[:mode] == "empty" ? [] : [{ key: "compare", label: "Compare options" }, { key: "continue", label: "Continue analysis" }]
     RailsToolViews.present(key, props: { title: "Choose your next step", options: options }, scope: scope, context: context)

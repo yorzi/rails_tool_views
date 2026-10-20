@@ -33,3 +33,5 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 ## 0.4 本地开发
 
 投递使用已有 attempts 作为确认 fence，旧成功/失败不能覆盖新 claim；外层事务内 deliver 返回 DELIVERY_IN_TRANSACTION。dummy 的 DemoV1::ContinuationJob 重新解析当前 staff，独立进程中断/恢复验证主应用 receipt 去重。无新表、依赖或内置队列，尚未发布。
+
+WORK-20261020-03：action.executed 增加 replayed 布尔；Transition.notice 是≤500bytes的响应反馈，JSON/Turbo直接返回，HTML由匹配Surface/actor/tenant的Rails flash显示一次。Surface state/snapshot无notice，回执保留同一响应以便精确重放，现有state.message不变。

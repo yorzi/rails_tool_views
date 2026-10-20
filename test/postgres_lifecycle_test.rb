@@ -8,6 +8,32 @@ if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
   class PostgresLifecycleTest < ActiveSupport::TestCase
     include ActiveSupport::Testing::TimeHelpers
 
+    test "competing delivery claims invoke only one callback while the lease is fresh" do
+      RailsToolViews.reset!; register_card(agent: true)
+      entered, release, start, workers = Queue.new, Queue.new, Queue.new, []
+      RailsToolViews.configuration.agent_adapter = ->(*) { entered << true; Timeout.timeout(5) { release.pop } }
+      interaction_id = act(present_card).fetch(:interaction_id)
+      2.times do
+        workers << Thread.new { ActiveRecord::Base.connection_pool.with_connection {
+          start.pop
+          RailsToolViews.deliver(interaction_id, scope: scope)
+        } }
+      end
+      2.times { start << true }
+      Timeout.timeout(5) { entered.pop }
+      # The skipped contender returns while the active callback is still blocked.
+      Timeout.timeout(5) { Thread.pass until workers.any? { |worker| !worker.alive? } }
+      assert entered.empty?, "both claimants invoked the adapter"
+      assert_equal 1, RailsToolViews::AgentInteraction.find(interaction_id).attempts
+      release << true
+      results = Timeout.timeout(5) { workers.map(&:value) }
+      assert_equal %w[completed delivering], results.map(&:status).sort
+      assert_equal "completed", RailsToolViews::AgentInteraction.uncached { RailsToolViews::AgentInteraction.find(interaction_id).status }
+    ensure
+      release << true if release
+      workers&.each { |worker| worker.kill if worker.alive?; worker.join }
+    end
+
     test "two cleanup workers serialize on the same Surface and retain business effects" do
       surface = present_card
       act(surface)

@@ -2,6 +2,10 @@
 
 ## [0.4.0] - Unreleased
 
+- Emit the existing metadata-only `action.conflict` event when database rollback or lock contention maps to a retryable conflict.
+- Keep `action.executed` and add `replayed` metadata to distinguish exact receipt replay from handler execution.
+- Add optional bounded plain-text `Transition#notice`, rendered for the action response through JSON/Turbo or scoped HTML flash. Refresh drops it; action receipts retain exact responses. Existing persistent `state["message"]` is unchanged.
+
 - Omit raw host exception messages and stack text from handled-error log lines; preserve the original exception in host-controlled `Rails.error`. Document the metadata-only event catalog.
 
 - Fence delivery acknowledgments with the existing attempt counter. Late callbacks cannot overwrite newer attempts or emit false terminal notifications. Keep durable uncertainty and host deduplication.

@@ -37,3 +37,5 @@ WORK-20261019-02：purge_closed 先限定 scope/cutoff/deadline 与 batch，再�
 ## 0.4 投递恢复
 
 claim（Surface→interaction lock，attempts+1）→ 提交 → adapter（无外层事务）→ 按 id/status/attempts 条件确认。仅当前 attempt 的成功/失败发终态通知；旧回调只读回当前结果，不覆盖新 claim。host job 从可信 staff 重新解析 scope；进程在业务 effect/receipt commit 后退出时，租约到期重试同一 key，由 host receipt 避免第二次 effect。uncertain 仍保护清理，不凭 fence 推断旧 worker 停止。
+
+动作反馈：handler返回state/可选notice → 事务校验/保存state与精确回执（含notice）→ action.executed(replayed:false)；命中回执跳过handler并发送replayed:true。JSON返回notice，Turbo在既有status显示；HTML303将notice经scope绑定flash交给下一页helper消费。刷新只读Surface state，无旧notice；旧state.message仍持久显示。notice/参数/props不进入通知。

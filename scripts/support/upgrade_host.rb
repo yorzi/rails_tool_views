@@ -49,6 +49,7 @@ RailsToolViews.register(:upgrade_card, description: "Upgrade fixture", schema: s
 })
 scope = RailsToolViews::Scope.new(actor: "alice", tenant: "acme")
 fixture = File.join(host, "fixture.json")
+lifecycle_fixture = File.join(host, "lifecycle.json")
 if phase == "old"
   rows = %w[completed pending failed delivering retried].map do |status|
     correlation = { adapter: "fixture", call_id: status, context: "chat" }
@@ -56,28 +57,74 @@ if phase == "old"
     result = RailsToolViews.dispatch(surface.id, scope: scope, action: "save", arguments: {}, base_revision: 1, idempotency_key: "saved")
     interaction = RailsToolViews::AgentInteraction.find(result[:interaction_id])
     interaction.update!(status: status == "retried" ? "completed" : status, attempts: status == "retried" ? 2 : 1)
-    { id: surface.id, label: status, snapshot: surface.reload.snapshot, receipt: result, correlation: correlation }
+    { id: surface.id, label: status, snapshot: surface.reload.snapshot, receipt: result, correlation: correlation,
+      uncertain: interaction.has_attribute?(:delivery_uncertain) ? interaction.delivery_uncertain : %w[delivering retried].include?(status) }
   end
   File.write(fixture, JSON.generate(rows))
-  puts "UPGRADE_OLD_PASS: #{RailsToolViews::VERSION}, five genuine runtime graphs/business writes"
+  if RailsToolViews.respond_to?(:purge_closed)
+    lifecycle = %w[closed purged].map do |label|
+      correlation = { adapter: "fixture", call_id: label, context: "chat" }
+      surface = RailsToolViews.present(:upgrade_card, props: { title: label }, scope: scope, context: "private", correlation: correlation)
+      receipt = RailsToolViews.dispatch(surface.id, scope: scope, action: "save", arguments: {}, base_revision: 1, idempotency_key: "saved")
+      RailsToolViews.deliver(receipt.fetch(:interaction_id), scope: scope, adapter: ->(*) {})
+      RailsToolViews.close(surface.id, scope: scope, retain_until: label == "purged" ? 1.hour.from_now : nil)
+      { id: surface.id, label: label, receipt: receipt, correlation: correlation }
+    end
+    RailsToolViews.configuration.retention_policy = ->(_) { true }
+    require "active_support/testing/time_helpers"
+    Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(2.hours.from_now) do
+      RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: false)
+    end
+    File.write(lifecycle_fixture, JSON.generate(lifecycle))
+  end
+  puts "UPGRADE_OLD_PASS: #{RailsToolViews::VERSION}, #{rows.size} action graphs, #{File.file?(lifecycle_fixture) ? 2 : 0} lifecycle guards/business writes"
 else
   rows = JSON.parse(File.read(fixture))
+  lifecycle = File.file?(lifecycle_fixture) ? JSON.parse(File.read(lifecycle_fixture)) : []
+  lifecycle.each do |row|
+    if row.fetch("label") == "closed"
+      surface = RailsToolViews.restore(row.fetch("id"), scope: scope)
+      raise "Old closure lost" unless surface.closed? && surface.revision == 3 && surface.retain_until.nil?
+      receipt = RailsToolViews.dispatch(surface.id, scope: scope, action: "save", arguments: {}, base_revision: 1, idempotency_key: "saved")
+      raise "Closed receipt changed" unless receipt.stringify_keys == row.fetch("receipt")
+      begin
+        RailsToolViews.dispatch(surface.id, scope: scope, action: "save", arguments: {}, base_revision: 3, idempotency_key: "new")
+        raise "Old closed Surface reopened"
+      rescue RailsToolViews::Error => error
+        raise unless error.code == "SURFACE_CLOSED"
+      end
+    else
+      [:restore, :present].each do |operation|
+        begin
+          operation == :restore ? RailsToolViews.restore(row.fetch("id"), scope: scope) :
+            RailsToolViews.present(:upgrade_card, props: { title: "purged" }, scope: scope, context: "private", correlation: row.fetch("correlation").symbolize_keys)
+          raise "Old purge tombstone lost"
+        rescue RailsToolViews::Error => error
+          raise unless error.code == "SURFACE_PURGED"
+        end
+      end
+    end
+  end
   rows.each do |row|
     surface = RailsToolViews.restore(row.fetch("id"), scope: scope)
-    raise "Old payload/revision changed" unless JSON.parse(JSON.generate(surface.snapshot.except(:lifecycle))) == row.fetch("snapshot")
+    old_snapshot = row.fetch("snapshot")
+    raise "Old payload/revision changed" unless JSON.parse(JSON.generate(surface.snapshot.except(:lifecycle))) == old_snapshot.except("lifecycle")
+    raise "Old lifecycle changed" if old_snapshot.key?("lifecycle") && JSON.parse(JSON.generate(surface.snapshot[:lifecycle])) != old_snapshot.fetch("lifecycle")
     raise "Old row closed implicitly" if surface.closed?
     receipt = RailsToolViews.dispatch(surface.id, scope: scope, action: "save", arguments: {}, base_revision: 1, idempotency_key: "saved")
     raise "Old receipt changed" unless receipt.stringify_keys == row.fetch("receipt")
     interaction = surface.agent_interactions.first
-    uncertain = %w[delivering retried].include?(row.fetch("label"))
+    uncertain = row.fetch("uncertain")
     raise "Unsafe backfill" unless interaction.delivery_uncertain == uncertain
     correlated = RailsToolViews.present(:upgrade_card, props: { title: row.fetch("label") }, scope: scope, context: "private", correlation: row.fetch("correlation").symbolize_keys)
     raise "Correlation recreated" unless correlated.id == surface.id
   end
   # Migration down is safe before use, then reapply/backfill in a new process schema.
   migration = ActiveRecord::MigrationContext.new(File.join(host, "db/migrate"))
-  migration.down(20261010000000)
-  migration.up
+  if lifecycle.empty?
+    migration.down(20261010000000)
+    migration.up
+  end
   RailsToolViews::Surface.reset_column_information
   RailsToolViews::AgentInteraction.reset_column_information
   complete = rows.find { |r| r["label"] == "completed" }
@@ -94,7 +141,8 @@ else
     result = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: false)
     raise "Upgraded cleanup failed" unless result[:purged] == 1
   end
-  raise "Business data lost or replayed" unless HostBusinessRecord.count == 5
-  raise "Guards lost" unless RailsToolViews::Surface.count == 5 && RailsToolViews::Presentation.count == 5
-  puts "UPGRADE_NEW_PASS: #{RailsToolViews::VERSION}, migration/replay/correlation/quarantine/rollback/purge/business preservation"
+  expected = rows.size + lifecycle.size
+  raise "Business data lost or replayed" unless HostBusinessRecord.count == expected
+  raise "Guards lost" unless RailsToolViews::Surface.count == expected && RailsToolViews::Presentation.count == expected
+  puts "UPGRADE_NEW_PASS: #{RailsToolViews::VERSION}, migration/replay/correlation/quarantine/rollback/purge/business preservation, #{lifecycle.size} old lifecycle guards"
 end

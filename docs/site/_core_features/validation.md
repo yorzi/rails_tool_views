@@ -48,3 +48,5 @@ Renderer failures show `RENDER_FAILED` without deleting state and are reported t
 
 * [Production Boundaries]({% link _advanced/production.md %}) covers logs and privacy.
 * [API Reference]({% link _reference/api-reference.md %}) lists error classes.
+
+* [Status and Temporary Feedback]({% link _core_features/feedback.md %}) separates action acknowledgments from saved state.

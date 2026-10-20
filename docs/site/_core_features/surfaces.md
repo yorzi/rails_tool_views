@@ -43,3 +43,5 @@ Use [Surface Lifecycle]({% link _advanced/lifecycle.md %}) to stop new actions w
 
 * [Actions and Forms]({% link _core_features/actions.md %}) changes state safely.
 * [Upgrading]({% link _reference/upgrading.md %}) preserves old saved Surfaces.
+
+* [Status and Temporary Feedback]({% link _core_features/feedback.md %}) separates action acknowledgments from saved state.

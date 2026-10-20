@@ -35,3 +35,9 @@ Replay a saved action with the original arguments and key. Exercise pending deli
 ## Review Error Reporting
 
 Handled-error log lines now contain the event and exception class, without raw messages or stack text. If an operator parsed the old line, use the notification metadata and the host-controlled `Rails.error` report instead. That report still receives the original exception; review privacy controls in its subscribers.
+
+## Read Replay Metadata and Optional Notices
+
+`action.executed.rails_tool_views` keeps its name and adds `replayed: false` for a new action and `true` for exact receipt replay. Update strict payload consumers to accept this boolean. Count new execution only when it is false; do not treat notification delivery as a business audit log.
+
+`Transition` adds optional `notice:`. Existing `state["message"]` retains its persistence and meaning. A notice is bounded plain text, displayed for the action response and absent after refresh; the durable receipt retains it for exact replay. JSON responses add `notice` only when supplied. Standard HTML uses scoped Rails flash and the `rails_tool_views_surface` helper. See [Status and Temporary Feedback]({% link _core_features/feedback.md %}).

@@ -18,12 +18,13 @@ Dir.mktmpdir("rails-tool-views-docs-") do |temporary|
     File.read(path).scan(/```ruby\n(# docs-example: ([\w-]+)\n.*?)\n```/m).map { |code, name| [name, [code, path]] }
   end.to_h
   context = binding
-  %w[registration lifecycle dispatch error].each do |name|
+  %w[registration lifecycle dispatch error notice].each do |name|
     code, path = snippets.fetch(name)
     eval(code, context, path)
   end
   raise "Saved selection differs" unless eval('surface.reload.state.fetch("selected") == "compare" && surface.revision == 2', context)
   raise "Documented error output differs" unless eval('error.message == "Only two left."', context)
+  raise "Documented notice differs" unless eval('transition.notice == "Selection saved." && transition.state == { selected: "compare" }', context)
   replay_code, = snippets.fetch("dispatch")
   eval(replay_code, context)
   raise "Replay duplicated an action" unless RailsToolViews::ActionExecution.count == 1
@@ -55,5 +56,5 @@ Dir.mktmpdir("rails-tool-views-docs-") do |temporary|
     eval(apply_code, context, apply_path)
     raise "Documented cleanup failed" unless eval('summary[:purged] == 1 && closed.reload.purged? && closed.props.empty?', context)
   end
-  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, error wording, ERB form, close, retention preview/apply#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
+  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, notice, error wording, ERB form, close, retention preview/apply#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
 end

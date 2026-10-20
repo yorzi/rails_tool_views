@@ -80,6 +80,8 @@ class RuntimeTest < ActiveSupport::TestCase
   end
 
   test "a database rollback of the action is a retryable conflict with nothing committed" do
+    events = []
+    token = ActiveSupport::Notifications.subscribe("action.conflict.rails_tool_views") { |*args| events << args.last }
     [ActiveRecord::Deadlocked, ActiveRecord::SerializationFailure, ActiveRecord::LockWaitTimeout].each do |rollback|
       RailsToolViews.reset!
       attempts = 0
@@ -94,6 +96,9 @@ class RuntimeTest < ActiveSupport::TestCase
       assert_equal 2, act(surface, idempotency: "retry-me")[:revision]
       assert_equal 1, DemoEffect.where(surface_id: surface.id).count
     end
+    assert_equal [{ code: "CONFLICT" }] * 3, events
+  ensure
+    ActiveSupport::Notifications.unsubscribe(token) if token
   end
 
   test "correlation is durable and isolated by actor tenant adapter and context" do

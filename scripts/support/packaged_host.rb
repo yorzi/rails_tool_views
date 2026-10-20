@@ -110,6 +110,37 @@ client.post("/rails_tool_views/surfaces/#{review.id}/actions", params: { action_
 raise "Generated HTML correction failed" unless client.response.status == 303 && client.response.location == "http://www.example.com/rails_tool_views/surfaces/#{review.id}" && review.reload.state["value"] == "reviewed"
 client.follow_redirect!
 raise "Generated saved view did not restore" unless client.response.status == 200 && client.response.body.include?('value="reviewed"')
+# Exercise delivery from the installed artifact with a durable host receipt.
+RailsToolViews.register(:recovery_card, description: "Host recovery fixture", schema: schema, partial: "choices/card", policy: ->(_) { true },
+  actions: { save: { schema: params_schema, policy: ->(_) { true }, handler: ->(_) {
+    RailsToolViews::Transition.new(state: { saved: true }, agent: true, notice: "Host work saved.")
+  } } })
+ActiveRecord::Base.connection.create_table(:host_delivery_receipts) { |t| t.string :delivery_key, null: false; t.index :delivery_key, unique: true }
+host_receipt = Class.new(ActiveRecord::Base) { self.table_name = "host_delivery_receipts" }
+calls = 0
+RailsToolViews.configuration.agent_adapter = ->(_payload, delivery_key:) {
+  calls += 1
+  host_receipt.create_or_find_by!(delivery_key: delivery_key)
+  raise "offline failure after host commit" if calls == 1
+}
+recovery = RailsToolViews.present(:recovery_card, props: { title: "Recovery" }, scope: scope)
+receipt = RailsToolViews.dispatch(recovery.id, scope: scope, action: "save", arguments: { key: "a" }, base_revision: 1, idempotency_key: "recover-once")
+raise "Installed notice missing" unless receipt[:notice] == "Host work saved." && !recovery.reload.snapshot.to_json.include?("notice")
+interaction_id = receipt.fetch(:interaction_id)
+ActiveRecord::Base.transaction do
+  begin
+    RailsToolViews.deliver(interaction_id, scope: scope)
+    raise "Installed delivery ran inside a transaction"
+  rescue RailsToolViews::Error => error
+    raise unless error.code == "DELIVERY_IN_TRANSACTION"
+  end
+end
+raise "Installed failed outcome lost" unless RailsToolViews.deliver(interaction_id, scope: scope).status == "failed"
+raise "Installed delivery retried implicitly" unless RailsToolViews.deliver(interaction_id, scope: scope).status == "failed" && calls == 1
+delivered = RailsToolViews.deliver(interaction_id, scope: scope, retry_failed: true)
+raise "Installed recovery duplicated the host effect" unless delivered.status == "completed" && delivered.attempts == 2 &&
+  !delivered.delivery_uncertain? && host_receipt.count == 1 && host_receipt.first.delivery_key == delivered.delivery_key && recovery.reload.revision == 2
+
 # Exercise actual lifecycle code from the installed artifact.
 RailsToolViews.close(review.id, scope: scope, retain_until: 1.day.from_now)
 raise "Installed lifecycle did not close" unless review.reload.closed? && review.revision == 3
@@ -145,7 +176,7 @@ load registration
 ActiveRecord.maintain_test_schema = false
 load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> closed replay/payload cleanup/migration task -> generated scaffold/test -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> delivery transaction guard/durable host retry -> closed replay/payload cleanup/migration task -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

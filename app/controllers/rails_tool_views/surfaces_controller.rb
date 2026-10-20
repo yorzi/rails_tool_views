@@ -85,10 +85,16 @@ module RailsToolViews
       status = response[:status] == "pending" ? 202 : 200
       respond_to do |format|
         format.json { render json: response, status: status }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, RailsToolViews.render(surface, view_context: view_context, scope: current_scope)), status: status }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(surface.dom_id, RailsToolViews.render(surface, view_context: view_context, scope: current_scope, notice: result[:notice])), status: status }
         # Without Turbo, return to the page that embeds the Surface; it re-renders saved state.
         # The Engine's own helper keeps whatever mount path and name the host chose.
-        format.html { redirect_after_action(surface) }
+        format.html do
+          if result[:notice]
+            flash[:rails_tool_views_notice] = { "surface_id" => surface.id.to_s, "actor" => current_scope.actor,
+              "tenant" => current_scope.tenant, "text" => result[:notice] }
+          end
+          redirect_after_action(surface)
+        end
       end
     end
     def redirect_after_action(surface)
@@ -106,7 +112,7 @@ module RailsToolViews
       end
     end
     def render_surface_page(surface, error: nil)
-      html = surface && RailsToolViews.render(surface, view_context: view_context, scope: current_scope, error: error)
+      html = surface && view_context.rails_tool_views_surface(surface, scope: current_scope, error: error)
       render template: "rails_tool_views/surfaces/page", layout: "rails_tool_views/application",
         locals: { surface_html: html, reload_path: surface && surface_path(surface), error: error },
         status: error ? error.status : :ok

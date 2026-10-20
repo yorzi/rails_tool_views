@@ -43,9 +43,11 @@ An action handler returns `RailsToolViews::Transition.new(state: {...})`. Put ho
 
 For external delivery, commit a host outbox record and deliver it separately with host idempotency. A database transaction cannot roll back an email, payment, or remote API request. `agent: true` requests a follow-up interaction after the action commits.
 
-HTML form success redirects back to the embedding page when possible. JSON and Turbo use the same action transaction. Without Turbo, a denied action currently renders a fragment page; the host should account for this limitation in its flow.
+HTML form success redirects back to the embedding page when possible. JSON and Turbo use the same action transaction. Without Turbo, a rejected action renders a complete page with an authorized correction path.
 
 ## Next Steps
 
 * [Validation and Errors]({% link _core_features/validation.md %}) rejects invalid form values.
 * [Agent Continuation]({% link _advanced/continuation.md %}) handles follow-up failures.
+
+* [Status and Temporary Feedback]({% link _core_features/feedback.md %}) keeps notices separate from saved state.

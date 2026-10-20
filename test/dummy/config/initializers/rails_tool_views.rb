@@ -29,7 +29,11 @@ Rails.application.config.to_prepare do
       handler: ->(access) {
         DemoEffect.create!(surface_id: access.surface.id, value: access.arguments.fetch("key"))
         key = access.arguments.fetch("key")
-        RailsToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: access.surface.context_ref == "demo-chat")
+        if access.surface.context_ref == "demo-notice"
+          RailsToolViews::Transition.new(state: { selected: key }, notice: "Selection saved for this request.")
+        else
+          RailsToolViews::Transition.new(state: { selected: key, message: "Selection saved: #{key}." }, agent: access.surface.context_ref == "demo-chat")
+        end
       } }
     RailsToolViews.register(:choice_card, description: "Select a workflow", schema: schema, partial: "choices/card", policy: policy, expose_to: [:agent], actions: { select_option: selection })
     RailsToolViews.register(:component_card, description: "Existing ViewComponent", schema: schema, component: DemoChoiceComponent, policy: policy, actions: { select_option: selection })

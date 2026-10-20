@@ -184,8 +184,9 @@ module RailsToolViews
 
   # Policy and handler context populated by the runtime.
   Access = Struct.new(:actor, :tenant, :operation, :props, :surface, :action, :arguments, :context_ref, keyword_init: true)
-  # Handler result containing the next UI state and an optional agent flag.
-  Transition = Struct.new(:state, :agent, keyword_init: true)
+  # Handler result containing persistent UI state, an optional agent flag and
+  # plain-text notice (at most 500 bytes) displayed for this action response.
+  Transition = Struct.new(:state, :agent, :notice, keyword_init: true)
   Action = Struct.new(:key, :schema, :policy, :handler, keyword_init: true)
 
   # An immutable renderer, schema, version, and authorization contract.

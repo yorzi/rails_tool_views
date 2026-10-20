@@ -39,3 +39,7 @@ Andy explicitly authorizes continued 0.3 development and tests. FR-04/05/06/07/0
 ## 2026-10-19 — public 0.3 release authorization
 
 Andy explicitly authorizes publication and related documentation/commits after local candidate acceptance. Candidate push/remote CI/tag/OIDC/Release/Pages verification is in scope. No new product-intent/API/schema/dependency change is added to the accepted candidate. Original 59 Specs remain pinned and equal; previous local-only authorization is superseded for this release.
+
+## DELTA-006 — owner-approved 0.4 notification metadata and additive feedback
+
+2026-10-20; PRODUCT_INTENT_CHANGE (notification contract supplement), approved by Andy's explicit replies in this chat. Preserve action.executed.rails_tool_views and add replayed:false for a new execution / true for an exact authorized receipt replay. No new event name or payload data. Keep existing state["message"] persistence; add explicit Transition.notice as action-response feedback, absent on refreshed Surface snapshots. Durable action receipts retain that response field so exact retries remain deterministic; HTML flash is scoped to Surface/actor/tenant and shown once. This is presentation transience, not a secret/erasure guarantee. No business-state migration or external Specs edit. WORK-20261020-03 records implementation and compatibility tests; acceptance follows separately.

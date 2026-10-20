@@ -14,9 +14,11 @@ module RailsToolViews
       agent_unavailable: "AI follow-up unavailable.", agent_retry: "Retry AI follow-up"
     }.freeze
 
-    # Renders the Surface with a fresh scope and optional field feedback.
-    def rails_tool_views_surface(surface, scope:, error: nil)
-      RailsToolViews.render(surface, view_context: self, scope: scope, error: error)
+    # Renders with fresh authorization, optional field feedback and a transient
+    # notice. A matching HTML redirect's scoped flash is consumed once.
+    def rails_tool_views_surface(surface, scope:, error: nil, notice: nil)
+      notice = rails_tool_views_flash_notice(surface, scope) if notice.nil?
+      RailsToolViews.render(surface, view_context: self, scope: scope, error: error, notice: notice)
     end
 
     def rails_tool_views_text(key, **values)
@@ -77,6 +79,15 @@ module RailsToolViews
     def rails_tool_views_routes # :nodoc:
       view = respond_to?(:rails_tool_views) || respond_to?(:main_app) ? self : helpers
       view.respond_to?(:rails_tool_views) ? view.rails_tool_views : view.main_app.rails_tool_views
+    end
+
+    private
+    def rails_tool_views_flash_notice(surface, scope) # :nodoc:
+      return unless scope.is_a?(RailsToolViews::Scope) && respond_to?(:flash)
+      stored = flash[:rails_tool_views_notice]
+      return unless stored.is_a?(Hash) && stored.values_at("surface_id", "actor", "tenant") == [surface.id.to_s, scope.actor, scope.tenant]
+      flash.delete(:rails_tool_views_notice)
+      stored["text"]
     end
   end
 end

@@ -42,3 +42,5 @@ Use [Surface Lifecycle]({% link _advanced/lifecycle.md %}) to distinguish active
 * [Agent Continuation]({% link _advanced/continuation.md %}) separates commit from follow-up.
 
 * [Operational Diagnostics]({% link _advanced/diagnostics.md %}) explains metadata-only outcome events.
+
+* [Status and Temporary Feedback]({% link _core_features/feedback.md %}) separates action acknowledgments from saved state.

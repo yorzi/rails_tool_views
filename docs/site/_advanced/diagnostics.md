@@ -37,7 +37,7 @@ All names below have the suffix `.rails_tool_views`. An action commits independe
 | `presentation.rejected` | `code` | Presentation is rejected. |
 | `surface.rendered` | `surface_id`, `component`, `revision` | An authorized renderer succeeds. |
 | `surface.render_failed` | `surface_id`, `component`, `error_class` | A host renderer raises a handled exception. |
-| `action.executed` | `surface_id`, `revision`, `action` | Dispatch succeeds, including an exact receipt replay. |
+| `action.executed` | `surface_id`, `revision`, `action`, `replayed` | Dispatch succeeds. `false` means new execution; `true` means an exact authorized receipt replay. |
 | `action.conflict` | `code` | The revision or transaction conflicts. |
 | `action.rejected` | `code` | Dispatch is rejected for another reason. |
 | `agent_returned` | `surface_id`, `interaction_id` | The current attempt acknowledges success. |

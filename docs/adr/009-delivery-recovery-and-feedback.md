@@ -8,8 +8,12 @@ Refuse delivery inside an outer transaction before making any claim or adapter c
 
 Fencing does not stop an old callback or make a remote effect atomic. Retain the 0.3 uncertainty flag and lifecycle quarantine after takeover. Do not infer quiescence or clear uncertainty from age or terminal status. No force-cleanup or attested-recovery API is introduced without a concrete safe host contract.
 
-Notification replay metadata and transient feedback are pending owner compatibility decisions, requested under the roadmap. No catalog or message behavior change is inferred by this recovery work.
+Owner explicitly confirms both compatibility choices after the recovery unit; DELTA-006 records this before implementation. Keep action.executed and add replayed boolean. Add bounded plain-text Transition.notice without changing persistent state.message.
 
 ## Diagnostics and existing UI verification
 
-The ordinary handled-error line exposes only event/class; the original exception remains in host-controlled Rails.error, with explicit privacy boundaries. Preserve the current event catalog while owner replay/notice choices remain pending. Browser checks exercise real keyboard activation, busy state/disabled submission, validation focus, mobile failure/retry/refresh and unchanged business receipt counts. No new UI state machine or client framework.
+The ordinary handled-error line exposes only event/class; the original exception remains in host-controlled Rails.error, with explicit privacy boundaries. Preserve event names, adding only the approved replayed boolean to action.executed. Browser checks exercise real keyboard activation, busy state/disabled submission, validation focus, mobile failure/retry/refresh and unchanged business receipt counts. No new UI state machine or client framework.
+
+## Response notices
+
+Notice is optional plain text at most500bytes, normalized to a plain String even for SafeBuffer input. Validate inside the action transaction so invalid feedback rolls back host and Surface writes. Store it in the action receipt to keep exact retries deterministic, never in Surface state/snapshot or notifications. JSON returns the optional field; Turbo renders it in the existing status region. HTML reuses Rails flash with exact Surface/actor/tenant matching, consumed once by the embedding helper. Restore without a response notice keeps the old persistent message or translated status. No extra session store, notice table or frontend framework.

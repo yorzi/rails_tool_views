@@ -65,3 +65,7 @@ Andy 授权推送和发布后，候选精确 CI 全绿才创建 v0.2.0；标签�
 ## 2026-10-19 — 0.3 正式交付
 
 owner授权的候选推送、精确标签远端CI、OIDC与GitHub/RubyGems发布、稳定0.3/next文档核验完成。close/abandon/opt-in payload清理与加法迁移已交付；未知/不确定投递保护和host业务权威边界不变。旧版本与tag不可变，升级先停旧writers/备份，不自动开始0.4。详见 RELEASE_0_3_0。
+
+## 2026-10-20 — 0.4 恢复与反馈边界
+
+投递确认现在绑定具体attempt，旧worker不能把新claim改成completed/failed；业务副作用仍需host durable dedup。调用deliver必须在host事务提交后。action.executed保留名称，用replayed区分实际执行与历史回执。新增notice只控制一次响应的状态提示，刷新恢复state；既有message持久语义不变。notice为精确重放留在回执，不是隐私擦除。无新迁移、依赖或内置队列。

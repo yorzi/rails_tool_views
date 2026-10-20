@@ -169,3 +169,11 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] Chrome6/61 on disposable loopback host: native keyboard submit/retry, aria-busy, disabled loading button, error/status focus,390px failure/recovery/refresh and one host reply/receipt; screenshots checked. Initial sandbox bind EPERM was rerun with approved execution. Browser/driver/Puma ended.
 - [x] Diagnostic guide inventories actual existing events and limits, docs/upgrading/runbook/What's New updated.21 guides zero errors/two expected candidate warnings, stable0.3/next build and2,822links PASS.
 - [x] No new event name/payload field/notice behavior/schema/dependency. Owner compatibility questions remain pending; this commit does not claim those parts of0.4 complete.
+
+## WORK-20261020-03 — confirmed replay and notice compatibility
+
+- [x] Owner choices recorded before implementation in DELTA-006/baseline/preflight. action.executed keeps its name and adds replayed; Transition.notice adds bounded plain-text feedback, preserving persistent message semantics.
+- [x] Six feedback tests first fail on the old behavior, then6/65 PASS: deterministic receipt, no snapshot notice, metadata privacy, rollback on invalid/oversized notice, SafeBuffer escaping, JSON/Turbo/HTML-once/scope boundaries. Core129/1129/eager load PASS, Chrome8/77 PASS, screenshots checked.
+- [x] Database rollback diagnostic omission reproduced then fixed using existing action.conflict code-only event; three rollback classes covered.
+- [x] Built package host adds transaction guard/host receipt retry/notice check. Upgrade runner covers immutable0.2 and0.3, including old closed/purged guards. PostgreSQL competing fresh claims test added, prior126/1079 PASS after uncached reader correction; final expanded matrix belongs to WORK-04.
+- [x]22-guide lint zero errors/two expected candidate warnings; stable0.3/next build/2,897links/internal exclusion PASS. New feedback guide, What's New/upgrading/API/diagnostics/runbook and human mental model sync. RDoc constant link corrected to generated anchor. No schema/dependency/queue; task-created browser processes ended.

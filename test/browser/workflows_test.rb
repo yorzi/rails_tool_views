@@ -2,6 +2,26 @@
 require_relative "../browser_test_helper"
 
 class BrowserWorkflowsTest < BrowserTest
+  %i[rails_tool_views_chrome rails_tool_views_no_js].each do |driver|
+    test "temporary feedback disappears on refresh with #{driver}" do
+      with_browser(driver) do
+        visit "/"
+        click_button "Try temporary feedback"
+        choose "Compare options"
+        find_button("Save selection").send_keys(:enter)
+        assert_text "Selection saved for this request."
+        assert_checked_field "Compare options"
+        assert_equal 1, DemoEffect.uncached { DemoEffect.count }
+        take_screenshot("temporary-notice")
+        page.refresh
+        assert_no_text "Selection saved for this request."
+        assert_text "Changes saved."
+        assert_checked_field "Compare options"
+        assert_equal 1, DemoEffect.uncached { DemoEffect.count }
+        assert_equal({ "selected" => "compare" }, RailsToolViews::Surface.uncached { RailsToolViews::Surface.last.state })
+      end
+    end
+  end
   test "keyboard submission exposes loading then an explicit continuation retry on mobile" do
     mobile_viewport
     visit "/v1/support"

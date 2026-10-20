@@ -13,14 +13,14 @@
 
 ## 当前工作与下一步
 
-按 owner 新授权执行0.4：先修复投递确认竞争与事务边界，再处理已确认的诊断/界面反馈选择，最后验证完整矩阵、真实升级/包、浏览器并记录本地验收。即时清单见 [Current Work](../agent/02_CURRENT_WORK.md)。外部通知/临时 notice 兼容性选择已提问，等待明确决定。
+按 owner 新授权执行0.4：先修复投递确认竞争与事务边界，再处理已确认的诊断/界面反馈选择，最后验证完整矩阵、真实升级/包、浏览器并记录本地验收。即时清单见 [Current Work](../agent/02_CURRENT_WORK.md)。owner 已确认保留action.executed并新增replayed，以及显式notice且保留state.message；实现与核心/browser验证完成，正在做最终验收。
 
 ## 尚未解决
 
 | 问题 | 当前事实 / 拟处理阶段 |
 | --- | --- |
 | 数据生命周期 | close/abandon 与清理已发布。旧租约不确定投递受持久保护，不能据时间强删；恢复方案留 0.4 |
-| 运行反馈与遥测 | state message 会持久化，回放仍发 action.executed；拟在 0.4 处理，新通知契约需 owner 决定 |
+| 运行反馈与遥测 | owner 已批准 DELTA-006：action.executed + replayed；新增 transient notice，保留 state.message。核心/browser已通过，待最终候选验收 |
 | 实际采用 | 缺少外部开发者试验和实测定制实现对照；dummy/本地接入不是外部采用 |
 | 支持边界 | MySQL、真实 provider、独立安全审核未验证；正式 H2/C/R 仍开放 |
 
