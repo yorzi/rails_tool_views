@@ -186,3 +186,9 @@ Boundaries: MySQL NOT_RUN (proven by column introspection and arithmetic), no li
 - [x] No schema/runtime dependency/queue or external Specs change. Upgrade docs clarify draining old web and worker callbacks. Current work/status/map/at-a-glance/implementation/roadmap/operations/acceptance/evidence/ledger updated. No new entity/flow requiring another diagram.
 - [x] Browser/driver/Puma ended, temporary PG databases verified absent, isolated/upgrade/package tempdirs cleaned; pre-existing PG service retained. No credentials/provider/contact/push/tag/publication.
 - [x] Local candidate complete and owner review next. Ledger linkage/clean tree verified with final commit; remote/hosted evidence remains NOT_RUN.
+
+## WORK-20261020-05 — 0.4 release preparation
+
+Owner-authorized publication scope recorded before changes. Date/released/history/What's New/upgrading and operations are aligned at0.4.0. Runtime unchanged from accepted6d90216; 59 Specs byte-identical to pinned0ea28b1. Final release metadata core129/1129/eager load, 35-file formal package gate, actual installed host/generated test1/2, executable core docs and empty GEM_HOME network/full host/activated audit PASS. Seven locks clean at fa229525; docs22guides zero errors/one expected pre-tag version warning, stable0.3/next build2897links/internal exclusion PASS. Impact helper warning reviewed: raise_action_conflict! is private/:nodoc; helper/render examples and upgrade/recovery/privacy/notice guides reviewed.
+
+Local preparation artifact SHA2231ea7a17f3ebd260302c12f4d80e9d7b6aa1386f37979c9cbd86462a35ed80; this is not yet a published checksum. No new schema/dependency/permission/DNS/provider effect. No local server started; isolated temp host removed. Next: push candidate and require exact CI/Docs before tag; actual publication/hosted results belong in WORK-06, not a preemptive PASS here.

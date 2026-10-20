@@ -381,3 +381,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **文档/人工复查：** 更新Current Work、status/map/at-a-glance、implementation、roadmap、runbook/upgrade、acceptance/postflight与evidence；review先读反馈/续接/升级三指南，再试临时提示刷新和失败重试。结构/实体不变，无新diagram。Chrome/driver/Puma已结束，独立PG临时DB核验已删除，包/升级/隔离tempdirs清理；既有PG服务不动，无预览/watcher/tunnel遗留。
 
 **下一步：** 0.4本地候选完成，等待owner审阅后另行授权推送/精确远端CI及发布；本轮未推送、tag或上传，公共稳定0.3不变。provider/MySQL/外部采用/独立安全/full a11y/正式H2/C/R仍开放，不自动开展无关迭代。
+
+### WORK-20261020-05 — 0.4 授权发布准备
+
+**内容/映射：** Andy明确要求远端CI、发布验收、文档及发布，授权本候选push/tag/OIDC/Release/Pages及交付记录提交。FR-08/NFR-03；更新0.4日期/released/history/What's New、baseline授权/currentwork/status/发布流程。运行时代码冻结于6d90216，DELTA-006和59份pinned Specs不变。
+
+**验证：** 最终元数据core129/1129/eager load，35-file正式包gate、实际Rails安装host/生成测试1/2、空GEM_HOME网络安装/full host/activated audit、可执行core文档通过。七锁审计fa229525干净；22-guide lint零错误/一条预期打tag前版本warning，stable0.3/next build2897links和internal exclusion通过。impact唯一新名称raise_action_conflict!已private/:nodoc，相关helper/render/notice/recovery/升级示例已复查。准备包SHA2231ea7a17f3ebd260302c12f4d80e9d7b6aa1386f37979c9cbd86462a35ed80；不是发布校验和。完整本地matrix/PG/browser/旧runtime升级见V0_4_VALIDATION，不重标为远端结果。
+
+**影响/人工复查：** 阅读What's New/Upgrading/Feedback/Continuation，升级时drain旧web/worker，deliver置于host commit后；notice回执仍保留，旧message兼容。无新schema/runtime依赖/权限/DNS/provider调用；formal/MySQL/adoption/独立review缺口仍保留。文档版本与运行手册变化，不改结构图。未启动本地服务，isolated host临时目录已清理。
+
+**下一步：** 本commit推送后等待精确main CI/Docs；通过再annotated v0.4.0与既有OIDC发布，核验registry/Release/HTTPS。WORK-06另记真实交付结果并提交推送；当前不提前宣称远端或发布成功。

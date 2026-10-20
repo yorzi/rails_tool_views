@@ -48,3 +48,7 @@ Andy requests executing the planned 0.4 recovery/diagnostics/UI feedback scope w
 ## 2026-10-20 0.4 compatibility decisions
 
 Andy explicitly chooses to keep action.executed and add replayed:true/false metadata, and to add transient notice without changing persistent state["message"]. DELTA-006 records the notification supplement before implementation. This does not authorize an event rename, removal of old message behavior or publication.
+
+## 2026-10-20 public 0.4 release authorization
+
+Andy explicitly requests completing remote CI, release acceptance, related documentation and publication. This authorizes the completed 0.4 candidate push, exact remote CI, annotated v0.4.0, existing OIDC publication, GitHub Release and versioned Pages verification, including preparation and delivery-record commits. It supersedes prior local-only statements for this release. DELTA-006, MIT/disclosure and the pinned external Specs remain unchanged; open provider/MySQL/adoption/independent review/formal gates remain evidence limits.

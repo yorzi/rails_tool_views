@@ -43,3 +43,7 @@ Andy explicitly authorizes publication and related documentation/commits after l
 ## DELTA-006 — owner-approved 0.4 notification metadata and additive feedback
 
 2026-10-20; PRODUCT_INTENT_CHANGE (notification contract supplement), approved by Andy's explicit replies in this chat. Preserve action.executed.rails_tool_views and add replayed:false for a new execution / true for an exact authorized receipt replay. No new event name or payload data. Keep existing state["message"] persistence; add explicit Transition.notice as action-response feedback, absent on refreshed Surface snapshots. Durable action receipts retain that response field so exact retries remain deterministic; HTML flash is scoped to Surface/actor/tenant and shown once. This is presentation transience, not a secret/erasure guarantee. No business-state migration or external Specs edit. WORK-20261020-03 records implementation and compatibility tests; acceptance follows separately.
+
+## 2026-10-20 — public 0.4 release authorization
+
+Andy explicitly authorizes remote CI, release acceptance, documentation and publication after local completion. Extend the existing publication authorization to WORK-20261020-05..06; no additional runtime/API/schema/dependency intent is introduced. DELTA-006 remains the approved notification supplement. All 59 copied Specs still match pinned 0ea28b1; external files are unchanged. Prior local-only limits are superseded for this release, without claiming formal/provider/MySQL/adoption/independent review completion.

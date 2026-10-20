@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.0] - Unreleased
+## [0.4.0] - 2026-10-20
 
 - Emit the existing metadata-only `action.conflict` event when database rollback or lock contention maps to a retryable conflict.
 - Keep `action.executed` and add `replayed` metadata to distinguish exact receipt replay from handler execution.

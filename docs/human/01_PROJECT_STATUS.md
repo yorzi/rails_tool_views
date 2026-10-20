@@ -13,7 +13,7 @@
 
 ## 当前工作与下一步
 
-0.4按路线图完成恢复/诊断/临时反馈，owner批准DELTA-006。三个Ruby/Rails组合各129/1129，PG132/1145，adapter7/45，Chrome8/77；真实0.2/0.3升级、实际包/隔离安装/审计与2,897文档链接通过。详见[0.4本地验收](../evidence/V0_4_VALIDATION.md)。下一步是owner审阅后另行授权推送/远端CI和发布；没有自动发布或新功能任务。即时清单见[Current Work](../agent/02_CURRENT_WORK.md)。
+0.4按路线图完成恢复/诊断/临时反馈，owner批准DELTA-006。三个Ruby/Rails组合各129/1129，PG132/1145，adapter7/45，Chrome8/77；真实0.2/0.3升级、实际包/隔离安装/审计与2,897文档链接通过。详见[0.4本地验收](../evidence/V0_4_VALIDATION.md)。owner现已明确授权推送/远端CI、发布验收和发布；正在执行0.4发布，尚未取得远端或公开交付结果。即时清单见[Current Work](../agent/02_CURRENT_WORK.md)。
 
 ## 尚未解决
 
