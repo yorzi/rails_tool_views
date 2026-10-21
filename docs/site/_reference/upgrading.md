@@ -14,6 +14,7 @@ After reading this guide, you will know:
 
 * Install the candidate and keep saved data.
 * Update code that rescued raw registration or identifier exceptions.
+* Configure every delivery worker with its adapter.
 * Keep focus, styling and supported versions in view.
 
 ## Install the Candidate
@@ -36,6 +37,10 @@ Hosts on 0.3 or earlier first follow the [0.4 upgrade guide](https://github.com/
 A malformed registration used to raise `NoMethodError`, `KeyError` or `RegexpError`. It now raises `RailsToolViews::Error` during boot: `INVALID_SCHEMA` for an invalid `pattern`, `INVALID_ACTION` for an action definition that is not a Hash or lacks `schema:`, and `INVALID_COMPONENT` for a non-array `expose_to`. Correct registrations behave as before.
 
 An identifier with invalid UTF-8 now raises its own code, such as `INVALID_SCOPE`, instead of `ArgumentError`. `Scope#actor` and `Scope#tenant` return UTF-8 Strings, so a binary-encoded identifier matches its stored row. Values stored in props and state are plain Strings in memory, as they already were after a reload. If your code rescued the old exception classes, rescue `RailsToolViews::Error` and check `code`.
+
+## Configure Every Delivery Worker
+
+`deliver` used to mark pending or failed work `skipped` when no adapter was passed or configured, which ended that follow-up for good. It now raises `AGENT_NOT_CONFIGURED` with HTTP 503 and changes nothing. Make sure every process that delivers loads the same adapter configuration as your web processes. If you relied on the old skip to drop follow-up, call `RailsToolViews.abandon` instead. Dispatch without a configured adapter still records `skipped`.
 
 ## Check the Browser
 

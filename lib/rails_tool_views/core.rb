@@ -23,6 +23,7 @@ module RailsToolViews
       "INCOMPATIBLE_COMPONENT" => "This view's contract changed. Ask the application owner to migrate or recreate it.",
       "RENDER_FAILED" => "This view cannot be rendered. Your saved state is preserved.",
       "AGENT_UNAVAILABLE" => "Your changes were saved, but the AI follow-up could not complete.",
+      "AGENT_NOT_CONFIGURED" => "Your changes were saved. The AI follow-up is not available right now and will be kept.",
       "IDEMPOTENCY_CONFLICT" => "This request identifier was already used for a different request."
     }.freeze
     # Hosts own the wording of their codes: pass message:, or translate

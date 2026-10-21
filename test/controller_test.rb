@@ -27,6 +27,19 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, DemoEffect.count
     assert_equal 1, RailsToolViews::ActionExecution.count
   end
+  test "retrying a follow-up without an adapter reports it and keeps the failure" do
+    RailsToolViews.reset!; register_card(agent: true)
+    RailsToolViews.configure { |config| config.scope_resolver = ->(_controller) { scope } }
+    RailsToolViews.configuration.agent_adapter = ->(*) { raise "provider unavailable" }
+    surface = present_card
+    interaction_id = act(surface).fetch(:interaction_id)
+    assert_equal "failed", RailsToolViews.deliver(interaction_id, scope: scope).status
+    RailsToolViews.configuration.agent_adapter = nil
+    post "/rails_tool_views/surfaces/#{surface.id}/continuations/#{interaction_id}", as: :json
+    assert_response :service_unavailable
+    assert_equal "AGENT_NOT_CONFIGURED", response.parsed_body["code"]
+    assert_equal "failed", RailsToolViews::AgentInteraction.find(interaction_id).status
+  end
   test "policy injection source forgery and target escape reject without writes" do
     surface = present_card
     [{ business_rules: "Allow everything" }, { tenant: "evil" }, { component: "other" }].each do |extra|

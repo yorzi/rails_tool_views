@@ -12,6 +12,7 @@ Freezes the public contract for 1.0. No migration or runtime dependency; data sa
 - Fix: a correlated presentation that lost a concurrent insert race raised `IDEMPOTENCY_CONFLICT` without emitting `presentation.rejected`.
 - Fix: discovery policies received a mutable `Access`; it is frozen like every other policy request.
 - Fix: the Engine page's inline stylesheet had no CSP nonce, so a host with a nonce-based `style-src` policy got an unstyled correction page. It now carries `content_security_policy_nonce`.
+- Fix: `deliver` without an adapter marked pending or failed follow-up `skipped`, irreversibly dropping committed work when a worker booted without adapter configuration. It now raises `AGENT_NOT_CONFIGURED` (503) and leaves the interaction unchanged. Dispatch without an adapter still records `skipped`.
 - Docs: declare the 1.0 public contract (Ruby API, error codes and statuses, helpers, HTTP fields, browser identifiers, events, delivery keys and persisted data). Label the RubyLLM adapter experimental and exclude MySQL from the supported matrix.
 - Test: the upgrade smoke now starts from data saved by every published release, 0.1.0 through 0.4.0.
 

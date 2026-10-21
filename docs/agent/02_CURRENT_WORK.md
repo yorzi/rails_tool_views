@@ -13,7 +13,7 @@
 ## rc1 lifecycle decisions (owner-approved, 2026-10-21)
 
 - [x] WORK-20261021-08: ADR 010, DELTA-007 and pre-flight record before implementation.
-- [ ] WORK-20261021-09: D3, delivery without an adapter raises `AGENT_NOT_CONFIGURED`.
+- [x] WORK-20261021-09: D3, delivery without an adapter raises `AGENT_NOT_CONFIGURED`.
 - [ ] WORK-20261021-10: D1, keyset paging for `purge_closed`.
 - [ ] WORK-20261021-11: D2, attested `reconcile_delivery`.
 - [ ] WORK-20261021-12: installed-host and upgrade evidence, full matrix, readiness update.

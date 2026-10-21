@@ -17,13 +17,15 @@ After reading this guide, you will know:
 
 ## Request a Follow-Up
 
-Return a `Transition` with `agent: true` from the action handler. This persists an `AgentInteraction` along with the action receipt. A configured adapter runs after commit; without an adapter the interaction is marked skipped. Direct Ruby dispatch callers invoke delivery explicitly, while the mounted controller can deliver automatically.
+Return a `Transition` with `agent: true` from the action handler. This persists an `AgentInteraction` along with the action receipt. A configured adapter runs after commit. If no adapter is configured when the action commits, the action still succeeds and the interaction is recorded as `skipped`. Direct Ruby dispatch callers invoke delivery explicitly, while the mounted controller can deliver automatically.
 
 The adapter receives a structured payload and `delivery_key:`. Authorize the referenced conversation in the host and deduplicate that delivery key durably. Never infer an assistant or tool transcript message from UI text.
 
 ## Deliver Explicitly
 
 Call `RailsToolViews.deliver(interaction_id, scope: scope)` for the saved interaction. To retry a failed delivery, pass `retry_failed: true`. A failure preserves the committed Surface and stores `AGENT_UNAVAILABLE`. A completed or skipped interaction is not delivered again.
+
+If delivery would start but no adapter is passed or configured, `deliver` raises `AGENT_NOT_CONFIGURED` with HTTP 503 and leaves the interaction unchanged. A worker that booted without its adapter configuration therefore fails loudly, and a configured worker can deliver the same work later with the same delivery key. To stop follow-up on purpose, use `RailsToolViews.abandon`.
 
 For slow work, set `auto_deliver = false` and have the host enqueue delivery. The gem does not provide a job queue or poll a provider. Re-resolve authorized scope in the job; do not serialize a browser-supplied identity as authority.
 

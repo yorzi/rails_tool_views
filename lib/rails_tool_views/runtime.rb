@@ -119,10 +119,9 @@ module RailsToolViews
           # Reclaiming a lease does not prove that the previous callback ended.
           # This durable flag cannot be cleared by a stale worker's completion.
           uncertain = interaction.delivery_uncertain? || interaction.status == "delivering"
-          if adapter.nil?
-            interaction.update!(status: "skipped", claimed_at: nil, delivery_uncertain: uncertain)
-            next
-          end
+          # A worker without an adapter must not turn committed work terminal;
+          # the interaction stays as it is for a configured worker.
+          raise Error.new("AGENT_NOT_CONFIGURED", status: 503) if adapter.nil?
           interaction.update!(status: "delivering", claimed_at: Time.current, attempts: interaction.attempts + 1,
             error_code: nil, delivery_uncertain: uncertain)
           claimed = true

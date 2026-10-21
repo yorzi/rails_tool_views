@@ -481,3 +481,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读ADR 010的Decision与Alternatives。新增公开名称将在各实现commit写入public-contract。无schema/依赖。
 
 **下一步：** WORK-09实现D3（先写失败测试）。
+
+### WORK-20261021-09 — D3：无adapter的投递不再丢弃已提交工作
+
+**内容/映射：** FR-06、ADR 010、DELTA-007。`deliver`在将要claim时若无adapter（未传且未配置），原先把pending/failed/过期delivering改成终态`skipped`，未配置adapter启动的worker会静默永久丢弃follow-up。现在抛`AGENT_NOT_CONFIGURED`（503，默认文案说明已保存并保留），记录不变；终态、新鲜lease和未授权重试的failed仍按原样直接返回。dispatch时无adapter仍记`skipped`，保证FR-06-AC-03。
+
+**复查/验证：** 两个新测试先失败（未抛错；continuation重试HTTP返回200），修复后通过：pending/重试failed/过期delivering三种都不变（attempts与uncertain不变），随后配置好的adapter用同一delivery key完成；JSON重试端点返回503且failed保留。core 136/1178通过。
+
+**影响/人工复查：** 行为变化写入Upgrading（确保每个投递进程加载adapter；需要停止follow-up改用abandon）、continuation指南、public-contract（新错误码与503）、What's New与CHANGELOG。无schema/依赖。
+
+**下一步：** WORK-10实现D1游标分页。

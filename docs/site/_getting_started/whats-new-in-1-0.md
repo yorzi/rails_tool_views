@@ -32,6 +32,10 @@ A malformed registration now raises `RailsToolViews::Error` during boot instead 
 
 An identifier with invalid UTF-8 raises its own code, such as `INVALID_SCOPE`. A digest no longer rejects props or arguments that passed validation close to the size or depth limit.
 
+## Keep Follow-up Work Safe
+
+A delivery call without an adapter now raises `AGENT_NOT_CONFIGURED` and keeps the interaction for a configured worker, instead of marking committed work skipped. See [Agent Continuation]({% link _advanced/continuation.md %}#deliver-explicitly).
+
 ## Keep Browser Feedback Accessible
 
 Focus moves to a Surface's status only after a Turbo replacement. A page load or refresh keeps the reader's place. The Engine's complete HTML page carries your Content Security Policy nonce on its stylesheet. See [Status and Temporary Feedback]({% link _core_features/feedback.md %}) and [Validation and Errors]({% link _core_features/validation.md %}).

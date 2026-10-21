@@ -82,4 +82,25 @@ class ContinuationTest < ActiveSupport::TestCase
     assert_equal "completed", RailsToolViews.deliver(interaction.id, scope: scope).status
     assert_equal 1, count
   end
+  test "delivery without an adapter keeps committed follow-up for a configured worker" do
+    RailsToolViews.reset!; register_card(agent: true)
+    RailsToolViews.configuration.agent_adapter = ->(*) { flunk "dispatch must not deliver" }
+    interaction_id = act(present_card).fetch(:interaction_id)
+    # A worker that booted without adapter configuration must not drop the work.
+    RailsToolViews.configuration.agent_adapter = nil
+    assert_error("AGENT_NOT_CONFIGURED") { RailsToolViews.deliver(interaction_id, scope: scope) }
+    interaction = RailsToolViews::AgentInteraction.find(interaction_id)
+    assert_equal ["pending", 0, false], [interaction.status, interaction.attempts, interaction.delivery_uncertain]
+    interaction.update!(status: "failed", error_code: "AGENT_UNAVAILABLE", attempts: 1)
+    assert_equal "failed", RailsToolViews.deliver(interaction_id, scope: scope).status
+    assert_error("AGENT_NOT_CONFIGURED") { RailsToolViews.deliver(interaction_id, scope: scope, retry_failed: true) }
+    interaction.update!(status: "delivering", claimed_at: 6.minutes.ago)
+    assert_error("AGENT_NOT_CONFIGURED") { RailsToolViews.deliver(interaction_id, scope: scope) }
+    assert_equal ["delivering", 1, false], interaction.reload.values_at(:status, :attempts, :delivery_uncertain)
+    keys = []
+    delivered = RailsToolViews.deliver(interaction_id, scope: scope, adapter: ->(_payload, delivery_key:) { keys << delivery_key })
+    assert_equal ["completed", 2], [delivered.status, delivered.attempts]
+    assert_equal [interaction.delivery_key], keys
+    assert_equal "completed", RailsToolViews.deliver(interaction_id, scope: scope).status
+  end
 end
