@@ -36,6 +36,10 @@ An identifier with invalid UTF-8 raises its own code, such as `INVALID_SCOPE`. A
 
 A delivery call without an adapter now raises `AGENT_NOT_CONFIGURED` and keeps the interaction for a configured worker, instead of marking committed work skipped. See [Agent Continuation]({% link _advanced/continuation.md %}#deliver-explicitly).
 
+## Clean Up Past Protected Views
+
+`purge_closed` returns a `next_after` cursor. Pass it back as `after:` to page past views your policy protects, so a hold on old views no longer blocks newer ones. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}#sweep-every-batch).
+
 ## Keep Browser Feedback Accessible
 
 Focus moves to a Surface's status only after a Turbo replacement. A page load or refresh keeps the reader's place. The Engine's complete HTML page carries your Content Security Policy nonce on its stylesheet. See [Status and Temporary Feedback]({% link _core_features/feedback.md %}) and [Validation and Errors]({% link _core_features/validation.md %}).

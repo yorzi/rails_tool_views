@@ -491,3 +491,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 行为变化写入Upgrading（确保每个投递进程加载adapter；需要停止follow-up改用abandon）、continuation指南、public-contract（新错误码与503）、What's New与CHANGELOG。无schema/依赖。
 
 **下一步：** WORK-10实现D1游标分页。
+
+### WORK-20261021-10 — D1：purge_closed游标分页
+
+**内容/映射：** FR-04、NFR-05、ADR 010、DELTA-007。候选按`closed_at, id`排序且无游标，最旧的受保护视图（如policy保留的法律保全）会占满每个批次，较新的可清理视图永远轮不到。新增`after:`与返回的`next_after`：keyset条件`closed_at > t OR (closed_at = t AND id > i)`只与既有scope/cutoff/期限条件AND，伪造游标只能跳过行、不能扩大到其他scope；满批返回最后候选的不透明游标，否则nil；preview同样分页；格式非法抛`INVALID_RETENTION_REQUEST`。其他清理规则不变。
+
+**复查/验证：** 新测试先失败（unknown keyword :after），修复后：无游标时两次满批都停在受保护行（缺陷重现），带游标第二页清理2个、第三页nil；相同closed_at按id分页1/1/1/0；他scope位置的游标只缩小本scope；七种非法游标被拒。retention 10/90在SQLite与独立临时PG17库均通过（库已删除）；core 138/1203；文档示例新增可执行sweep循环通过；lint 24篇0错误。
+
+**影响/人工复查：** 摘要新增`next_after`键：比较整个hash的严格消费者需接受（Upgrading已写明）。lifecycle指南新增“Sweep Every Batch”，public-contract/What's New/CHANGELOG同步。无schema/依赖。
+
+**下一步：** WORK-11实现D2 attested reconciliation。

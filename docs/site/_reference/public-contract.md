@@ -39,12 +39,13 @@ RailsToolViews.deliver(id, scope:, adapter: RailsToolViews.configuration.agent_a
 RailsToolViews.render(surface, view_context:, scope:, error: nil, notice: nil)
 RailsToolViews.close(id, scope:, retain_until: nil)
 RailsToolViews.abandon(id, scope:, retain_until: nil)
-RailsToolViews.purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true)
+RailsToolViews.purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true,
+  after: nil)
 ```
 
 `present` and `restore` return a `RailsToolViews::Surface`. `close` and `abandon` return the Surface; a repeated call returns it unchanged. `deliver` returns the reloaded `RailsToolViews::AgentInteraction`. `render` returns HTML. `RailsToolViews.registry`, `RailsToolViews.configuration`, `reset_registry!` for reload hooks and `reset!` for tests are also stable.
 
-`dispatch` returns a receipt with `status: "completed"`, `surface_id` and `revision`, plus `notice` and `interaction_id` when present. An exact retry returns the same receipt. `purge_closed` returns `examined`, `eligible`, `purged`, `protected` and `dry_run`.
+`dispatch` returns a receipt with `status: "completed"`, `surface_id` and `revision`, plus `notice` and `interaction_id` when present. An exact retry returns the same receipt. `purge_closed` returns `examined`, `eligible`, `purged`, `protected`, `dry_run` and `next_after`, an opaque cursor string or nil. A later minor release may add summary keys.
 
 These classes and their documented readers are stable:
 

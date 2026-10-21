@@ -50,11 +50,14 @@ Dir.mktmpdir("rails-tool-views-docs-") do |temporary|
   Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(31.days.from_now) do
     preview_code, preview_path = snippets.fetch("retention-preview")
     eval(preview_code, context, preview_path)
-    raise "Documented preview differs" unless eval('summary == { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true }', context)
+    raise "Documented preview differs" unless eval('summary == { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true, next_after: nil }', context)
     raise "Preview deleted receipts" unless RailsToolViews::ActionExecution.count == 1
     apply_code, apply_path = snippets.fetch("retention-apply")
     eval(apply_code, context, apply_path)
     raise "Documented cleanup failed" unless eval('summary[:purged] == 1 && closed.reload.purged? && closed.props.empty?', context)
+    sweep_code, sweep_path = snippets.fetch("retention-sweep")
+    eval(sweep_code, context, sweep_path)
+    raise "Documented sweep did not finish" unless eval('summary[:next_after].nil? && after.nil?', context)
   end
-  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, notice, error wording, ERB form, close, retention preview/apply#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
+  puts "DOCS_EXAMPLES_PASS: registration, persistence, dispatch, replay, notice, error wording, ERB form, close, retention preview/apply/sweep#{', optional tool catalog' if ENV['DOCS_ADAPTER'] == '1'}"
 end

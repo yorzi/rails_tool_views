@@ -32,7 +32,7 @@ class RetentionTest < ActiveSupport::TestCase
     RailsToolViews.configuration.retention_policy = ->(_) { true }
     travel 2.hours do
       before = [surface.reload.attributes, RailsToolViews::ActionExecution.first.attributes, RailsToolViews::Presentation.first.attributes]
-      assert_equal({ examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true }, purge)
+      assert_equal({ examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true, next_after: nil }, purge)
       assert_equal before, [surface.reload.attributes, RailsToolViews::ActionExecution.first.attributes, RailsToolViews::Presentation.first.attributes]
       assert_equal 1, purge(dry_run: false)[:purged]
       assert surface.reload.purged?
@@ -69,6 +69,44 @@ class RetentionTest < ActiveSupport::TestCase
       assert_not foreign.reload.purged?
       assert_not late.reload.purged?
       assert_not infinite.reload.purged?
+    end
+  end
+
+  test "a cursor pages past protected views so newer eligible views are reached" do
+    held = 2.times.map { close_ready }
+    ready = 2.times.map { close_ready }
+    RailsToolViews.configuration.retention_policy = ->(access) { held.none? { |surface| surface.id == access.surface.id } }
+    travel 2.hours do
+      # The oldest candidates are on hold; without a cursor every batch stops on them.
+      2.times { assert_equal({ examined: 2, purged: 0, protected: 2 }, purge(batch_size: 2, dry_run: false).slice(:examined, :purged, :protected)) }
+      first = purge(batch_size: 2, dry_run: false)
+      assert_kind_of String, first[:next_after]
+      second = purge(batch_size: 2, dry_run: false, after: first[:next_after])
+      assert_equal({ examined: 2, purged: 2, protected: 0 }, second.slice(:examined, :purged, :protected))
+      last = purge(batch_size: 2, dry_run: false, after: second[:next_after])
+      assert_equal({ examined: 0, purged: 0, protected: 0, next_after: nil }, last.slice(:examined, :purged, :protected, :next_after))
+      assert ready.all? { |surface| surface.reload.purged? }
+      assert held.none? { |surface| surface.reload.purged? }
+    end
+  end
+
+  test "a cursor orders ties by id, previews like apply and stays inside the scope" do
+    RailsToolViews.configuration.retention_policy = ->(_) { true }
+    views = 3.times.map { close_ready }
+    tied = Time.utc(2026, 10, 1, 12, 0, 0, 123_456)
+    RailsToolViews::Surface.where(id: views.map(&:id)).update_all(closed_at: tied)
+    travel 2.hours do
+      seen, after = [], nil
+      loop do
+        summary = purge(batch_size: 1, after: after)
+        seen << summary[:examined]
+        after = summary[:next_after] or break
+      end
+      assert_equal [1, 1, 1, 0], seen
+      assert_equal 0, RailsToolViews::Surface.where.not(purged_at: nil).count
+      # A cursor from another scope's position only narrows this scope's query.
+      assert_equal 3, purge(after: "2000-01-01T00:00:00.000000Z/#{SecureRandom.uuid}", dry_run: false)[:purged]
+      assert_equal 0, purge(scope: scope("bob"), dry_run: false)[:examined]
     end
   end
 
@@ -149,7 +187,9 @@ class RetentionTest < ActiveSupport::TestCase
   test "invalid cleanup parameters fail before mutations" do
     RailsToolViews.configuration.retention_policy = ->(_) { true }
     close_ready
-    [{ batch_size: 0 }, { batch_size: 1001 }, { batch_size: "1" }, { dry_run: nil }, { dry_run: 0 }, { closed_before: "yesterday" }, { closed_before: 1.day.from_now }].each do |args|
+    [{ batch_size: 0 }, { batch_size: 1001 }, { batch_size: "1" }, { dry_run: nil }, { dry_run: 0 }, { closed_before: "yesterday" }, { closed_before: 1.day.from_now },
+      { after: 5 }, { after: "" }, { after: "garbage" }, { after: "2026-10-01T12:00:00Z/x" }, { after: "2026-13-01T12:00:00.000000Z/x" },
+      { after: "2026-10-01T12:00:00.000000Z/" }, { after: "2026-10-01T12:00:00.000000Z/#{"x" * 300}" }].each do |args|
       assert_error("INVALID_RETENTION_REQUEST") { purge(**args) }
     end
     assert_nil RailsToolViews::Surface.first.purged_at

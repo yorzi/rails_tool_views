@@ -16,6 +16,7 @@ After reading this guide, you will know:
 * Preserve replay receipts and choose a retention deadline.
 * Protect unfinished and uncertain delivery.
 * Preview and apply scoped payload cleanup.
+* Page through every batch past protected views.
 
 ## Close a Finished View
 
@@ -75,7 +76,8 @@ end
 
 summary = RailsToolViews.purge_closed(scope: scope,
   closed_before: 7.days.ago, batch_size: 100)
-# => { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true }
+# => { examined: 1, eligible: 1, purged: 0, protected: 0, dry_run: true,
+#      next_after: nil }
 ```
 
 The default policy is unset and rejects the call with `NOT_ALLOWED`. Pass a real `Scope`, an explicit past cutoff and a batch size from 1 to 1000. Candidates must belong to that exact actor and tenant, have closed strictly before the cutoff, and have reached their non-null retention deadline. Active views and indefinite retention are excluded. Pending, failed, delivering, unknown or historically uncertain interactions remain protected even if a host edited lifecycle columns directly.
@@ -88,9 +90,25 @@ summary = RailsToolViews.purge_closed(scope: scope,
   closed_before: 7.days.ago, batch_size: 100, dry_run: false)
 ```
 
-Each Surface is locked and eligibility is checked again. The batch bounds the number of Surfaces examined, not their child receipt count. Cleanup removes terminal interactions and action receipts, clears props, state and the Surface context reference, and sets `purged_at` in the same transaction. A database error rolls back that Surface. Earlier completed Surfaces in the batch stay committed; rerun the same request after resolving the error. Policy-denied or unsafe candidates count as protected. Inspect these before repeating full batches, since protected rows can fill a batch.
+Each Surface is locked and eligibility is checked again. The batch bounds the number of Surfaces examined, not their child receipt count. Cleanup removes terminal interactions and action receipts, clears props, state and the Surface context reference, and sets `purged_at` in the same transaction. A database error rolls back that Surface. Earlier completed Surfaces in the batch stay committed; rerun the same request after resolving the error. Policy-denied or unsafe candidates count as protected and stay untouched.
 
 Preview makes no Engine writes and reserves nothing. Apply may see different eligibility after concurrent work. Coordinate host policy changes and maintenance jobs accordingly. There is no automatic scheduler or tenant discovery. Choose a conservative batch size for large graphs and iterate known scopes in your own job.
+
+## Sweep Every Batch
+
+```ruby
+# docs-example: retention-sweep
+after = nil
+loop do
+  summary = RailsToolViews.purge_closed(scope: scope, closed_before: 7.days.ago,
+    batch_size: 100, dry_run: false, after: after)
+  after = summary[:next_after] or break
+end
+```
+
+Protected views sort first when they are the oldest, such as views your policy keeps on hold, so a single batch can fill with them. Each summary therefore includes `next_after`. It is an opaque cursor for the last view the batch examined, or `nil` when the batch came back short. Pass it back as `after:` to continue past those views; they stay untouched. A preview pages the same way.
+
+Start each sweep with `after: nil` and keep the same scope and cutoff while it runs. Views that reach their deadline later are found by the next sweep. The cursor only narrows the scoped query, so it cannot reach another actor or tenant. Store it only between calls of one sweep; an invalid value raises `INVALID_RETENTION_REQUEST`.
 
 ## Understand the Tombstone
 

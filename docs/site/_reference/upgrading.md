@@ -42,6 +42,10 @@ An identifier with invalid UTF-8 now raises its own code, such as `INVALID_SCOPE
 
 `deliver` used to mark pending or failed work `skipped` when no adapter was passed or configured, which ended that follow-up for good. It now raises `AGENT_NOT_CONFIGURED` with HTTP 503 and changes nothing. Make sure every process that delivers loads the same adapter configuration as your web processes. If you relied on the old skip to drop follow-up, call `RailsToolViews.abandon` instead. Dispatch without a configured adapter still records `skipped`.
 
+## Page Through Cleanup
+
+`purge_closed` accepts `after:` and its summary adds `next_after`. Code that compares the whole summary must accept the new key. Replace repeated full batches with the sweep loop in [Surface Lifecycle]({% link _advanced/lifecycle.md %}#sweep-every-batch), so protected views no longer stop newer views from being cleaned.
+
 ## Check the Browser
 
 Focus now moves to a Surface's status only after a Turbo replacement. If a test expected focus on the status after a full page load, update it. If you override `app/views/layouts/rails_tool_views/application.html.erb`, keep `nonce: content_security_policy_nonce` on its stylesheet.

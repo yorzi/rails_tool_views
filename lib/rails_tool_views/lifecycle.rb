@@ -16,19 +16,26 @@ module RailsToolViews
     # Scrubs eligible closed payloads in one bounded batch, preserving replay
     # tombstones. Requires an explicit scope, cutoff and host retention policy.
     # Defaults to a read-only preview. Each applied Surface commits atomically.
-    def purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true)
+    # Pass the returned next_after as after: to continue past this batch.
+    def purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true, after: nil)
       check_scope!(scope)
       valid_time = closed_before.is_a?(Time) || closed_before.is_a?(ActiveSupport::TimeWithZone)
       unless valid_time && closed_before <= Time.current && batch_size.is_a?(Integer) && batch_size.between?(1, 1000) && [true, false].any? { |v| dry_run.equal?(v) }
         raise Error.new("INVALID_RETENTION_REQUEST")
       end
+      position = retention_position(after) unless after.nil?
       policy = configuration.retention_policy
       raise Error.new("NOT_ALLOWED", status: 403) unless policy.respond_to?(:call)
       now = Time.current
-      candidates = Surface.where(actor_ref: scope.actor, tenant_ref: scope.tenant, purged_at: nil)
-        .where("closed_at < ? AND retain_until <= ?", closed_before, now).order(:closed_at, :id).limit(batch_size).pluck(:id)
-      counts = { examined: 0, eligible: 0, purged: 0, protected: 0, dry_run: dry_run }
-      candidates.each do |id|
+      relation = Surface.where(actor_ref: scope.actor, tenant_ref: scope.tenant, purged_at: nil)
+        .where("closed_at < ? AND retain_until <= ?", closed_before, now)
+      # Keyset paging only narrows the scoped query; a forged cursor can skip
+      # rows but never reach another scope.
+      relation = relation.where("closed_at > ? OR (closed_at = ? AND id > ?)", position[0], position[0], position[1]) if position
+      rows = relation.order(:closed_at, :id).limit(batch_size).pluck(:id, :closed_at)
+      counts = { examined: 0, eligible: 0, purged: 0, protected: 0, dry_run: dry_run,
+        next_after: rows.length == batch_size ? retention_cursor(*rows.last) : nil }
+      rows.each do |id, _closed_at|
         surface = Surface.find_by(id: id)
         next unless surface
         surface.with_lock do
@@ -77,6 +84,17 @@ module RailsToolViews
         surface.update!(closed_at: now, abandoned_at: abandon ? now : nil, retain_until: retain_until, revision: surface.revision + 1)
       end
       surface
+    end
+    # An opaque cursor: the last candidate's closing time and Surface ID.
+    def retention_cursor(id, closed_at)
+      "#{closed_at.utc.iso8601(6)}/#{id}"
+    end
+    def retention_position(cursor)
+      match = cursor.is_a?(String) && cursor.match(%r{\A(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z)/([^/\s]{1,150})\z})
+      raise Error.new("INVALID_RETENTION_REQUEST") unless match
+      [Time.iso8601(match[1]), match[2]]
+    rescue ArgumentError
+      raise Error.new("INVALID_RETENTION_REQUEST")
     end
     def protected_interactions?(surface, abandon:)
       interactions = surface.agent_interactions
