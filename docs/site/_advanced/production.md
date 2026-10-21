@@ -24,7 +24,7 @@ Use one database transaction for host writes that must commit with the Surface. 
 
 ## Plan Data Retention
 
-Four Engine models persist Surfaces, presentations, action receipts, and agent interactions. They do not expire automatically. Define host retention and delete related data deliberately; do not expire receipts while clients can still retry an old action. There is no built-in retention scheduler.
+Four Engine models persist Surfaces, presentations, action receipts, and agent interactions. They do not expire automatically. Close finished views with a retention deadline, then preview and apply `purge_closed` from your own job, as [Surface Lifecycle]({% link _advanced/lifecycle.md %}) explains. Do not delete receipts by hand while clients can still retry an old action. There is no built-in retention scheduler.
 
 ## Inspect Failures Safely
 
@@ -34,9 +34,9 @@ Keep translations under `rails_tool_views.errors`, `rails_tool_views.surface`, a
 
 ## Choose a Database and Integration
 
-SQLite and PostgreSQL have local and release-CI verification records. MySQL is unverified. The bundled migration bounds every indexed identifier column to 150 bytes, so the five-column presentation index needs 3000 bytes, inside utf8mb4's 3072-byte limit. The runtime also bounds identifiers in bytes, requires valid UTF-8 and matches stored identities byte for byte, so a case-insensitive collation cannot resolve another actor's or tenant's row. Run your own migration and concurrency checks on the actual deployment database.
+SQLite and PostgreSQL are supported and run in release CI. MySQL is not supported in 1.0. The bundled migration bounds every indexed identifier column to 150 bytes, so the five-column presentation index needs 3000 bytes, inside utf8mb4's 3072-byte limit. The runtime also bounds identifiers in bytes, requires valid UTF-8 and matches stored identities byte for byte, so a case-insensitive collation cannot resolve another actor's or tenant's row. These measures do not replace a real MySQL migration and concurrency run, so MySQL stays outside the [supported versions]({% link _reference/public-contract.md %}#supported-versions). On any database, run your own migration and concurrency checks before production.
 
-Host examples and local integration work do not establish production adoption. OddlyDock is not a runtime dependency. There are no built-in ActionCable subscriptions, remote UI protocols, billing, or hosted services. RubyLLM remains optional. The gem is published under MIT; publication does not establish independent security review, live-provider qualification or external adoption.
+Host examples and local integration work do not establish production adoption. OddlyDock is not a runtime dependency. There are no built-in ActionCable subscriptions, remote UI protocols, billing, or hosted services. RubyLLM remains optional, and its adapter is [experimental]({% link _reference/public-contract.md %}#experimental-parts). The gem is published under MIT; publication does not establish independent security review, live-provider qualification or external adoption.
 
 ## Next Steps
 

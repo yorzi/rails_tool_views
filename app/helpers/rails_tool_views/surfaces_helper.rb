@@ -21,6 +21,8 @@ module RailsToolViews
       RailsToolViews.render(surface, view_context: self, scope: scope, error: error, notice: notice)
     end
 
+    # Engine copy for +key+, translated under rails_tool_views.surface.<key>.
+    # Use it when you override an Engine template.
     def rails_tool_views_text(key, **values)
       t(key, scope: %i[rails_tool_views surface], default: TEXT.fetch(key), **values)
     end

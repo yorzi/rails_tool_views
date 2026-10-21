@@ -25,4 +25,4 @@ The module-level methods orchestrate registration, persistence, actions, and del
 | Define a component contract | [Component]({{ '/api/RailsToolViews/Component.html' | relative_url }}) |
 | Present through RubyLLM | [PresentUI]({{ '/api/RailsToolViews/Adapters/RubyLLM/PresentUI.html' | relative_url }}) |
 
-RDoc is generated from source. Do not edit its output. For the supported usage contract, start with [Getting Started]({% link _getting_started/getting-started.md %}) and the feature guides.
+RDoc is generated from source. Do not edit its output. For the names 1.0 keeps stable, read the [Public Contract]({% link _reference/public-contract.md %}). For usage, start with [Getting Started]({% link _getting_started/getting-started.md %}) and the feature guides.

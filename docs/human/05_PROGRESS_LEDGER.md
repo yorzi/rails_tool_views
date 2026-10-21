@@ -451,3 +451,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 阅读release.yml的“Create GitHub Release”步骤与checklist新节。无运行时代码/包内容变化；不新增权限或密钥。
 
 **下一步：** 声明1.0公开契约（含experimental适配器、MySQL排除），然后准备1.0.0.rc1候选元数据与证据。
+
+### WORK-20261021-06 — 声明1.0公开契约
+
+**内容/映射：** ROADMAP 1.0条件1（声明契约）、3（升级）、4（适配器边界）。新增`_reference/public-contract.md`：SemVer与rc1冻结规则；Ruby API签名与返回形状、稳定类成员、Access operation/interaction status/lifecycle枚举；全部错误码分组与非400状态；helper/模板覆盖点/generator；三个HTTP路由的请求/响应字段、202/303语义与snapshot字段（此前无任何指南记录线协议）；DOM/Stimulus标识；事件、delivery key与持久化数据。按路线图默认：未授权真实provider，RubyLLM适配器标为experimental（核心不受影响）；MySQL无真实迁移/并发运行，明确排除出支持矩阵。production指南的保留段原先仍说“手动删除”，已改为close+purge_closed；`rails_tool_views_text`补doc comment。upgrade smoke从v0.2/v0.3扩到v0.1.0..v0.4.0全部已发布版本。
+
+**复查/验证：** 每条契约陈述逐一对照源码（错误码清单由grep生成，状态码逐个核对）。upgrade smoke四个真实旧runtime各5个action graph的回执/关联/隔离/回滚/purge/业务保留PASS；docs build stable0.4/next、3183链接零断链、内部记录排除PASS；project-docs lint 23篇0错误0警告，impact无公开名称变化。
+
+**影响/人工复查：** 请重点审阅public-contract页面——rc1起这就是冻结清单，列入即承诺。experimental与MySQL排除是路线图规定的默认处理，若要改为支持需另行授权的provider/MySQL证据。无运行时行为变化。
+
+**下一步：** 1.0.0.rc1候选元数据（released:false）、What's New in 1.0、RC准备证据与全矩阵本地验收。

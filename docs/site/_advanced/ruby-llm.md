@@ -23,7 +23,7 @@ Add `ruby_llm` to the host Gemfile, then load the adapter explicitly:
 require "rails_tool_views/adapters/ruby_llm"
 ```
 
-The core does not require RubyLLM or a provider. The current adapter has offline coverage against RubyLLM {{ site.requirements.ruby_llm_tested }}. Configure provider credentials through the host's RubyLLM setup, not through RailsToolViews.
+The core does not require RubyLLM or a provider. The adapter is [experimental]({% link _reference/public-contract.md %}#experimental-parts): it has offline coverage against RubyLLM {{ site.requirements.ruby_llm_tested }}, including a real chat loop, but no live provider has been exercised end to end, and it may change in a minor release. Configure provider credentials through the host's RubyLLM setup, not through RailsToolViews.
 
 ## Build the Approved Tool
 

@@ -8,6 +8,7 @@
 - [x] WORK-20261021-04: Engine page stylesheet carries the host CSP nonce.
 - [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
 - [x] WORK-20261021-05: prerelease-safe GitHub Release and verified stable-docs behavior for an rc tag.
+- [x] WORK-20261021-06: declared public contract, experimental adapter, MySQL exclusion, 0.1-0.4 upgrade coverage.
 - [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
 
 Local commits only. No push, tag, publication, provider call or external contact.
