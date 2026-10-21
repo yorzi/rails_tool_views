@@ -4,6 +4,11 @@
 
 - Fix: the Stimulus controller moved focus to the status region of every saved Surface on page load, not only after a Turbo replacement. Focus now moves only for a rendered replacement or an error; a refresh keeps the reader's place.
 - Fix: malformed registrations raised raw Ruby errors. An invalid schema `pattern` now raises `INVALID_SCHEMA`, an action definition that is not a Hash or lacks `schema:` raises `INVALID_ACTION`, and a non-array `expose_to` raises `INVALID_COMPONENT`.
+- Fix: an actor, tenant or other identifier with invalid UTF-8 raised `ArgumentError`; it now raises the identifier's own code, such as `INVALID_SCOPE`. Valid identifiers are returned as UTF-8 Strings, so binary-encoded input still matches its stored row.
+- Fix: normalized values kept String subclasses such as `ActiveSupport::SafeBuffer`. They are now plain Strings, the same as after a reload.
+- Fix: request digests re-applied the payload size and depth limits to their envelope, so props or arguments close to a limit were rejected with `PAYLOAD_TOO_LARGE` or `PAYLOAD_TOO_DEEP` after passing validation. Digests of every previously accepted value are unchanged.
+- Fix: a correlated presentation that lost a concurrent insert race raised `IDEMPOTENCY_CONFLICT` without emitting `presentation.rejected`.
+- Fix: discovery policies received a mutable `Access`; it is frozen like every other policy request.
 
 ## [0.4.0] - 2026-10-20
 

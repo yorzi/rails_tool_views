@@ -44,19 +44,21 @@ module RailsToolViews
 
   module Data # :nodoc:
     module_function
-    def normalize(value, depth = 0)
-      raise Error.new("PAYLOAD_TOO_DEEP") if depth > RailsToolViews.configuration.max_depth
+    # limit: false is only for values that were already bounded.
+    def normalize(value, depth = 0, limit: true)
+      raise Error.new("PAYLOAD_TOO_DEEP") if limit && depth > RailsToolViews.configuration.max_depth
       case value
       when Hash
         result = {}
         value.each do |key, item|
           raise Error.new("INVALID_JSON") unless key.is_a?(String) || key.is_a?(Symbol)
           raise Error.new("INVALID_JSON") if result.key?(key.to_s)
-          result[key.to_s] = normalize(item, depth + 1)
+          result[key.to_s] = normalize(item, depth + 1, limit: limit)
         end
         result
-      when Array then value.map { |item| normalize(item, depth + 1) }
-      when String then value.dup
+      when Array then value.map { |item| normalize(item, depth + 1, limit: limit) }
+      # A plain String, as every value is once reloaded; a SafeBuffer stays text.
+      when String then String.new(value)
       when Integer, TrueClass, FalseClass, NilClass then value
       when Float
         raise Error.new("INVALID_JSON") unless value.finite?
@@ -85,8 +87,12 @@ module RailsToolViews
       else value
       end
     end
+    # Digests values that were already bounded. The envelope adds keys and a
+    # level of nesting, so request limits must not apply a second time.
     def digest(value)
-      "sha256:#{Digest::SHA256.hexdigest(JSON.generate(canonical(bounded(value))))}"
+      "sha256:#{Digest::SHA256.hexdigest(JSON.generate(canonical(normalize(value, limit: false))))}"
+    rescue JSON::GeneratorError, EncodingError
+      raise Error.new("INVALID_JSON")
     end
     # Actor, tenant, context, adapter, call and replay references are persisted
     # in string columns that carry multi-column indexes. Cap them in bytes so a
@@ -94,9 +100,12 @@ module RailsToolViews
     # utf8mb4's 3072-byte index limit on MySQL/InnoDB. A byte cap also bounds the
     # character count, which is what a varchar length actually limits.
     IDENTIFIER_BYTES = 150
+    # Stored and compared byte for byte, so always a valid UTF-8 String.
     def reference(value, code: "INVALID_SCOPE", limit: 255)
-      raise Error.new(code) unless value.is_a?(String) && !value.strip.empty? && value.bytesize <= limit
-      value.dup.freeze
+      raise Error.new(code) unless value.is_a?(String)
+      text = String.new(value, encoding: Encoding::UTF_8)
+      raise Error.new(code) unless text.valid_encoding? && !text.strip.empty? && text.bytesize <= limit
+      text.freeze
     end
     # A bounded reference for a stored, indexed identifier.
     def identifier(value, code: "INVALID_SCOPE")
@@ -251,7 +260,7 @@ module RailsToolViews
       raise Error.new("INVALID_SCOPE", status: 403) unless scope.is_a?(Scope)
       raise Error.new("CATALOG_TOO_LARGE") unless keys.is_a?(Array) && keys.length.between?(1, RailsToolViews.configuration.max_catalog_components) && keys.map(&:to_s).uniq.length == keys.length
       keys.map { |key| fetch(key) }.select do |component|
-        component.expose_to.include?(exposure) && component.policy&.call(Access.new(actor: scope.actor, tenant: scope.tenant, operation: :discover, props: {}, context_ref: nil)) == true
+        component.expose_to.include?(exposure) && component.policy&.call(Access.new(actor: scope.actor, tenant: scope.tenant, operation: :discover, props: {}.freeze, context_ref: nil).freeze) == true
       end.freeze
     end
   end

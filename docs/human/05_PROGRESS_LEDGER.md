@@ -421,3 +421,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 只影响启动期注册失败的异常类型；原先已能注册的组件行为不变。components指南新增“注册失败”段落列出各错误码，CHANGELOG Unreleased已记录。无schema/依赖/数据影响。
 
 **下一步：** 标识符编码、SafeBuffer归一化、digest边界、并发呈现的rejected通知与发现策略的不可变Access。
+
+### WORK-20261021-03 — 值归一化、digest边界与诊断补齐
+
+**内容/映射：** FR-01/04/05、SEC-04/06/18。五个探针确认的实现缺陷：(1) 非法UTF-8的actor/tenant等标识符抛ArgumentError，现返回该标识符自身错误码，合法值统一为UTF-8 String，二进制编码输入仍能逐字节匹配存储行；(2) `Data.normalize`保留SafeBuffer等String子类，内存值与重新读取的值不一致，现统一为普通String；(3) request digest对外层信封再次施加payload大小/深度限制，接近上限但已通过校验的props/arguments会被误报PAYLOAD_TOO_LARGE/DEEP，现digest只对已bounded值计算，不重复限制；(4) 关联呈现在并发插入竞争失败路径抛IDEMPOTENCY_CONFLICT却不发`presentation.rejected`，现由`present`统一包裹，主体移到private `present_surface`；(5) 发现策略收到可变Access，现与其他策略一样冻结。
+
+**复查/验证：** 三个新测试先失败（ArgumentError、frozen断言、空事件列表），修复后core 133/1156、eager load、adapter 7/45、实际包安装host、0.2.0/0.3.0真实旧runtime升级（回执/关联/digest重放）、文档示例全部PASS。测试固定一个规范化digest字节值，证明已存组件digest与回执不变。
+
+**影响/人工复查：** 不改schema/依赖/错误码集合/事件名；`presentation.rejected`在竞争路径新增一次与普通路径相同的code-only事件。阅读production指南的标识符段与CHANGELOG。私有方法标记:nodoc:。无结构变化无需图。
+
+**下一步：** Engine页面内联style的CSP nonce；随后RC准备。

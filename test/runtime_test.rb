@@ -112,6 +112,24 @@ class RuntimeTest < ActiveSupport::TestCase
     assert_not_equal first.id, present_card(correlation: correlation.merge(adapter: "other")).id
   end
 
+  test "a correlated presentation that loses the insert race still reports its rejection" do
+    correlation = { adapter: "test", call_id: "call-1", context: "chat-1" }
+    present_card(correlation: correlation)
+    events = []
+    token = ActiveSupport::Notifications.subscribe("presentation.rejected.rails_tool_views") { |*_timing, payload| events << payload }
+    lookup = RailsToolViews.method(:correlated_presentation)
+    calls = 0
+    # The first lookup runs before the competing request commits its receipt.
+    RailsToolViews.stub(:correlated_presentation, ->(key) { (calls += 1) == 1 ? nil : lookup.call(key) }) do
+      assert_error("IDEMPOTENCY_CONFLICT") { RailsToolViews.present(:choice_card, props: props.merge(title: "Different"), scope: scope, correlation: correlation) }
+    end
+    assert_equal 2, calls
+    assert_equal [{ code: "IDEMPOTENCY_CONFLICT" }], events
+    assert_equal 1, RailsToolViews::Surface.count
+  ensure
+    ActiveSupport::Notifications.unsubscribe(token) if token
+  end
+
   test "configured per-surface action budget limits new mutations while allowing replay" do
     RailsToolViews.configuration.max_actions_per_minute = 1
     surface = present_card

@@ -99,4 +99,33 @@ class RegistryTest < ActiveSupport::TestCase
     assert_error("INVALID_COMPONENT") { RailsToolViews.register(:one_exposure, description: "D", schema: empty, partial: "x/y", expose_to: :agent) }
     assert_raises(RailsToolViews::Error) { RailsToolViews.registry.fetch(:no_schema) }
   end
+
+  test "normalized values and digests match what the database stores" do
+    assert_error("INVALID_SCOPE") { RailsToolViews::Scope.new(actor: "\xFF".dup.force_encoding(Encoding::UTF_8), tenant: "acme") }
+    binary = RailsToolViews::Scope.new(actor: "é".b, tenant: "acme")
+    assert_equal Encoding::UTF_8, binary.actor.encoding
+    assert_equal "é", binary.actor
+    # A reloaded value is a plain String, so the in-memory copy must be one too.
+    label = RailsToolViews::Data.bounded("label" => ActiveSupport::SafeBuffer.new("<b>x</b>"))["label"]
+    assert_equal String, label.class
+    refute label.html_safe?
+    # Canonical bytes are pinned: stored component digests and receipts depend on them.
+    assert_equal "sha256:#{Digest::SHA256.hexdigest('{"a":[1,"x"],"b":null}')}", RailsToolViews::Data.digest(b: nil, a: [1, "x"])
+    # An accepted value stays digestible inside its envelope.
+    nested = "leaf"
+    15.times { nested = [nested] }
+    deep = RailsToolViews::Data.bounded("a" => nested)
+    large = RailsToolViews::Data.bounded("t" => "x" * 32_700)
+    assert_match(/\Asha256:\h{64}\z/, RailsToolViews::Data.digest(action: "go", arguments: deep, base_revision: 1))
+    assert_match(/\Asha256:\h{64}\z/, RailsToolViews::Data.digest(component: "c", props: large, context: nil))
+  end
+
+  test "discovery policies receive an immutable request" do
+    seen = nil
+    RailsToolViews.register(:spy, description: "Spy", schema: { type: "object", additionalProperties: false }, partial: "x/y",
+      expose_to: [:agent], policy: ->(access) { seen = access; true })
+    RailsToolViews.registry.catalog(keys: [:spy], scope: scope)
+    assert seen.frozen?
+    assert seen.props.frozen?
+  end
 end

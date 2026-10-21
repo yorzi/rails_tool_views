@@ -3,32 +3,7 @@ module RailsToolViews
   class << self
     # Validates and authorizes props, then returns a persisted Surface. Correlation replays the original presentation.
     def present(key, props:, scope:, context: nil, correlation: nil)
-      check_scope!(scope)
-      component = registry.fetch(key)
-      props = component.schema.validate!(props)
-      context = Data.identifier(context, code: "INVALID_CONTEXT") if context
-      component.authorize!(access(scope, :present, props: props, context_ref: context))
-      correlation = normalize_correlation(correlation) if correlation
-      request_digest = Data.digest(component: component.key, digest: component.digest, props: props, context: context)
-      lookup = correlation&.merge(actor_ref: scope.actor, tenant_ref: scope.tenant)
-      if lookup && (prior = correlated_presentation(lookup))
-        return correlated_surface(prior, request_digest, scope)
-      end
-      surface = nil
-      Surface.transaction(requires_new: true) do
-        surface = Surface.create!(actor_ref: scope.actor, tenant_ref: scope.tenant, context_ref: context,
-          component_key: component.key, component_digest: component.digest, props: props, state: {})
-        if lookup
-          Presentation.create!(**lookup, surface: surface, request_digest: request_digest,
-            result: { status: "presented", surface_id: surface.id, revision: surface.revision })
-        end
-      end
-      notify("presentation.accepted", surface_id: surface.id, component: component.key, revision: surface.revision)
-      surface
-    rescue ActiveRecord::RecordNotUnique
-      prior = lookup && correlated_presentation(lookup)
-      raise unless prior
-      correlated_surface(prior, request_digest, scope)
+      present_surface(key, props, scope, context, correlation)
     rescue Error => error
       notify("presentation.rejected", code: error.code)
       raise
@@ -218,6 +193,35 @@ module RailsToolViews
     end
 
     private
+    def present_surface(key, props, scope, context, correlation) # :nodoc:
+      check_scope!(scope)
+      component = registry.fetch(key)
+      props = component.schema.validate!(props)
+      context = Data.identifier(context, code: "INVALID_CONTEXT") if context
+      component.authorize!(access(scope, :present, props: props, context_ref: context))
+      correlation = normalize_correlation(correlation) if correlation
+      request_digest = Data.digest(component: component.key, digest: component.digest, props: props, context: context)
+      lookup = correlation&.merge(actor_ref: scope.actor, tenant_ref: scope.tenant)
+      if lookup && (prior = correlated_presentation(lookup))
+        return correlated_surface(prior, request_digest, scope)
+      end
+      surface = nil
+      Surface.transaction(requires_new: true) do
+        surface = Surface.create!(actor_ref: scope.actor, tenant_ref: scope.tenant, context_ref: context,
+          component_key: component.key, component_digest: component.digest, props: props, state: {})
+        if lookup
+          Presentation.create!(**lookup, surface: surface, request_digest: request_digest,
+            result: { status: "presented", surface_id: surface.id, revision: surface.revision })
+        end
+      end
+      notify("presentation.accepted", surface_id: surface.id, component: component.key, revision: surface.revision)
+      surface
+    rescue ActiveRecord::RecordNotUnique
+      # A concurrent request committed the same correlation first.
+      prior = lookup && correlated_presentation(lookup)
+      raise unless prior
+      correlated_surface(prior, request_digest, scope)
+    end
     def raise_action_conflict! # :nodoc:
       notify("action.conflict", code: "CONFLICT")
       raise Error.new("CONFLICT", status: 409)
