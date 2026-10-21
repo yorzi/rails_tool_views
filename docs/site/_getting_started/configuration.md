@@ -57,6 +57,8 @@ Limits bound payloads, nesting, catalogs, and accepted action throughput. They d
 | `agent_adapter` | `nil` | Host continuation callback |
 | `auto_deliver` | `true` | Controller attempts continuation after commit |
 | `delivery_lease` | 300 | Seconds before an unfinished delivery can be reclaimed |
+| `retention_policy` | `nil` | Authorize `purge_closed`; unset denies |
+| `reconciliation_policy` | `nil` | Authorize `reconcile_delivery`; unset denies |
 
 Use `RailsToolViews.reset_registry!` in a reload hook to clear definitions while retaining configuration. `RailsToolViews.reset!` clears both and belongs in isolated tests.
 

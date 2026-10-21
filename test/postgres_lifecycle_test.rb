@@ -34,6 +34,33 @@ if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
       workers&.each { |worker| worker.kill if worker.alive?; worker.join }
     end
 
+    test "a reclaiming worker waits for reconciliation and honors the attested failure" do
+      RailsToolViews.reset!; register_card(agent: true)
+      called = Queue.new
+      RailsToolViews.configuration.agent_adapter = ->(*) { called << true }
+      interaction_id = act(present_card).fetch(:interaction_id)
+      RailsToolViews::AgentInteraction.where(id: interaction_id).update_all(status: "delivering", claimed_at: 1.hour.ago, attempts: 1)
+      entered, release, workers = Queue.new, Queue.new, []
+      # The policy runs while reconciliation holds the Surface and interaction locks.
+      RailsToolViews.configuration.reconciliation_policy = ->(_) { entered << true; Timeout.timeout(5) { release.pop }; true }
+      workers << Thread.new { ActiveRecord::Base.connection_pool.with_connection {
+        RailsToolViews.reconcile_delivery(interaction_id, scope: scope, outcome: :failed)
+      } }
+      Timeout.timeout(5) { entered.pop }
+      workers << Thread.new { ActiveRecord::Base.connection_pool.with_connection { RailsToolViews.deliver(interaction_id, scope: scope) } }
+      sleep 0.3
+      assert workers.last.alive?, "the claim did not wait for the reconciliation lock"
+      release << true
+      results = Timeout.timeout(5) { workers.map(&:value) }
+      assert_equal %w[failed failed], results.map(&:status)
+      assert called.empty?, "a reclaim overrode the attested outcome"
+      final = RailsToolViews::AgentInteraction.uncached { RailsToolViews::AgentInteraction.find(interaction_id) }
+      assert_equal ["failed", 1, false], [final.status, final.attempts, final.delivery_uncertain?]
+    ensure
+      release << true if release
+      workers&.each { |worker| worker.kill if worker.alive?; worker.join }
+    end
+
     test "two cleanup workers serialize on the same Surface and retain business effects" do
       surface = present_card
       act(surface)

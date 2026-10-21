@@ -511,3 +511,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 正确性依赖host证明，Engine无法验证远端效果或进程静默（仅能看lease新鲜度），已在lifecycle指南写明。更新lifecycle（新节）、continuation、diagnostics事件表、configuration、public-contract、Upgrading（含0.3迁移标记的旧行）、What's New、CHANGELOG、ADR/DELTA措辞。无schema/依赖。
 
 **下一步：** WORK-12：实际安装host与真实旧版本升级数据上的对账/分页证据、全矩阵、准备记录更新。
+
+### WORK-20261021-12 — D1..D3的实际host/旧数据证据与全矩阵
+
+**内容/映射：** 1.0条件2/3、ADR 010。实际安装gem的host新增：无adapter投递保留pending、接管后uncertain阻止close、以host自己的receipt表证明结果并对账、close后batch_size 1分页清理两个视图；并在开发bundle下增加ViewComponent渲染/Turbo动作/恢复（空GEM_HOME安装没有ViewComponent，如实标为Partial路径）。升级host对每个旧版本受保护的历史（各版本都有的delivering行，以及0.1/0.2迁移回填的uncertain行）先确认close被拒，再对账、close、purge。新增PG真实竞争测试：对账在锁内暂停时，回收过期lease的worker必须等待并遵守证明的failed，不调用adapter。public-contract补充可读查询的Surface/AgentInteraction成员（host需要查找uncertain记录与其owner），Continuation错误码表述更清楚，配置表补两个policy；修正lifecycle示例：policy收到的是视图owner的scope，而不是operator，原例`Operator.exists?(ref: access.actor)`会误导，改为按tenant授权的作业示例，并说明“缺少receipt只有在receipt与效果同事务写入时才能证明未发生”。
+
+**复查/验证：** 最终矩阵：三组SQLite各144/1254+eager load；PG17.11临时库148/1274（含新竞争测试，库已删除）；adapter 7/45；Chrome 9/81；真实0.1.0/0.2.0/0.3.0/0.4.0升级各自对账2/2/1/1条历史后清理PASS；docs示例含sweep；正式gate按released:false拒绝；docs 3261链接、锚点存在、lint 24篇0错误。ViewComponent扩展在矩阵之后加入，随后单独重跑实际包host（两种渲染器PASS）与空GEM_HOME安装/审计（Partial路径PASS）。去掉对账行锁的变异使PG竞争测试失败；lifecycle指南的对账作业示例逐字执行通过。首次编写升级host时假设0.3/0.4数据的retried行也被隔离，结果“Quarantined history closed”失败——那是脚本假设错误（0.3+数据未回填该标记），改为按版本选择受保护行，如实记录。
+
+**影响/人工复查：** 重点读public-contract新增成员与lifecycle“Reconcile an Uncertain Delivery”。条件2按工程host满足，外部adopter属条件5。RC1_READINESS现只剩D4（条件5/6证据或例外）与D5（发布授权）。所有浏览器/driver/Puma/临时PG库已结束并核实为0，既有PG服务保留。
+
+**下一步：** owner审阅并决定D4/D5；未授权前不push/tag/发布。

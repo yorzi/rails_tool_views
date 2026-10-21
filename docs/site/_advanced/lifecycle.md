@@ -66,18 +66,24 @@ Nothing clears uncertainty because time passed or a status became terminal. Only
 ```ruby
 RailsToolViews.configure do |config|
   config.reconciliation_policy = ->(access) {
-    access.operation == :reconcile && Operator.exists?(ref: access.actor)
+    access.operation == :reconcile && Account.active.exists?(ref: access.tenant)
   }
 end
 
-receipt = DeliveryReceipt.find_by(key: interaction.delivery_key)
-RailsToolViews.reconcile_delivery(interaction.id, scope: scope,
-  outcome: receipt ? :completed : :failed)
+RailsToolViews::AgentInteraction.where(delivery_uncertain: true).find_each do |interaction|
+  surface = interaction.surface
+  scope = RailsToolViews::Scope.new(actor: surface.actor_ref, tenant: surface.tenant_ref)
+  receipt = DeliveryReceipt.find_by(key: interaction.delivery_key)
+  RailsToolViews.reconcile_delivery(interaction.id, scope: scope,
+    outcome: receipt ? :completed : :failed)
+rescue RailsToolViews::Error => error
+  raise unless error.code == "DELIVERY_ACTIVE"
+end
 ```
 
-`Operator` and `DeliveryReceipt` are host models in this example. Before you reconcile, check your durable deduplication record for the interaction's `delivery_key`, and make sure no worker still runs an attempt. Pass `:completed` when the record shows the follow-up happened and `:failed` when it shows it did not. The Engine records your attestation; it cannot see remote effects.
+`Account` and `DeliveryReceipt` are host models in this example. Pass `:completed` when your durable deduplication record for the interaction's `delivery_key` shows the follow-up happened, and `:failed` when it shows it did not. A missing receipt proves nothing unless your adapter writes it in the same transaction as the follow-up's effect; otherwise reconcile only what you can prove. Run the job only when no worker can still be running an old attempt, for example after draining delivery workers. The Engine records your attestation; it cannot see remote effects or other processes.
 
-The default `reconciliation_policy` is unset and rejects the call with `NOT_ALLOWED`. It receives `:reconcile`, the Surface and the interaction's action name, and it must return exactly `true`. It is independent of `retention_policy` and of the registry, so you can resolve an obsolete component's history. The view must belong to the exact actor and tenant; another scope receives 404.
+Run reconciliation from trusted host code, such as an operator-approved job; there is no HTTP endpoint or agent tool for it. The default `reconciliation_policy` is unset and rejects the call with `NOT_ALLOWED`. Like the retention policy, it receives the view owner's scope, plus `:reconcile`, the Surface and the interaction's action name, and it must return exactly `true`. It is independent of `retention_policy` and of the registry, so you can resolve an obsolete component's history. The scope must be the view's exact actor and tenant; another scope receives 404. A delivering interaction whose lease expired can be reconciled the same way.
 
 A fresh delivering lease raises `DELIVERY_ACTIVE` and changes nothing. An uncertain interaction, or a delivering one whose lease expired, takes the outcome as its status, and its uncertainty flag clears. `:failed` stores `AGENT_UNAVAILABLE`, so you can retry it with the same delivery key or abandon the view. A callback that outlived its lease still cannot overwrite the result, because its attempt no longer matches. Repeating the same outcome returns the interaction unchanged. A different outcome for an interaction with nothing to resolve raises `RECONCILIATION_CONFLICT`. `agent_reconciled` reports the outcome without payloads. After reconciliation, close, abandon and cleanup follow the normal rules.
 

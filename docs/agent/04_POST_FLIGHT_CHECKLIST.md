@@ -206,3 +206,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Public contract declared; RubyLLM adapter experimental and MySQL excluded per ROADMAP defaults. No schema, dependency, queue or new public feature.
 - [x] Browsers, drivers, Puma and the temporary PG database stopped/removed and verified; pre-existing PG service retained; scratch clones deleted. No push, tag, publication, provider call or contact.
 - [x] Open: conditions 2/5/6 and owner decisions D1..D5. External pinned Specs unchanged.
+
+## WORK-20261021-08..12 — rc1 lifecycle decisions
+
+- [x] Decisions recorded before code (ADR 010, DELTA-007, authorization); each behavior change had a failing test first; key guards mutation-checked.
+- [x] FR-06-AC-03 preserved (dispatch without an agent succeeds); lock order, callback isolation, attempt fence and default-deny kept; no schema, dependency or queue.
+- [x] Public contract, lifecycle, continuation, diagnostics, configuration, Upgrading, What's New, CHANGELOG and readiness record updated; corrected a lifecycle example whose policy wrongly treated the owner scope as an operator.
+- [x] Browsers, drivers, Puma and all temporary PostgreSQL databases stopped/removed and verified (0 remaining); pre-existing PG service retained. No push, tag, publication, provider call or contact.

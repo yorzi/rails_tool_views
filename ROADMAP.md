@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**1.0.0.rc1 prepared locally, 2026-10-21; 0.4.0 is the latest published release.** The candidate on `main` declares the [public contract](docs/site/_reference/public-contract.md) and carries audit fixes. Its [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 3 (local) and 4 met and conditions 2, 5 and 6 open, so rc1 is not tagged or published. Versions 0.1.0 through0.4.0 are published. Owner-authorized0.4 candidate/tag CI, OIDC publication and registry/hosted verification are complete; see [delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**1.0.0.rc1 prepared locally, 2026-10-21; 0.4.0 is the latest published release.** The candidate on `main` declares the [public contract](docs/site/_reference/public-contract.md) and carries audit fixes. It also settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). Its [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met and conditions 5 and 6 open, so rc1 is not tagged or published. Versions 0.1.0 through0.4.0 are published. Owner-authorized0.4 candidate/tag CI, OIDC publication and registry/hosted verification are complete; see [delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -51,7 +51,7 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 
 **Done when:** recovery preserves committed results and produces no duplicate host effect; metadata-only diagnostics explain failures without exposing props/secrets. A dashboard or built-in queue is not required.
 
-**Delivered:** [0.4 validation](docs/evidence/V0_4_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_4_0.md) cover recovery, compatibility, host jobs, actual packages, browser feedback and stable0.4/next. Contract and evidence preparation for rc1 is done locally; see the [readiness record](docs/evidence/RC1_READINESS.md) for the open conditions and five owner decisions. No push, tag or publication is authorized.
+**Delivered:** [0.4 validation](docs/evidence/V0_4_VALIDATION.md) and [exact-tag publication evidence](docs/evidence/RELEASE_0_4_0.md) cover recovery, compatibility, host jobs, actual packages, browser feedback and stable0.4/next. Contract and evidence preparation for rc1 is done locally; see the [readiness record](docs/evidence/RC1_READINESS.md) for the open conditions and the two remaining owner decisions. No push, tag or publication is authorized.
 
 ## 1.0 release conditions
 

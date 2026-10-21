@@ -135,14 +135,30 @@ else
   rescue StandardError => error
     raise unless error.message.include?("Restore a pre-upgrade backup")
   end
+  # Quarantined or stuck histories are resolved only by the host's attestation:
+  # the old delivering row in every version, plus backfilled uncertain rows.
+  RailsToolViews.configuration.reconciliation_policy = ->(access) { access.operation == :reconcile && access.actor == "alice" }
+  resolved = rows.select { |r| r["uncertain"] || r["label"] == "delivering" }
+  resolved.each do |row|
+    begin
+      RailsToolViews.close(row.fetch("id"), scope: scope)
+      raise "Protected history closed"
+    rescue RailsToolViews::Error => error
+      raise unless error.code == "LIFECYCLE_BUSY"
+    end
+    quarantined = RailsToolViews::Surface.find(row.fetch("id")).agent_interactions.first
+    reconciled = RailsToolViews.reconcile_delivery(quarantined.id, scope: scope, outcome: :completed)
+    raise "Protected history not reconciled" unless reconciled.status == "completed" && !reconciled.delivery_uncertain? && reconciled.attempts == quarantined.attempts
+    RailsToolViews.close(row.fetch("id"), scope: scope, retain_until: 1.hour.from_now)
+  end
   RailsToolViews.configure { |config| config.retention_policy = ->(_) { true } }
   require "active_support/testing/time_helpers"
   Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(2.hours.from_now) do
     result = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: false)
-    raise "Upgraded cleanup failed" unless result[:purged] == 1
+    raise "Upgraded cleanup failed" unless result[:purged] == 1 + resolved.size
   end
   expected = rows.size + lifecycle.size
   raise "Business data lost or replayed" unless HostBusinessRecord.count == expected
   raise "Guards lost" unless RailsToolViews::Surface.count == expected && RailsToolViews::Presentation.count == expected
-  puts "UPGRADE_NEW_PASS: #{RailsToolViews::VERSION}, migration/replay/correlation/quarantine/rollback/purge/business preservation, #{lifecycle.size} old lifecycle guards"
+  puts "UPGRADE_NEW_PASS: #{RailsToolViews::VERSION}, migration/replay/correlation/quarantine/reconciliation/rollback/purge/business preservation, #{lifecycle.size} old lifecycle guards, #{resolved.size} reconciled histories"
 end

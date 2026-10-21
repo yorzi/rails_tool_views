@@ -23,6 +23,12 @@ require "active_record/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
 require "turbo-rails"
+# The development bundle includes ViewComponent; an isolated runtime-only install does not.
+begin
+  require "view_component"
+rescue LoadError
+  nil
+end
 require "rails_tool_views"
 require "generators/rails_tool_views/install/install_generator"
 require "action_dispatch/testing/integration"
@@ -86,6 +92,30 @@ client.post("/rails_tool_views/surfaces/#{invalid.id}/actions", params: { action
 feedback = JSON.parse(client.response.body)
 raise "Installed validation feedback failed" unless client.response.status == 422 && feedback["fields"] == { "key" => "needs correction" } && feedback["values"] == { "key" => "a" }
 raise "Rejected form changed persistence" unless invalid.reload.revision == 1
+renderers = "Partial"
+if defined?(ViewComponent::Base)
+  # The second trusted renderer, opting into Surface context by keyword.
+  Object.const_set(:PackagedChoiceComponent, Class.new(ViewComponent::Base) {
+    include RailsToolViews::SurfacesHelper
+    def initialize(title:, surface:, state:)
+      @title, @surface, @state = title, surface, state
+    end
+    def call
+      safe_join([content_tag(:h2, @title), content_tag(:p, @state["selected"]),
+        rails_tool_views_action_button(@surface, :select_option, "Pick a", arguments: { key: "a" })])
+    end
+  })
+  RailsToolViews.register(:component_card, description: "Packaged ViewComponent", schema: schema, component: PackagedChoiceComponent, policy: ->(_access) { true },
+    actions: { select_option: { schema: params_schema, policy: ->(_access) { true }, handler: ->(access) { RailsToolViews::Transition.new(state: { selected: access.arguments.fetch("key") }) } } })
+  component = RailsToolViews.present(:component_card, props: { title: "Component <safe> card" }, scope: scope)
+  html = RailsToolViews.render(component, view_context: controller.view_context, scope: scope)
+  raise "Installed ViewComponent did not render" unless html.include?("Component &lt;safe&gt; card") && html.include?(%(action="/rails_tool_views/surfaces/#{component.id}/actions"))
+  client.post("/rails_tool_views/surfaces/#{component.id}/actions", params: { action_name: "select_option", arguments: { key: "a" }, base_revision: 1, idempotency_key: "component-1" }, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+  raise "Installed ViewComponent action failed" unless client.response.status == 200 && client.response.body.include?(%(target="#{component.dom_id}")) && component.reload.state["selected"] == "a"
+  client.get("/rails_tool_views/surfaces/#{component.id}", headers: { "Accept" => "text/html" })
+  raise "Installed ViewComponent did not restore" unless client.response.status == 200 && client.response.body.include?("<p>a</p>")
+  renderers = "Partial/ViewComponent"
+end
 # The installed component generator must produce a runnable, closed-by-default scaffold.
 require "generators/rails_tool_views/component/component_generator"
 RailsToolViews::Generators::ComponentGenerator.start(["review_card"], destination_root: host)
@@ -140,6 +170,31 @@ raise "Installed delivery retried implicitly" unless RailsToolViews.deliver(inte
 delivered = RailsToolViews.deliver(interaction_id, scope: scope, retry_failed: true)
 raise "Installed recovery duplicated the host effect" unless delivered.status == "completed" && delivered.attempts == 2 &&
   !delivered.delivery_uncertain? && host_receipt.count == 1 && host_receipt.first.delivery_key == delivered.delivery_key && recovery.reload.revision == 2
+# A worker without an adapter keeps the work; a takeover after a lost worker
+# leaves uncertainty that only the host's own receipt can resolve.
+takeover = RailsToolViews.present(:recovery_card, props: { title: "Takeover" }, scope: scope)
+lost = RailsToolViews::AgentInteraction.find(RailsToolViews.dispatch(takeover.id, scope: scope, action: "save", arguments: { key: "a" },
+  base_revision: 1, idempotency_key: "takeover").fetch(:interaction_id))
+begin
+  RailsToolViews.deliver(lost.id, scope: scope, adapter: nil)
+  raise "Installed delivery dropped work without an adapter"
+rescue RailsToolViews::Error => error
+  raise unless error.code == "AGENT_NOT_CONFIGURED" && lost.reload.status == "pending"
+end
+lost.update!(status: "delivering", claimed_at: 1.hour.ago, attempts: 1)
+uncertain = RailsToolViews.deliver(lost.id, scope: scope)
+raise "Installed takeover lost uncertainty" unless uncertain.status == "completed" && uncertain.delivery_uncertain?
+begin
+  RailsToolViews.close(takeover.id, scope: scope)
+  raise "Installed uncertain view closed"
+rescue RailsToolViews::Error => error
+  raise unless error.code == "LIFECYCLE_BUSY"
+end
+RailsToolViews.configuration.reconciliation_policy = ->(access) { access.operation == :reconcile && access.actor == "alice" }
+outcome = host_receipt.exists?(delivery_key: lost.delivery_key) ? :completed : :failed
+reconciled = RailsToolViews.reconcile_delivery(lost.id, scope: scope, outcome: outcome)
+raise "Installed reconciliation failed" unless outcome == :completed && reconciled.status == "completed" && !reconciled.delivery_uncertain?
+RailsToolViews.close(takeover.id, scope: scope, retain_until: 1.day.from_now)
 
 # Exercise actual lifecycle code from the installed artifact.
 RailsToolViews.close(review.id, scope: scope, retain_until: 1.day.from_now)
@@ -152,10 +207,15 @@ RailsToolViews.configure { |config| config.retention_policy = ->(access) { acces
 # The fixture advances its clock after exercising the real future-deadline API.
 require "active_support/testing/time_helpers"
 Object.new.extend(ActiveSupport::Testing::TimeHelpers).travel_to(2.days.from_now) do
-  preview = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current)
-  raise "Installed preview mutated data" unless preview[:eligible] == 1 && preview[:purged] == 0 && review.reload.props.any?
-  applied = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, dry_run: false)
-  raise "Installed cleanup failed" unless applied[:purged] == 1 && review.reload.purged? && review.props.empty? && review.state.empty? && review.action_executions.count.zero?
+  preview = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, batch_size: 1)
+  raise "Installed preview mutated data" unless preview[:eligible] == 1 && preview[:purged] == 0 && preview[:next_after] && review.reload.props.any?
+  purged, after = 0, nil
+  loop do
+    applied = RailsToolViews.purge_closed(scope: scope, closed_before: Time.current, batch_size: 1, dry_run: false, after: after)
+    purged += applied[:purged]
+    after = applied[:next_after] or break
+  end
+  raise "Installed cleanup failed" unless purged == 2 && takeover.reload.purged? && review.reload.purged? && review.props.empty? && review.state.empty? && review.action_executions.count.zero?
   client.get("/rails_tool_views/surfaces/#{review.id}", headers: { "Accept" => "text/html" })
   raise "Installed tombstone response failed" unless client.response.status == 410
 end
@@ -176,7 +236,7 @@ load registration
 ActiveRecord.maintain_test_schema = false
 load File.join(host, "test/rails_tool_views/components/review_card_test.rb")
 Rails::ZeitwerkChecker.check
-puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> delivery transaction guard/durable host retry -> closed replay/payload cleanup/migration task -> generated scaffold/test -> eager load"
+puts "PACKAGED_INSTALL_PASS: installer -> fresh Rails host -> host authentication/helper -> #{renderers} renderers -> escaped partial -> action form helper -> HTTP JSON/Turbo replay/conflict/denial -> no-Turbo HTML redirect -> validation feedback -> durable restore -> generated HTML rejection/correction -> delivery transaction guard/durable host retry -> missing adapter/takeover reconciliation -> closed replay/paged payload cleanup/migration task -> generated scaffold/test -> eager load"
 if ARGV[2]
   File.write(ARGV[2], JSON.generate(Gem.loaded_specs.values.map { |item| { name: item.name, version: item.version.to_s } }))
 end

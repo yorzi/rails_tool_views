@@ -61,8 +61,8 @@ These classes and their documented readers are stable:
 | `Registry` | `register`, `fetch`, `catalog` |
 | `Schema` | `json`, `validate!` |
 | `Configuration` | every attribute in [Configuration]({% link _getting_started/configuration.md %}) |
-| `Surface` | `id`, `props`, `state`, `revision`, `dom_id`, `closed?`, `purged?`, `lifecycle_status`, `snapshot` |
-| `AgentInteraction` | `id`, `status`, `attempts`, `claimed_at`, `error_code`, `delivery_uncertain`, `delivery_key` |
+| `Surface` | `id`, `actor_ref`, `tenant_ref`, `context_ref`, `component_key`, `component_digest`, `contract_version`, `props`, `state`, `revision`, `closed_at`, `abandoned_at`, `retain_until`, `purged_at`, `agent_interactions`, `dom_id`, `closed?`, `purged?`, `lifecycle_status`, `snapshot` |
+| `AgentInteraction` | `id`, `surface_id`, `surface`, `status`, `attempts`, `claimed_at`, `error_code`, `delivery_uncertain`, `delivery_key` |
 
 A policy receives `Access#operation` as one of `:present`, `:read`, `:action`, `:discover`, `:close`, `:abandon`, `:purge` or `:reconcile`. An interaction's `status` is one of `pending`, `delivering`, `completed`, `failed`, `skipped` or `abandoned`. `Surface#lifecycle_status` is one of `active`, `closed`, `abandoned` or `purged`.
 
@@ -74,7 +74,7 @@ Every rejection is a `RailsToolViews::Error` with a stable `code` and HTTP `stat
 * Input bounds: `INVALID_JSON`, `PAYLOAD_TOO_LARGE`, `PAYLOAD_TOO_DEEP`, `INVALID_SCOPE`, `INVALID_CONTEXT`, `INVALID_CORRELATION`, `INVALID_IDEMPOTENCY_KEY`, `UNKNOWN_FIELD`, `INVALID_CSRF`.
 * Presentation and reads: `UNKNOWN_COMPONENT`, `INVALID_PROPS`, `NOT_FOUND`, `NOT_ALLOWED`, `INCOMPATIBLE_COMPONENT`, `RENDER_FAILED`, `CATALOG_TOO_LARGE`.
 * Actions: `UNKNOWN_ACTION`, `INVALID_ARGUMENTS`, `INVALID_REVISION`, `INVALID_SOURCE`, `INVALID_TARGET`, `INVALID_TRANSITION`, `INVALID_VALIDATION_FEEDBACK`, `VALIDATION_FAILED`, `CONFLICT`, `IDEMPOTENCY_CONFLICT`, `RATE_LIMITED`.
-* Continuation: `AGENT_UNAVAILABLE`, stored as an interaction's `error_code`, `AGENT_NOT_CONFIGURED`, `DELIVERY_IN_TRANSACTION`, `DELIVERY_ACTIVE`, `RECONCILIATION_CONFLICT` and `INVALID_RECONCILIATION`.
+* Continuation: `AGENT_NOT_CONFIGURED`, `DELIVERY_IN_TRANSACTION`, `DELIVERY_ACTIVE`, `RECONCILIATION_CONFLICT` and `INVALID_RECONCILIATION`. A failed attempt stores `AGENT_UNAVAILABLE` as the interaction's `error_code`.
 * Lifecycle: `SURFACE_CLOSED`, `SURFACE_PURGED`, `LIFECYCLE_BUSY`, `INVALID_RETENTION_REQUEST`, `INVALID_RETENTION_WINDOW`.
 
 Codes use HTTP 400 unless listed here. `NOT_ALLOWED`, `INVALID_CSRF`, and `INVALID_SCOPE` for a call without a `Scope`, use 403. `NOT_FOUND` and `UNKNOWN_COMPONENT` use 404. `CONFLICT`, `IDEMPOTENCY_CONFLICT`, `LIFECYCLE_BUSY`, `DELIVERY_IN_TRANSACTION`, `DELIVERY_ACTIVE` and `RECONCILIATION_CONFLICT` use 409. `SURFACE_CLOSED` and `SURFACE_PURGED` use 410. `PAYLOAD_TOO_LARGE` uses 413. `VALIDATION_FAILED`, `INVALID_TRANSITION`, `INCOMPATIBLE_COMPONENT` and `RENDER_FAILED` use 422. `RATE_LIMITED` uses 429. `AGENT_NOT_CONFIGURED` uses 503. A host may raise its own codes; they keep the status it chooses.
@@ -111,7 +111,7 @@ The asset `rails_tool_views_controller.js` exports a default factory that takes 
 
 Every event in the [Operational Diagnostics]({% link _advanced/diagnostics.md %}) catalog is stable, with its name and metadata keys. A minor release may add a metadata key, so ignore keys you do not use. A delivery key is `rails_tool_views:interaction:<id>` and never changes across retries.
 
-The Engine owns four tables with the `rails_tool_views_` prefix. Read them through the Ruby API, not with direct writes. Saved Surfaces carry `contract_version` 1. Their component digests stay valid across releases until you change the component contract, as [Components]({% link _core_features/components.md %}#change-a-contract) explains. Data saved by any 0.x release upgrades through the migrations and steps in [Upgrading]({% link _reference/upgrading.md %}).
+The Engine owns four tables with the `rails_tool_views_` prefix. You may query `Surface` and `AgentInteraction` by the members listed above, for example to find uncertain deliveries to reconcile. Change Engine rows only through the Ruby API; unlisted columns, including interaction payloads, are internal. Saved Surfaces carry `contract_version` 1. Their component digests stay valid across releases until you change the component contract, as [Components]({% link _core_features/components.md %}#change-a-contract) explains. Data saved by any 0.x release upgrades through the migrations and steps in [Upgrading]({% link _reference/upgrading.md %}).
 
 ## Experimental Parts
 
