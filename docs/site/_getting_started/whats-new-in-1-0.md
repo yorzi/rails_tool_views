@@ -36,6 +36,10 @@ An identifier with invalid UTF-8 raises its own code, such as `INVALID_SCOPE`. A
 
 A delivery call without an adapter now raises `AGENT_NOT_CONFIGURED` and keeps the interaction for a configured worker, instead of marking committed work skipped. See [Agent Continuation]({% link _advanced/continuation.md %}#deliver-explicitly).
 
+## Reconcile Uncertain Deliveries
+
+`RailsToolViews.reconcile_delivery(id, scope:, outcome: :completed)` records the outcome your deduplication record shows for a delivery whose lease was taken over. Its uncertainty clears, so the view can close and be cleaned up. A default-deny `reconciliation_policy` authorizes it, and a running delivery is never overridden. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}#reconcile-an-uncertain-delivery).
+
 ## Clean Up Past Protected Views
 
 `purge_closed` returns a `next_after` cursor. Pass it back as `after:` to page past views your policy protects, so a hold on old views no longer blocks newer ones. See [Surface Lifecycle]({% link _advanced/lifecycle.md %}#sweep-every-batch).

@@ -147,6 +147,46 @@ module RailsToolViews
       interaction.reload
     end
 
+    # Records the host's attested outcome for an uncertain delivery, or for a
+    # delivering row whose lease expired: :completed when the host's durable
+    # deduplication record shows the effect, :failed when it shows none. The
+    # host must also know that no attempt is still running. Authorized by
+    # configuration.reconciliation_policy; a fresh lease is never overridden.
+    def reconcile_delivery(id, scope:, outcome:)
+      check_scope!(scope)
+      raise Error.new("INVALID_RECONCILIATION") unless %i[completed failed].include?(outcome)
+      policy = configuration.reconciliation_policy
+      raise Error.new("NOT_ALLOWED", status: 403) unless policy.respond_to?(:call)
+      interaction = AgentInteraction.find_by(id: id)
+      # Ownership, not component policy: an obsolete component's history stays resolvable.
+      surface = interaction && Surface.find_by(id: interaction.surface_id, actor_ref: scope.actor, tenant_ref: scope.tenant)
+      raise Error.new("NOT_FOUND", status: 404) unless surface && exact_match?(surface, actor_ref: scope.actor, tenant_ref: scope.tenant)
+      reconciled = false
+      surface.with_lock do
+        ensure_not_purged!(surface)
+        interaction.with_lock do
+          request = access(scope, :reconcile, surface: surface, props: surface.props, action: interaction.payload["action"],
+            context_ref: surface.context_ref)
+          raise Error.new("NOT_ALLOWED", status: 403) unless policy.call(request) == true
+          stale = interaction.status == "delivering"
+          if stale && interaction.claimed_at && interaction.claimed_at > Time.current - configuration.delivery_lease
+            raise Error.new("DELIVERY_ACTIVE", status: 409)
+          end
+          unless stale || interaction.delivery_uncertain?
+            next if interaction.status == outcome.to_s
+            raise Error.new("RECONCILIATION_CONFLICT", status: 409)
+          end
+          # Attempts stay unchanged, so the acknowledgment fence still rejects
+          # a callback that outlived its lease.
+          interaction.update!(status: outcome.to_s, error_code: outcome == :failed ? "AGENT_UNAVAILABLE" : nil,
+            claimed_at: nil, delivery_uncertain: false)
+          reconciled = true
+        end
+      end
+      notify("agent_reconciled", surface_id: surface.id, interaction_id: interaction.id, outcome: outcome.to_s) if reconciled
+      interaction.reload
+    end
+
     # Renders the trusted component after fresh authorization. Optional notice
     # is plain-text response feedback; it never changes the Surface snapshot.
     def render(surface, view_context:, scope:, error: nil, notice: nil)

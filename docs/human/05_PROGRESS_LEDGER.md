@@ -501,3 +501,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 摘要新增`next_after`键：比较整个hash的严格消费者需接受（Upgrading已写明）。lifecycle指南新增“Sweep Every Batch”，public-contract/What's New/CHANGELOG同步。无schema/依赖。
 
 **下一步：** WORK-11实现D2 attested reconciliation。
+
+### WORK-20261021-11 — D2：host证明的投递对账（reconcile_delivery）
+
+**内容/映射：** FR-05/06、NFR-05、SEC-04/06/18、ADR 010、DELTA-007。`delivery_uncertain`原为永久标记，带该标记的视图永远无法close/abandon/purge，也没有受支持的方式记录host去重证据。新增`reconcile_delivery(id, scope:, outcome: :completed|:failed)`：host契约为“已核对该delivery key的持久去重记录，且确认无仍在运行的attempt”。Engine可观测部分全部强制：默认拒绝的独立`reconciliation_policy`（operation :reconcile，不经registry，过时组件也能处理，不让既有retention_policy静默获权）；精确actor/tenant字节匹配，他scope 404；Surface→interaction锁序；新鲜lease抛`DELIVERY_ACTIVE`；仅uncertain或lease过期的delivering可对账，状态设为结果、清除uncertain、failed记AGENT_UNAVAILABLE；attempts不变以保留fence；同结果幂等、无可对账内容且结果不同抛`RECONCILIATION_CONFLICT`、非法结果抛`INVALID_RECONCILIATION`；对账成功发metadata-only `agent_reconciled`。对账后close/abandon/purge按原规则。
+
+**复查/验证：** 新测试文件6个测试先失败（无配置项），实现后6/51通过：默认拒绝且policy收到冻结的:reconcile请求；接管→uncertain→close被拒→对账→close→到期purge成功；新鲜lease拒绝，回调运行中lease过期后对账failed，旧回调成功确认被fence拒绝且无事件，之后同key重试完成；幂等/冲突/非法结果；他scope、大小写不同tenant、缺失id、purge后均404；过时组件仍可对账。四个变异（去lease检查/去policy/去幂等/不清标记）都使测试失败。core 144/1254、eager load、文档示例、站点build 3261链接零断链、锚点存在、lint 24篇0错误。
+
+**影响/人工复查：** 正确性依赖host证明，Engine无法验证远端效果或进程静默（仅能看lease新鲜度），已在lifecycle指南写明。更新lifecycle（新节）、continuation、diagnostics事件表、configuration、public-contract、Upgrading（含0.3迁移标记的旧行）、What's New、CHANGELOG、ADR/DELTA措辞。无schema/依赖。
+
+**下一步：** WORK-12：实际安装host与真实旧版本升级数据上的对账/分页证据、全矩阵、准备记录更新。

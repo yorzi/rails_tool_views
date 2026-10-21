@@ -22,6 +22,7 @@ The rc1 audit found three lifecycle gaps that a frozen 1.0 contract would otherw
 * A fresh delivering lease raises `DELIVERY_ACTIVE` (409). The Engine never overrides a running claim.
 * Only an uncertain interaction or a delivering row whose lease expired is reconcilable. Its status becomes the outcome, `error_code` is `AGENT_UNAVAILABLE` for `:failed` and nil otherwise, `claimed_at` is cleared and `delivery_uncertain` becomes false. `attempts` is unchanged, so the existing compare-and-set fence still rejects any stale callback: it requires `delivering` and its own attempt.
 * Repeating the same outcome on an already-resolved interaction returns it unchanged, so host jobs can retry. A different outcome for an interaction with nothing to reconcile raises `RECONCILIATION_CONFLICT` (409).
+* An outcome other than `:completed` or `:failed` raises `INVALID_RECONCILIATION`.
 * `agent_reconciled` reports `surface_id`, `interaction_id` and `outcome`, metadata only.
 
 A `:failed` outcome makes the follow-up retryable with the same delivery key, or abandonable. Lifecycle rules do not change: uncertainty still blocks close, abandon and purge until it is reconciled.
@@ -37,7 +38,7 @@ A `:failed` outcome makes the follow-up retryable with the same delivery key, or
 
 ## Consequences
 
-Hosts gain an additive keyword, a result key, one method, one configuration hook, three error codes and one event, all declared in the public contract. Strict consumers comparing the whole cleanup summary must accept `next_after`. Reconciliation correctness depends on the host's attestation; the Engine cannot verify remote effects or process quiescence beyond lease freshness. A worker without an adapter now fails loudly instead of losing data.
+Hosts gain an additive keyword, a result key, one method, one configuration hook, four error codes (`AGENT_NOT_CONFIGURED`, `DELIVERY_ACTIVE`, `RECONCILIATION_CONFLICT`, `INVALID_RECONCILIATION`) and one event; cursor validation reuses `INVALID_RETENTION_REQUEST`, all declared in the public contract. Strict consumers comparing the whole cleanup summary must accept `next_after`. Reconciliation correctness depends on the host's attestation; the Engine cannot verify remote effects or process quiescence beyond lease freshness. A worker without an adapter now fails loudly instead of losing data.
 
 ## Human review trigger
 

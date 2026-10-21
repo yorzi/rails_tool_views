@@ -14,7 +14,7 @@ After reading this guide, you will know:
 
 * Close or abandon a view from trusted host code.
 * Preserve replay receipts and choose a retention deadline.
-* Protect unfinished and uncertain delivery.
+* Protect unfinished and uncertain delivery, and reconcile it.
 * Preview and apply scoped payload cleanup.
 * Page through every batch past protected views.
 
@@ -59,7 +59,27 @@ A delivering interaction blocks close and abandon, even after its lease expires.
 
 A takeover sets the durable `delivery_uncertain` flag. It remains set if a stale callback later writes a terminal status. Such a Surface stays protected from lifecycle cleanup. The migration also marks old delivering or multiple-attempt rows conservatively, since their history cannot prove which attempts overlapped. An ordinary explicit retry after a known failure does not introduce this flag in the new runtime.
 
-There is no force option to clear uncertainty in this release. Stop automatic retention for these views and investigate the host delivery process and durable deduplication records. Do not rewrite the flag merely because enough time passed. The [continuation guide]({% link _advanced/continuation.md %}) explains the host's remote deduplication responsibility.
+Nothing clears uncertainty because time passed or a status became terminal. Only your attested reconciliation does.
+
+## Reconcile an Uncertain Delivery
+
+```ruby
+RailsToolViews.configure do |config|
+  config.reconciliation_policy = ->(access) {
+    access.operation == :reconcile && Operator.exists?(ref: access.actor)
+  }
+end
+
+receipt = DeliveryReceipt.find_by(key: interaction.delivery_key)
+RailsToolViews.reconcile_delivery(interaction.id, scope: scope,
+  outcome: receipt ? :completed : :failed)
+```
+
+`Operator` and `DeliveryReceipt` are host models in this example. Before you reconcile, check your durable deduplication record for the interaction's `delivery_key`, and make sure no worker still runs an attempt. Pass `:completed` when the record shows the follow-up happened and `:failed` when it shows it did not. The Engine records your attestation; it cannot see remote effects.
+
+The default `reconciliation_policy` is unset and rejects the call with `NOT_ALLOWED`. It receives `:reconcile`, the Surface and the interaction's action name, and it must return exactly `true`. It is independent of `retention_policy` and of the registry, so you can resolve an obsolete component's history. The view must belong to the exact actor and tenant; another scope receives 404.
+
+A fresh delivering lease raises `DELIVERY_ACTIVE` and changes nothing. An uncertain interaction, or a delivering one whose lease expired, takes the outcome as its status, and its uncertainty flag clears. `:failed` stores `AGENT_UNAVAILABLE`, so you can retry it with the same delivery key or abandon the view. A callback that outlived its lease still cannot overwrite the result, because its attempt no longer matches. Repeating the same outcome returns the interaction unchanged. A different outcome for an interaction with nothing to resolve raises `RECONCILIATION_CONFLICT`. `agent_reconciled` reports the outcome without payloads. After reconciliation, close, abandon and cleanup follow the normal rules.
 
 ## Preview Eligible Payloads
 

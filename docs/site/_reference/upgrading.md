@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Install the candidate and keep saved data.
 * Update code that rescued raw registration or identifier exceptions.
 * Configure every delivery worker with its adapter.
+* Resolve uncertain deliveries and page through cleanup.
 * Keep focus, styling and supported versions in view.
 
 ## Install the Candidate
@@ -41,6 +42,10 @@ An identifier with invalid UTF-8 now raises its own code, such as `INVALID_SCOPE
 ## Configure Every Delivery Worker
 
 `deliver` used to mark pending or failed work `skipped` when no adapter was passed or configured, which ended that follow-up for good. It now raises `AGENT_NOT_CONFIGURED` with HTTP 503 and changes nothing. Make sure every process that delivers loads the same adapter configuration as your web processes. If you relied on the old skip to drop follow-up, call `RailsToolViews.abandon` instead. Dispatch without a configured adapter still records `skipped`.
+
+## Resolve Uncertain Deliveries
+
+Views whose delivery became uncertain after a lease takeover, including rows the 0.3 migration marked conservatively, could never be closed or cleaned up. Check each one against your durable deduplication record, configure `reconciliation_policy`, then call `reconcile_delivery` as [Surface Lifecycle]({% link _advanced/lifecycle.md %}#reconcile-an-uncertain-delivery) shows. Until you do, they stay protected exactly as before.
 
 ## Page Through Cleanup
 

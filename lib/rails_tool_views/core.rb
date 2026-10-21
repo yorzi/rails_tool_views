@@ -24,6 +24,9 @@ module RailsToolViews
       "RENDER_FAILED" => "This view cannot be rendered. Your saved state is preserved.",
       "AGENT_UNAVAILABLE" => "Your changes were saved, but the AI follow-up could not complete.",
       "AGENT_NOT_CONFIGURED" => "Your changes were saved. The AI follow-up is not available right now and will be kept.",
+      "DELIVERY_ACTIVE" => "An AI follow-up delivery is still in progress. Try again after its lease expires.",
+      "RECONCILIATION_CONFLICT" => "This AI follow-up has no uncertain delivery to resolve, and its saved status differs.",
+      "INVALID_RECONCILIATION" => "Reconcile a delivery as :completed or :failed.",
       "IDEMPOTENCY_CONFLICT" => "This request identifier was already used for a different request."
     }.freeze
     # Hosts own the wording of their codes: pass message:, or translate
@@ -269,7 +272,7 @@ module RailsToolViews
   # Process-local host hooks, request limits, and delivery settings.
   class Configuration
     attr_accessor :scope_resolver, :agent_adapter, :max_payload_bytes, :max_depth, :max_catalog_components, :max_actions_per_minute, :auto_deliver,
-      :parent_controller, :delivery_lease, :retention_policy
+      :parent_controller, :delivery_lease, :retention_policy, :reconciliation_policy
     # Initializes conservative request limits with no host identity or agent adapter.
     def initialize
       @max_payload_bytes, @max_depth, @max_catalog_components, @max_actions_per_minute = 32_768, 16, 20, 60

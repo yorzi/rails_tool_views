@@ -15,7 +15,7 @@
 - [x] WORK-20261021-08: ADR 010, DELTA-007 and pre-flight record before implementation.
 - [x] WORK-20261021-09: D3, delivery without an adapter raises `AGENT_NOT_CONFIGURED`.
 - [x] WORK-20261021-10: D1, keyset paging for `purge_closed`.
-- [ ] WORK-20261021-11: D2, attested `reconcile_delivery`.
+- [x] WORK-20261021-11: D2, attested `reconcile_delivery`.
 - [ ] WORK-20261021-12: installed-host and upgrade evidence, full matrix, readiness update.
 
 Next owner action after these: review the public contract and decide D4/D5 in the readiness record. Conditions 2, 5 and 6 remain open; rc1 is not pushed, tagged or published.

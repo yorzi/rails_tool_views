@@ -37,13 +37,14 @@ RailsToolViews.dispatch(id, scope:, action:, arguments:, base_revision:,
 RailsToolViews.deliver(id, scope:, adapter: RailsToolViews.configuration.agent_adapter,
   retry_failed: false)
 RailsToolViews.render(surface, view_context:, scope:, error: nil, notice: nil)
+RailsToolViews.reconcile_delivery(id, scope:, outcome:)
 RailsToolViews.close(id, scope:, retain_until: nil)
 RailsToolViews.abandon(id, scope:, retain_until: nil)
 RailsToolViews.purge_closed(scope:, closed_before:, batch_size: 100, dry_run: true,
   after: nil)
 ```
 
-`present` and `restore` return a `RailsToolViews::Surface`. `close` and `abandon` return the Surface; a repeated call returns it unchanged. `deliver` returns the reloaded `RailsToolViews::AgentInteraction`. `render` returns HTML. `RailsToolViews.registry`, `RailsToolViews.configuration`, `reset_registry!` for reload hooks and `reset!` for tests are also stable.
+`present` and `restore` return a `RailsToolViews::Surface`. `close` and `abandon` return the Surface; a repeated call returns it unchanged. `deliver` and `reconcile_delivery` return the reloaded `RailsToolViews::AgentInteraction`; `outcome:` is `:completed` or `:failed`. `render` returns HTML. `RailsToolViews.registry`, `RailsToolViews.configuration`, `reset_registry!` for reload hooks and `reset!` for tests are also stable.
 
 `dispatch` returns a receipt with `status: "completed"`, `surface_id` and `revision`, plus `notice` and `interaction_id` when present. An exact retry returns the same receipt. `purge_closed` returns `examined`, `eligible`, `purged`, `protected`, `dry_run` and `next_after`, an opaque cursor string or nil. A later minor release may add summary keys.
 
@@ -63,7 +64,7 @@ These classes and their documented readers are stable:
 | `Surface` | `id`, `props`, `state`, `revision`, `dom_id`, `closed?`, `purged?`, `lifecycle_status`, `snapshot` |
 | `AgentInteraction` | `id`, `status`, `attempts`, `claimed_at`, `error_code`, `delivery_uncertain`, `delivery_key` |
 
-A policy receives `Access#operation` as one of `:present`, `:read`, `:action`, `:discover`, `:close`, `:abandon` or `:purge`. An interaction's `status` is one of `pending`, `delivering`, `completed`, `failed`, `skipped` or `abandoned`. `Surface#lifecycle_status` is one of `active`, `closed`, `abandoned` or `purged`.
+A policy receives `Access#operation` as one of `:present`, `:read`, `:action`, `:discover`, `:close`, `:abandon`, `:purge` or `:reconcile`. An interaction's `status` is one of `pending`, `delivering`, `completed`, `failed`, `skipped` or `abandoned`. `Surface#lifecycle_status` is one of `active`, `closed`, `abandoned` or `purged`.
 
 ## Error Codes
 
@@ -73,10 +74,10 @@ Every rejection is a `RailsToolViews::Error` with a stable `code` and HTTP `stat
 * Input bounds: `INVALID_JSON`, `PAYLOAD_TOO_LARGE`, `PAYLOAD_TOO_DEEP`, `INVALID_SCOPE`, `INVALID_CONTEXT`, `INVALID_CORRELATION`, `INVALID_IDEMPOTENCY_KEY`, `UNKNOWN_FIELD`, `INVALID_CSRF`.
 * Presentation and reads: `UNKNOWN_COMPONENT`, `INVALID_PROPS`, `NOT_FOUND`, `NOT_ALLOWED`, `INCOMPATIBLE_COMPONENT`, `RENDER_FAILED`, `CATALOG_TOO_LARGE`.
 * Actions: `UNKNOWN_ACTION`, `INVALID_ARGUMENTS`, `INVALID_REVISION`, `INVALID_SOURCE`, `INVALID_TARGET`, `INVALID_TRANSITION`, `INVALID_VALIDATION_FEEDBACK`, `VALIDATION_FAILED`, `CONFLICT`, `IDEMPOTENCY_CONFLICT`, `RATE_LIMITED`.
-* Continuation: `AGENT_UNAVAILABLE`, stored as an interaction's `error_code`, `AGENT_NOT_CONFIGURED` and `DELIVERY_IN_TRANSACTION`.
+* Continuation: `AGENT_UNAVAILABLE`, stored as an interaction's `error_code`, `AGENT_NOT_CONFIGURED`, `DELIVERY_IN_TRANSACTION`, `DELIVERY_ACTIVE`, `RECONCILIATION_CONFLICT` and `INVALID_RECONCILIATION`.
 * Lifecycle: `SURFACE_CLOSED`, `SURFACE_PURGED`, `LIFECYCLE_BUSY`, `INVALID_RETENTION_REQUEST`, `INVALID_RETENTION_WINDOW`.
 
-Codes use HTTP 400 unless listed here. `NOT_ALLOWED`, `INVALID_CSRF`, and `INVALID_SCOPE` for a call without a `Scope`, use 403. `NOT_FOUND` and `UNKNOWN_COMPONENT` use 404. `CONFLICT`, `IDEMPOTENCY_CONFLICT`, `LIFECYCLE_BUSY` and `DELIVERY_IN_TRANSACTION` use 409. `SURFACE_CLOSED` and `SURFACE_PURGED` use 410. `PAYLOAD_TOO_LARGE` uses 413. `VALIDATION_FAILED`, `INVALID_TRANSITION`, `INCOMPATIBLE_COMPONENT` and `RENDER_FAILED` use 422. `RATE_LIMITED` uses 429. `AGENT_NOT_CONFIGURED` uses 503. A host may raise its own codes; they keep the status it chooses.
+Codes use HTTP 400 unless listed here. `NOT_ALLOWED`, `INVALID_CSRF`, and `INVALID_SCOPE` for a call without a `Scope`, use 403. `NOT_FOUND` and `UNKNOWN_COMPONENT` use 404. `CONFLICT`, `IDEMPOTENCY_CONFLICT`, `LIFECYCLE_BUSY`, `DELIVERY_IN_TRANSACTION`, `DELIVERY_ACTIVE` and `RECONCILIATION_CONFLICT` use 409. `SURFACE_CLOSED` and `SURFACE_PURGED` use 410. `PAYLOAD_TOO_LARGE` uses 413. `VALIDATION_FAILED`, `INVALID_TRANSITION`, `INCOMPATIBLE_COMPONENT` and `RENDER_FAILED` use 422. `RATE_LIMITED` uses 429. `AGENT_NOT_CONFIGURED` uses 503. A host may raise its own codes; they keep the status it chooses.
 
 ## Views, Helpers and Generators
 

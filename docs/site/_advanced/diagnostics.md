@@ -42,13 +42,14 @@ All names below have the suffix `.rails_tool_views`. An action commits independe
 | `action.rejected` | `code` | Dispatch is rejected for another reason. |
 | `agent_returned` | `surface_id`, `interaction_id` | The current attempt acknowledges success. |
 | `agent_failed` | `surface_id`, `interaction_id`, `error_class` | The current attempt acknowledges a handled adapter failure. |
+| `agent_reconciled` | `surface_id`, `interaction_id`, `outcome` | The host's attested outcome resolves an uncertain or expired delivery. |
 | `adapter.tool_called` | `surface_id`, `revision` | The optional RubyLLM presentation tool returns a view. |
 
 Fresh leases, skipped work, terminal delivery replay and lifecycle maintenance add no events to this catalog. It is not a complete audit trail. Measure external effects from the host's durable business receipts.
 
 ## Investigate Delivery
 
-Use the interaction ID to inspect only `status`, `attempts`, `claimed_at`, `error_code` and `delivery_uncertain` in an authorized host operation. A pending row needs delivery; a failed row needs an explicit retry decision. A fresh delivering lease is active. An expired lease allows takeover with the same delivery key, while uncertainty continues to block lifecycle cleanup.
+Use the interaction ID to inspect only `status`, `attempts`, `claimed_at`, `error_code` and `delivery_uncertain` in an authorized host operation. A pending row needs delivery; a failed row needs an explicit retry decision. A fresh delivering lease is active. An expired lease allows takeover with the same delivery key, while uncertainty continues to block lifecycle changes until you [reconcile it]({% link _advanced/lifecycle.md %}#reconcile-an-uncertain-delivery).
 
 The Engine's handled-error log line includes the event and exception class. It omits raw messages and stack text. `Rails.error` still receives the original exception for host debugging. Configure filtering, access and retention in that reporting pipeline; the gem cannot sanitize arbitrary exception objects or SDK logs. Do not return those reports to a browser.
 
