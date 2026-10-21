@@ -24,13 +24,16 @@ export default function railsToolViewsController(Controller) {
         const incoming = stream.querySelector("template")?.content.firstElementChild;
         const revision = Number(incoming?.getAttribute("data-rails-tool-views-revision-value"));
         if (revision && revision < this.revisionValue) event.preventDefault();
+        else incoming?.setAttribute("data-rails-tool-views-replaced", "");
       };
       this.element.ownerDocument.addEventListener("turbo:before-stream-render", this.beforeStream);
       this.element.addEventListener("turbo:submit-start", this.start);
       this.element.addEventListener("turbo:submit-end", this.end);
-      // Replacement happens after a committed result; move focus to its announcement.
+      // Only a rendered replacement announces a result; a page load keeps the reader's place.
+      const replaced = this.element.hasAttribute("data-rails-tool-views-replaced");
+      this.element.removeAttribute("data-rails-tool-views-replaced");
       if (this.hasErrorTarget) this.errorTarget.focus({ preventScroll: true });
-      else if (this.revisionValue > 1 && this.hasStatusTarget) this.statusTarget.focus({ preventScroll: true });
+      else if (replaced && this.hasStatusTarget) this.statusTarget.focus({ preventScroll: true });
     }
     disconnect() {
       this.element.ownerDocument.removeEventListener("turbo:before-stream-render", this.beforeStream);

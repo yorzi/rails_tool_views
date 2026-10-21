@@ -22,6 +22,17 @@ class BrowserWorkflowsTest < BrowserTest
       end
     end
   end
+  test "only a replaced Surface moves focus to its status" do
+    visit "/"
+    click_button "Present ChoiceCard"
+    choose "Compare options"
+    click_button "Save selection"
+    assert_text "Selection saved: compare."
+    assert page.evaluate_script("document.activeElement.getAttribute('role') === 'status'"), "Replacement did not focus its status"
+    page.refresh
+    assert_checked_field "Compare options"
+    assert page.evaluate_script("document.activeElement === document.body"), "A saved Surface took focus on page load"
+  end
   test "keyboard submission exposes loading then an explicit continuation retry on mobile" do
     mobile_viewport
     visit "/v1/support"

@@ -32,7 +32,7 @@ Use a notice for an acknowledgment such as "Selection saved." Put facts needed o
 
 ## Use Each Transport
 
-The mounted controller includes `notice` in a successful JSON response when supplied. Turbo displays it in the Surface's existing live status region and focuses that status after replacement. A refreshed Surface renders its saved state without the notice.
+The mounted controller includes `notice` in a successful JSON response when supplied. Turbo displays it in the Surface's existing live status region and focuses that status after replacement. A page load or refresh leaves focus where the browser put it. A refreshed Surface renders its saved state without the notice.
 
 A normal HTML form redirects as before. Rails flash carries the notice to the next request, bound to the exact Surface, actor and tenant. The `rails_tool_views_surface` helper consumes only a matching notice. The host needs standard Rails session/flash middleware and must use the helper on an embedding page. No notice is added to the URL.
 

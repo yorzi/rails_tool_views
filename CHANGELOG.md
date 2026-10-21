@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix: the Stimulus controller moved focus to the status region of every saved Surface on page load, not only after a Turbo replacement. Focus now moves only for a rendered replacement or an error; a refresh keeps the reader's place.
+
 ## [0.4.0] - 2026-10-20
 
 - Emit the existing metadata-only `action.conflict` event when database rollback or lock contention maps to a retryable conflict.

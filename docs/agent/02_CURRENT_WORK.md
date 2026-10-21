@@ -1,5 +1,13 @@
 # Current work
 
+## Owner-requested audit and 1.0 RC preparation (2026-10-21)
+
+- [x] WORK-20261021-01: pre-flight record; focus moves only after a Turbo replacement (browser regression first).
+- [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
+- [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
+
+Local commits only. No push, tag, publication, provider call or external contact.
+
 ## Owner-authorized 0.4 delivery
 
 - [x] WORK-20261020-01: attempt-fenced recovery, transaction guard and host-job/process-death checks.

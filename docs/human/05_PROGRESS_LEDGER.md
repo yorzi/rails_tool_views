@@ -401,3 +401,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 从0.3无新migration/runtime依赖；升级drain旧web/worker，deliver移到host commit之后；fence只保护Engine确认，host负责durable dedup/outbox/reconcile，uncertain仍隔离。notice不进入Surface state但回执保留，旧message兼容；host Rails.error仍需隐私控制。Specs/DELTA-006不变，既有OIDC/MIT/MFA/DNS复用，无新权限/凭证/provider或host生产数据变动。1.0仍缺外部试用/独立review/MySQL/provider/正式gates证据。
 
 **清理/下一步：** 未启动本地服务；临时isolated/compare目录自动删除，Chrome验收页关闭，任务watchers结束；ignored tmp保存下载证据。提交推送本记录并检查其自身CI/Docs，在最终回复报告实际状态；不预写未来SHA/成功，不自动开发下一版。
+
+### WORK-20261021-01 — 审计启动与刷新焦点修复
+
+**内容/映射：** Andy要求审计功能与处理逻辑、修复有效问题并分步提交、核对计划与路线图并准备1.0 RC；SPEC_BASELINE记录本轮仅授权本地修复/提交，不含push/tag/发布/provider/外部联系。FR-07/08（键盘与反馈）。Stimulus controller原先在任何revision>1的Surface连接时聚焦status，页面加载/刷新也会抢走焦点，与反馈指南“替换后聚焦”不符；现在`turbo:before-stream-render`给传入元素打标记，只有实际替换或error才移动焦点。
+
+**复查/验证：** 新浏览器回归先失败（"A saved Surface took focus on page load"），修复后通过；替换后仍聚焦status。完整Chrome套件9个中一次出现禁用JS生命周期测试的stale-node错误；该测试中页面JS经探测确实不执行，交替运行原版/修复版各6次全部通过，记录为既有时序flake而非本修复。core 129/1129未受影响（仅JS/测试/文档）。
+
+**影响/人工复查：** 在demo保存一次选择后刷新，确认焦点不跳到状态行；用Turbo提交时仍由status朗读结果。无schema/依赖/服务端行为变化。更新feedback指南、CHANGELOG Unreleased、Current Work和pre-flight记录；结构不变无需图。
+
+**下一步：** 继续审计修复（注册错误码、标识符编码、digest边界、CSP nonce），每个commit独立Work-ID；随后RC准备。
