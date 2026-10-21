@@ -9,6 +9,7 @@
 - Fix: request digests re-applied the payload size and depth limits to their envelope, so props or arguments close to a limit were rejected with `PAYLOAD_TOO_LARGE` or `PAYLOAD_TOO_DEEP` after passing validation. Digests of every previously accepted value are unchanged.
 - Fix: a correlated presentation that lost a concurrent insert race raised `IDEMPOTENCY_CONFLICT` without emitting `presentation.rejected`.
 - Fix: discovery policies received a mutable `Access`; it is frozen like every other policy request.
+- Fix: the Engine page's inline stylesheet had no CSP nonce, so a host with a nonce-based `style-src` policy got an unstyled correction page. It now carries `content_security_policy_nonce`.
 
 ## [0.4.0] - 2026-10-20
 

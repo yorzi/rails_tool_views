@@ -5,6 +5,7 @@
 - [x] WORK-20261021-01: pre-flight record; focus moves only after a Turbo replacement (browser regression first).
 - [x] WORK-20261021-02: malformed registrations fail with stable codes.
 - [x] WORK-20261021-03: identifier encoding, plain-String normalization, digest envelope, race-path rejection event, frozen discovery Access.
+- [x] WORK-20261021-04: Engine page stylesheet carries the host CSP nonce.
 - [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
 - [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
 

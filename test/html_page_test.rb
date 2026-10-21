@@ -35,6 +35,21 @@ class HtmlPageTest < ActionDispatch::IntegrationTest
     refute_match(/<!doctype/i, fragment)
   end
 
+  test "the complete page style carries the host's CSP nonce" do
+    surface = present_card
+    policy = ActionDispatch::ContentSecurityPolicy.new { |content| content.style_src :self }
+    config = Rails.application.env_config.merge("action_dispatch.content_security_policy" => policy,
+      "action_dispatch.content_security_policy_nonce_generator" => ->(_request) { "page-nonce" },
+      "action_dispatch.content_security_policy_nonce_directives" => %w[style-src])
+    Rails.application.stub(:env_config, config) { get surface_path(surface) }
+    assert_response :ok
+    assert_includes response.headers["Content-Security-Policy"], "'nonce-page-nonce'"
+    assert_select "head style[nonce=page-nonce]", count: 1
+    get surface_path(surface)
+    assert_select "head style", count: 1
+    assert_select "head style[nonce]", count: 0
+  end
+
   test "conflict keeps current authorized form and safe reload link then corrects without a POST redirect loop" do
     surface = present_card
     post "#{surface_path(surface)}/actions", params: arguments

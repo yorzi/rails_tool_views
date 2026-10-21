@@ -431,3 +431,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 不改schema/依赖/错误码集合/事件名；`presentation.rejected`在竞争路径新增一次与普通路径相同的code-only事件。阅读production指南的标识符段与CHANGELOG。私有方法标记:nodoc:。无结构变化无需图。
 
 **下一步：** Engine页面内联style的CSP nonce；随后RC准备。
+
+### WORK-20261021-04 — Engine完整页面的CSP nonce
+
+**内容/映射：** FR-07/08、SEC（host安全头兼容）。Engine自有layout的内联`<style>`没有nonce，host若使用带nonce的`style-src`（不允许'unsafe-inline'），完整错误/读取页面会失去样式（仍可用但移动端布局和焦点外框丢失）。现在用`tag.style nonce: content_security_policy_nonce`；未配置CSP nonce时不输出属性。
+
+**复查/验证：** 新HTML页面测试通过host真实CSP中间件路径（stub `env_config`）先失败：header含'nonce-page-nonce'而style无nonce；修复后html_page 7/83通过，并断言未配置时不渲染nonce属性。
+
+**影响/人工复查：** 若host覆盖了layout，需要自行保留nonce；validation指南已说明。无JS/schema/依赖变化，不放宽任何CSP。CHANGELOG Unreleased已记录。
+
+**下一步：** 汇总审计中“设计取舍”类发现交给owner决定，然后进行1.0 RC准备（契约声明、prerelease安全的发布流程、条件证据）。

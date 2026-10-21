@@ -31,6 +31,8 @@ HTTP status codes remain unchanged: validation returns 422, conflicts return 409
 
 Direct HTML reads of a Surface also use the complete page. Embedded `rails_tool_views_surface` rendering still returns a fragment. The Engine uses its own layout, so it does not require instance variables from your embedding controller. To customize it, override `app/views/layouts/rails_tool_views/application.html.erb`; preserve the document title, language, viewport, CSRF tags and main landmark. The page content lives at `app/views/rails_tool_views/surfaces/page.html.erb`.
 
+The layout's small inline stylesheet carries `content_security_policy_nonce`. If your Content Security Policy adds a nonce to `style-src`, the page stays styled without allowing `'unsafe-inline'`. Keep that nonce in an overriding layout.
+
 ## Give Errors Useful Wording
 
 ```ruby
