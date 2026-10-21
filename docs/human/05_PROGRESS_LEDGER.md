@@ -441,3 +441,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 若host覆盖了layout，需要自行保留nonce；validation指南已说明。无JS/schema/依赖变化，不放宽任何CSP。CHANGELOG Unreleased已记录。
 
 **下一步：** 汇总审计中“设计取舍”类发现交给owner决定，然后进行1.0 RC准备（契约声明、prerelease安全的发布流程、条件证据）。
+
+### WORK-20261021-05 — RC发布流程：prerelease不取代稳定版
+
+**内容/映射：** ROADMAP的rc1前置项“首个RC前把GitHub Release标为prerelease并确认不替换稳定文档/最新稳定版”。原`release.yml`对任何tag都直接`gh release create`，`v1.0.0.rc1`会成为GitHub Latest。现在用RubyGems自身的`Gem::Version#prerelease?`判断，prerelease加`--prerelease --latest=false`；稳定版保持GitHub自动Latest选择，不强制`--latest`（否则1.0之后的0.x补丁会被错误标为Latest）。release checklist新增“Release candidates”一节。
+
+**复查/验证：** 本地验证判定：0.4.0/1.0.0为stable，1.0.0.rc1/1.0.0.pre为prerelease；`gh release create --help`确认`--prerelease`与`--latest=false`存在；workflow YAML可解析。在scratch本地clone中创建本地tag `v1.0.0.rc1`并运行`docs/site/bin/build.sh`：输出“Built v0.4.0 at / and the working tree at /next/”，首页与Getting Started显示“0.4.0 (stable)”且无rc1；clone与站点已删除，真实仓库未建tag。远端workflow未运行（无发布授权），属NOT_RUN。
+
+**影响/人工复查：** 阅读release.yml的“Create GitHub Release”步骤与checklist新节。无运行时代码/包内容变化；不新增权限或密钥。
+
+**下一步：** 声明1.0公开契约（含experimental适配器、MySQL排除），然后准备1.0.0.rc1候选元数据与证据。

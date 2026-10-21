@@ -58,6 +58,14 @@ The `Release Gem` workflow runs the full reusable compatibility CI (Ruby 3.3 and
 
 Do not move or reuse a tag after a successful RubyGems upload. If checks fail before publication, fix on main and inspect the exact failed step before deciding how to retry. Published versions are immutable; use a new version for code fixes.
 
+## Release candidates
+
+Use RubyGems prerelease versions such as `1.0.0.rc1` with the matching tag `v1.0.0.rc1`. The `Release Gem` workflow asks RubyGems' own `Gem::Version#prerelease?` and creates such a GitHub Release with `--prerelease --latest=false`, so it never replaces the latest stable release. A stable version keeps GitHub's automatic Latest selection.
+
+`docs/site/bin/build.sh` builds stable docs only from `vX.Y.Z` tags, so a candidate tag never replaces the stable site; candidate readers use `/next/`. On 2026-10-21 a scratch clone with a local `v1.0.0.rc1` tag built `v0.4.0` at `/` and the working tree at `/next/`. `gem install rails_tool_views` ignores prereleases unless `--pre` or an exact version is given.
+
+Each candidate still needs owner authorization, exact remote CI and the evidence in ROADMAP's 1.0 conditions. After publication, confirm the GitHub Release shows the Pre-release badge and that the Latest release and stable docs still name the previous stable version.
+
 ## Verify the outcome
 
 - RubyGems API and gem page report the intended version and source/docs/MFA metadata. Download the published gem and compare SHA-256 with the GitHub Release asset and SHA256SUMS.

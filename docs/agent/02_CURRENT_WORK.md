@@ -7,6 +7,7 @@
 - [x] WORK-20261021-03: identifier encoding, plain-String normalization, digest envelope, race-path rejection event, frozen discovery Access.
 - [x] WORK-20261021-04: Engine page stylesheet carries the host CSP nonce.
 - [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
+- [x] WORK-20261021-05: prerelease-safe GitHub Release and verified stable-docs behavior for an rc tag.
 - [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
 
 Local commits only. No push, tag, publication, provider call or external contact.

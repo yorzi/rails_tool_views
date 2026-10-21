@@ -90,6 +90,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --verify-tag \
+          # RubyGems' rule: a version with a letter (1.0.0.rc1) is a prerelease.
+          # It must never replace the latest stable GitHub Release. A stable
+          # release keeps GitHub's automatic Latest selection.
+          channel=()
+          if ruby -e 'exit Gem::Version.new(ARGV.fetch(0)).prerelease?' "${GITHUB_REF_NAME#v}"; then
+            channel=(--prerelease --latest=false)
+          fi
+          gh release create "$GITHUB_REF_NAME" --verify-tag "${channel[@]}" \
             --title "RailsToolViews $GITHUB_REF_NAME" --notes-file release-notes.md \
             "pkg/rails_tool_views-${GITHUB_REF_NAME#v}.gem" pkg/SHA256SUMS
