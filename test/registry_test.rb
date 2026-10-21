@@ -90,4 +90,13 @@ class RegistryTest < ActiveSupport::TestCase
   ensure
     I18n.backend.reload!
   end
+
+  test "malformed registration input fails with a stable code" do
+    empty = { type: "object", additionalProperties: false }
+    assert_error("INVALID_SCHEMA") { RailsToolViews::Schema.new(closed(code: { type: "string", pattern: "(" })) }
+    assert_error("INVALID_ACTION") { RailsToolViews.register(:no_schema, description: "D", schema: empty, partial: "x/y", actions: { go: { handler: ->(_) {} } }) }
+    assert_error("INVALID_ACTION") { RailsToolViews.register(:not_hash, description: "D", schema: empty, partial: "x/y", actions: { go: :handler }) }
+    assert_error("INVALID_COMPONENT") { RailsToolViews.register(:one_exposure, description: "D", schema: empty, partial: "x/y", expose_to: :agent) }
+    assert_raises(RailsToolViews::Error) { RailsToolViews.registry.fetch(:no_schema) }
+  end
 end

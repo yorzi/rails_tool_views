@@ -3,6 +3,7 @@
 ## Owner-requested audit and 1.0 RC preparation (2026-10-21)
 
 - [x] WORK-20261021-01: pre-flight record; focus moves only after a Turbo replacement (browser regression first).
+- [x] WORK-20261021-02: malformed registrations fail with stable codes.
 - [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
 - [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
 

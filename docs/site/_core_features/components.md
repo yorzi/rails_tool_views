@@ -37,6 +37,8 @@ The name is looked up on every render, so it follows the request's locale. Keep 
 
 Every object schema is closed with `additionalProperties: false`. Every array declares `items`. Nested values must declare a type, enum, const, or constrained schema combination. `$ref` and unsupported keywords are rejected. Unknown props are rejected rather than silently discarded.
 
+A malformed registration raises `RailsToolViews::Error` while your application boots, so the mistake cannot reach a request. `INVALID_COMPONENT` covers the key, description, version and `expose_to`, which must be an array. `INVALID_RENDERER` covers the renderer. `INVALID_SCHEMA` covers an unsupported schema, including a `pattern` that is not a valid regular expression. `INVALID_ACTION` covers an action without a valid name, a `schema:` or a callable `handler:`. A repeated key raises `DUPLICATE_COMPONENT`.
+
 ## Reuse a Renderer
 
 A Partial receives `props`, `state`, `surface`, and `error` locals. A ViewComponent receives validated props as keyword arguments. It can opt into runtime context by explicitly naming `surface:`, `state:`, or `error:` in its initializer. Include `RailsToolViews::SurfacesHelper` to use the action helpers.

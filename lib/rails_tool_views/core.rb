@@ -139,7 +139,7 @@ module RailsToolViews
       @validator = JSONSchemer.schema(@json, ref_resolver: ->(_uri) { raise Error.new("INVALID_SCHEMA") })
       raise Error.new("INVALID_SCHEMA") unless @validator.valid_schema?
       Data.freeze_deep(@json)
-    rescue JSONSchemer::UnknownRef, ArgumentError
+    rescue JSONSchemer::UnknownRef, ArgumentError, RegexpError
       raise Error.new("INVALID_SCHEMA")
     end
     # Returns normalized validated data, or raises Error with the supplied code.
@@ -208,10 +208,13 @@ module RailsToolViews
       keywords = component ? component.instance_method(:initialize).parameters.filter_map { |kind, name| name if %i[key keyreq].include?(kind) } : []
       @context = (CONTEXT & keywords).freeze
       raise Error.new("INVALID_COMPONENT") if (@context.map(&:to_s) & @schema.json.fetch("properties", {}).keys).any?
+      raise Error.new("INVALID_COMPONENT") unless expose_to.is_a?(Array)
       @expose_to = expose_to.map(&:to_sym).freeze
       @actions = actions.to_h do |name, definition|
         name = name.to_s.freeze
-        raise Error.new("INVALID_ACTION") unless name.match?(/\A[a-z][a-z0-9_]{0,63}\z/) && (definition.keys - %i[schema policy handler]).empty? && definition[:handler].respond_to?(:call)
+        valid = name.match?(/\A[a-z][a-z0-9_]{0,63}\z/) && definition.is_a?(Hash) && definition.key?(:schema) &&
+          (definition.keys - %i[schema policy handler]).empty? && definition[:handler].respond_to?(:call)
+        raise Error.new("INVALID_ACTION") unless valid
         [name, Action.new(key: name, schema: Schema.new(definition.fetch(:schema)), policy: definition[:policy], handler: definition[:handler]).freeze]
       end.freeze
       @digest = Data.digest(key: @key, version: @version, schema: @schema.json, renderer: @partial || @component.name,

@@ -411,3 +411,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 在demo保存一次选择后刷新，确认焦点不跳到状态行；用Turbo提交时仍由status朗读结果。无schema/依赖/服务端行为变化。更新feedback指南、CHANGELOG Unreleased、Current Work和pre-flight记录；结构不变无需图。
 
 **下一步：** 继续审计修复（注册错误码、标识符编码、digest边界、CSP nonce），每个commit独立Work-ID；随后RC准备。
+
+### WORK-20261021-02 — 注册输入的稳定错误码
+
+**内容/映射：** FR-01/02注册契约。探针发现三类畸形注册直接抛Ruby异常：schema的`pattern`不是合法正则抛RegexpError，action定义不是Hash或缺`schema:`抛NoMethodError/KeyError，`expose_to: :agent`（非数组）抛NoMethodError。现在分别为`INVALID_SCHEMA`、`INVALID_ACTION`、`INVALID_COMPONENT`，与其余注册错误一致，便于1.0冻结错误码。合法注册与digest不变。
+
+**复查/验证：** 新registry测试先失败（RegexpError），修复后registry 7/81通过；完整core套件130/1138通过。
+
+**影响/人工复查：** 只影响启动期注册失败的异常类型；原先已能注册的组件行为不变。components指南新增“注册失败”段落列出各错误码，CHANGELOG Unreleased已记录。无schema/依赖/数据影响。
+
+**下一步：** 标识符编码、SafeBuffer归一化、digest边界、并发呈现的rejected通知与发现策略的不可变Access。
