@@ -119,3 +119,12 @@ Base 8d98688, clean main, 0.4.0 published. Andy requests an audit of functions a
 - Probed defects: status focus on page load; invalid regex patterns, malformed action definitions and a non-array `expose_to` raise raw Ruby errors instead of stable codes; identifiers with invalid encoding raise ArgumentError; String subclasses survive normalization; request digests re-apply payload limits to already-validated values; the race path of correlated presentation skips `presentation.rejected`; discovery policies receive a mutable Access; the Engine page's inline style has no CSP nonce.
 - Classification: IMPLEMENTATION_BUG for each. Digests of accepted inputs must stay byte-identical, so stored component digests and replay receipts remain valid. Documented limits (uncertain delivery has no force clear; protected rows can fill a purge batch; the mount must stay named `:rails_tool_views`) are recorded as rc decisions, not silently changed.
 - Every fix lands with a test that fails first. No schema, dependency, queue or new public feature. Stop task-owned browsers and servers.
+
+## WORK-20261021-08..12 — rc1 lifecycle decisions D1..D3
+
+Base 9887701, clean main, local 1.0.0.rc1 candidate. Owner asks to resolve D1..D3 with the best design. Re-read ADR 008/009 (both defer attested resolution until a concrete safe host contract exists), the Spec Delta protocol, pinned FR-06 and NFR-05, lifecycle/retention/continuation tests and guides.
+
+- Baseline: core 134/1162, adapter 7/45, PG 137/1178, Chrome 9/81, upgrades 0.1..0.4 PASS (RC1_READINESS).
+- Classification: implementation designs inside FR-04/05/06 and NFR-05, recorded in ADR 010; the added public names are an owner-approved contract supplement, DELTA-007, recorded before implementation.
+- Invariants to keep: dispatch without an agent still succeeds (FR-06-AC-03); Surface-then-interaction lock order; callbacks outside transactions; the attempt fence rejects stale acknowledgments; uncertainty never clears on age or status; cursor narrows but never widens a scoped query; default-deny for the new hook; no schema, dependency or queue.
+- Order: decisions (08), D3 (09), D1 (10), D2 (11), real-host and upgrade evidence plus full matrix (12). Failing tests first; stop task-owned processes.

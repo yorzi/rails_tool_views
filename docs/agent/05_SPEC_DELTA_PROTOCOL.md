@@ -47,3 +47,7 @@ Andy explicitly authorizes publication and related documentation/commits after l
 ## 2026-10-20 — public 0.4 release authorization
 
 Andy explicitly authorizes remote CI, release acceptance, documentation and publication after local completion. Extend the existing publication authorization to WORK-20261020-05..06; no additional runtime/API/schema/dependency intent is introduced. DELTA-006 remains the approved notification supplement. All 59 copied Specs still match pinned 0ea28b1; external files are unchanged. Prior local-only limits are superseded for this release, without claiming formal/provider/MySQL/adoption/independent review completion.
+
+## DELTA-007 — owner-approved rc1 lifecycle contract supplement
+
+2026-10-21; PRODUCT_INTENT_CHANGE (public contract supplement), approved by Andy's explicit request to resolve D1..D3 with the best design before rc1 freezes the contract. Within FR-04/05/06 and NFR-05: add keyset paging to `purge_closed` (`after:`, `next_after`); add host-attested `reconcile_delivery` with a default-deny `reconciliation_policy`, `DELIVERY_ACTIVE`, `RECONCILIATION_CONFLICT` and the metadata-only `agent_reconciled` event; and make delivery without an adapter raise `AGENT_NOT_CONFIGURED` instead of terminally skipping committed work. Dispatch without an adapter still records `skipped` (FR-06-AC-03). Uncertainty still blocks lifecycle changes until reconciled; nothing is inferred from age. ADR 010 records the design. No schema, dependency or external Specs change.

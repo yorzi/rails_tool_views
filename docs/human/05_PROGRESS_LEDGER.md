@@ -471,3 +471,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 先读public-contract（rc1起冻结），再读RC1_READINESS的D1..D5：purge批次饥饿、uncertain无解除路径、无adapter时pending被标skipped、条件2/5/6的证据或例外、发布授权。无schema/runtime依赖变化；main现为未发布候选，稳定文档仍由v0.4.0构建。浏览器/driver/Puma/临时PG已结束，既有PG服务保留。
 
 **下一步：** owner审阅并决定；未授权前不push/tag/发布，不开展外部试用或provider调用。
+
+### WORK-20261021-08 — D1..D3设计决定（ADR 010 / DELTA-007）
+
+**内容/映射：** Andy要求在rc1冻结契约前以最佳设计解决D1..D3。实现前先记录决定：D1 `purge_closed`增加keyset游标（`after:`/`next_after`），游标只与既有scope/cutoff/期限条件AND，不能扩大访问；D2 新增host证明的`reconcile_delivery(id, scope:, outcome: :completed|:failed)`，由默认拒绝的`reconciliation_policy`授权（独立于registry，也不让既有retention_policy静默获得权限），新鲜lease拒绝（DELIVERY_ACTIVE），不改attempts以保留fence，同结果幂等、不同结果冲突（RECONCILIATION_CONFLICT），发metadata-only `agent_reconciled`；D3 deliver将要claim却无adapter时抛`AGENT_NOT_CONFIGURED`(503)且不改记录，dispatch无adapter仍记skipped（FR-06-AC-03）。这正是ADR 008/009推迟、要求“具体安全host契约”的部分。
+
+**复查/验证：** 仅决策文档；无代码变化，未运行测试。DELTA-007按DELTA-006先例记录为owner批准的契约补充；外部Specs不变。
+
+**影响/人工复查：** 阅读ADR 010的Decision与Alternatives。新增公开名称将在各实现commit写入public-contract。无schema/依赖。
+
+**下一步：** WORK-09实现D3（先写失败测试）。
