@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## [1.0.0.rc1] - Unreleased candidate
+
+Freezes the public contract for 1.0. No migration or runtime dependency; data saved by 0.1.0 through 0.4.0 upgrades unchanged. See the Upgrading guide.
 
 - Fix: the Stimulus controller moved focus to the status region of every saved Surface on page load, not only after a Turbo replacement. Focus now moves only for a rendered replacement or an error; a refresh keeps the reader's place.
 - Fix: malformed registrations raised raw Ruby errors. An invalid schema `pattern` now raises `INVALID_SCHEMA`, an action definition that is not a Hash or lacks `schema:` raises `INVALID_ACTION`, and a non-array `expose_to` raises `INVALID_COMPONENT`.

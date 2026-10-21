@@ -198,3 +198,11 @@ Local preparation artifact SHA2231ea7a17f3ebd260302c12f4d80e9d7b6aa1386f37979c9c
 Exact immutable tag e93f8df main/tag compatibility, package/isolated/audits/docs and OIDC Release PASS; published registry/direct/client/Release checksums agree. Downloaded package's35 files and normalized contract equal tested preparation; empty GEM_HOME actual Rails host/generated1/2/activated audit passes again on the published hash. Pages39360929392 stable0.4/next,18HTTPS entries, real Chrome stable install/search/new guide/version menu PASS;22guides lint zero errors/warnings,3102 local links clean. See RELEASE_0_4_0 for exact run URLs/hash/first registry404/platform warnings/browser connection fallback and limits.
 
 No new schema/dependency/provider/permission/DNS or host production migration. DELTA-006 and59 pinned Specs unchanged. Status/currentwork/roadmap/feature map/implementation/runbook/acceptance/evidence synchronized; no entity/architecture change needing new diagrams. Real user review: read upgrade/feedback/continuation guides and verify own host recovery. Independent review/adoption/provider/MySQL/formal evidence remains open. No local server started; isolated/extract directories removed, task-created browser tab closed and watchers complete. Next: commit/push record, verify its own CI/Docs and clean tree in final handoff; no new version work.
+
+## WORK-20261021-01..07 — audit and 1.0 RC preparation
+
+- [x] Each fix had a failing test first; affected guides, CHANGELOG and Upgrading changed with it. Stored digests are pinned and unchanged; real 0.1..0.4 data upgrades.
+- [x] Full local matrix on the candidate recorded in RC1_READINESS with the Ruby 4 harness error and the pre-existing no-JS flake stated, not hidden.
+- [x] Public contract declared; RubyLLM adapter experimental and MySQL excluded per ROADMAP defaults. No schema, dependency, queue or new public feature.
+- [x] Browsers, drivers, Puma and the temporary PG database stopped/removed and verified; pre-existing PG service retained; scratch clones deleted. No push, tag, publication, provider call or contact.
+- [x] Open: conditions 2/5/6 and owner decisions D1..D5. External pinned Specs unchanged.

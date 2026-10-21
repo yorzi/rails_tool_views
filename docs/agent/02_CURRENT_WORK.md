@@ -6,10 +6,11 @@
 - [x] WORK-20261021-02: malformed registrations fail with stable codes.
 - [x] WORK-20261021-03: identifier encoding, plain-String normalization, digest envelope, race-path rejection event, frozen discovery Access.
 - [x] WORK-20261021-04: Engine page stylesheet carries the host CSP nonce.
-- [ ] Further audit fixes, one Work-ID per commit, each with a failing test first.
 - [x] WORK-20261021-05: prerelease-safe GitHub Release and verified stable-docs behavior for an rc tag.
 - [x] WORK-20261021-06: declared public contract, experimental adapter, MySQL exclusion, 0.1-0.4 upgrade coverage.
-- [ ] 1.0 RC preparation: declared public contract, prerelease-safe release workflow, readiness evidence for each 1.0 condition.
+- [x] WORK-20261021-07: `1.0.0.rc1` candidate metadata (`released: false`), What's New in 1.0, Upgrading from 0.4, full local matrix and [readiness record](../evidence/RC1_READINESS.md).
+
+Next owner action: review the public contract and decide D1..D5 in the readiness record. Conditions 2, 5 and 6 remain open; rc1 is not pushed, tagged or published.
 
 Local commits only. No push, tag, publication, provider call or external contact.
 

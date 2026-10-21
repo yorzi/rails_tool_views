@@ -461,3 +461,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 请重点审阅public-contract页面——rc1起这就是冻结清单，列入即承诺。experimental与MySQL排除是路线图规定的默认处理，若要改为支持需另行授权的provider/MySQL证据。无运行时行为变化。
 
 **下一步：** 1.0.0.rc1候选元数据（released:false）、What's New in 1.0、RC准备证据与全矩阵本地验收。
+
+### WORK-20261021-07 — 1.0.0.rc1 本地候选与准备证据
+
+**内容/映射：** ROADMAP 1.0条件1..6、NFR-03。版本改为`1.0.0.rc1`，七个lockfile路径条目同步；docs `version: 1.0.0.rc1`、`released: false`（候选，正式gate应拒绝）；CHANGELOG Unreleased改为`## [1.0.0.rc1] - Unreleased candidate`。新增What's New in 1.0；0.4页面转入Release History（URL不变，/:name/）；Upgrading改为“从0.4升级”，更早版本指向v0.4.0的指南；导航与release history同步。新增`docs/evidence/RC1_READINESS.md`逐条记录1.0条件：1、3（本地）、4满足；2部分、5未开始、6部分。
+
+**复查/验证：** 候选上顺序运行：三组SQLite各134/1162+eager load；PG17.11独立临时库137/1178（已删除并核实）；adapter 7/45及adapter文档示例；Chrome 9/81；实际包host/生成测试；真实0.1.0..0.4.0升级；空GEM_HOME安装/activated audit；七份lock bundle-audit无漏洞；35文件candidate gate PASS，本地SHA9bba50bd…802ed8（非发布校验和）；正式gate按released:false正确拒绝；docs stable0.4/next、3254链接、24篇0错误/2条预期打tag前警告。Ruby4首次因脚本`rvm use 4.0.2`写错失败，改用`rvm ruby-4.0.2 do`重跑并确认RUBY_VERSION 4.0.2后通过，如实记录。
+
+**影响/人工复查：** 先读public-contract（rc1起冻结），再读RC1_READINESS的D1..D5：purge批次饥饿、uncertain无解除路径、无adapter时pending被标skipped、条件2/5/6的证据或例外、发布授权。无schema/runtime依赖变化；main现为未发布候选，稳定文档仍由v0.4.0构建。浏览器/driver/Puma/临时PG已结束，既有PG服务保留。
+
+**下一步：** owner审阅并决定；未授权前不push/tag/发布，不开展外部试用或provider调用。

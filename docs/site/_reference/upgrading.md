@@ -2,7 +2,7 @@
 layout: default
 title: "Upgrading"
 nav_order: 2
-description: "Upgrade from 0.3 while preserving saved state and using fenced delivery acknowledgments."
+description: "Upgrade from 0.4 to the 1.0 candidate without a migration or a change to saved data."
 ---
 
 # {{ page.title }}
@@ -12,32 +12,35 @@ description: "Upgrade from 0.3 while preserving saved state and using fenced del
 
 After reading this guide, you will know:
 
-* Restart delivery workers with the new acknowledgment behavior.
-* Move adapter delivery outside host transactions.
-* Preserve existing data and lifecycle protections.
+* Install the candidate and keep saved data.
+* Update code that rescued raw registration or identifier exceptions.
+* Keep focus, styling and supported versions in view.
 
-## Replace Old Workers
+## Install the Candidate
 
-Stop and drain old web processes and delivery workers before restarting with {{ site.version }}. An old callback does not enforce attempt fencing and can overwrite a newer claim. An expired lease alone does not prove that a worker stopped.
+```ruby
+# Gemfile
+gem "rails_tool_views", "1.0.0.rc1"
+```
 
-There is no new database migration or runtime dependency. Existing Surfaces, action receipts, component digests and delivery keys remain unchanged. Older hosts first follow the [0.3 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.3.0/docs/site/_reference/upgrading.md).
+```sh
+bundle update rails_tool_views
+```
 
-## Deliver After Commit
+A release candidate installs only by exact version. There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 0.4.0 and replays it with {{ site.version }}.
 
-Move `RailsToolViews.deliver` out of any surrounding database transaction. It now raises `DELIVERY_IN_TRANSACTION` before calling the adapter if a transaction is open. Dispatch may still participate in the host transaction. Schedule the host job after commit, and recover committed pending rows if enqueueing fails.
+Hosts on 0.3 or earlier first follow the [0.4 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.4.0/docs/site/_reference/upgrading.md). It covers draining old workers and delivering after commit.
 
-A callback acknowledges only its own attempt. Stale success or failure cannot overwrite a newer claim or emit its terminal notification. The existing `delivery_uncertain` flag remains conservative after takeover. Never clear it based on elapsed time; host reconciliation and quiescence remain required before any manual data repair.
+## Handle Stable Error Codes
 
-## Verify Recovery
+A malformed registration used to raise `NoMethodError`, `KeyError` or `RegexpError`. It now raises `RailsToolViews::Error` during boot: `INVALID_SCHEMA` for an invalid `pattern`, `INVALID_ACTION` for an action definition that is not a Hash or lacks `schema:`, and `INVALID_COMPONENT` for a non-array `expose_to`. Correct registrations behave as before.
 
-Replay a saved action with the original arguments and key. Exercise pending delivery, explicit failed retry, a process exit after the host effect and an expired lease. Confirm that host deduplication produces one business effect with the same delivery key. Recheck authorization and cross-tenant rejection. See [Agent Continuation]({% link _advanced/continuation.md %}).
+An identifier with invalid UTF-8 now raises its own code, such as `INVALID_SCOPE`, instead of `ArgumentError`. `Scope#actor` and `Scope#tenant` return UTF-8 Strings, so a binary-encoded identifier matches its stored row. Values stored in props and state are plain Strings in memory, as they already were after a reload. If your code rescued the old exception classes, rescue `RailsToolViews::Error` and check `code`.
 
-## Review Error Reporting
+## Check the Browser
 
-Handled-error log lines now contain the event and exception class, without raw messages or stack text. If an operator parsed the old line, use the notification metadata and the host-controlled `Rails.error` report instead. That report still receives the original exception; review privacy controls in its subscribers.
+Focus now moves to a Surface's status only after a Turbo replacement. If a test expected focus on the status after a full page load, update it. If you override `app/views/layouts/rails_tool_views/application.html.erb`, keep `nonce: content_security_policy_nonce` on its stylesheet.
 
-## Read Replay Metadata and Optional Notices
+## Review the Contract
 
-`action.executed.rails_tool_views` keeps its name and adds `replayed: false` for a new action and `true` for exact receipt replay. Update strict payload consumers to accept this boolean. Count new execution only when it is false; do not treat notification delivery as a business audit log.
-
-`Transition` adds optional `notice:`. Existing `state["message"]` retains its persistence and meaning. A notice is bounded plain text, displayed for the action response and absent after refresh; the durable receipt retains it for exact replay. JSON responses add `notice` only when supplied. Standard HTML uses scoped Rails flash and the `rails_tool_views_surface` helper. See [Status and Temporary Feedback]({% link _core_features/feedback.md %}).
+Read the [Public Contract]({% link _reference/public-contract.md %}) before relying on a name. The RubyLLM adapter is experimental and may change in a minor release. MySQL is outside the supported matrix; stay on a supported database or run your own migration and concurrency checks.

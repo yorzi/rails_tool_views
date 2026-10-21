@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "What Is New in 0.4"
+parent: "Release History"
 nav_order: 4
 description: "Recover committed follow-up work without letting stale workers overwrite newer delivery attempts."
 ---
