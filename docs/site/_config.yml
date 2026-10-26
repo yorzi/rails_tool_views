@@ -123,6 +123,7 @@ examples: {}
 requirements:
   ruby: "3.3 or later"
   rails: "7.2 up to, but not including, 9"
+  ruby_llm: "2.0 or later"
   ruby_llm_tested: "2.1.0"
 
 # Preserve generated RDoc while Jekyll regenerates the guides during preview.

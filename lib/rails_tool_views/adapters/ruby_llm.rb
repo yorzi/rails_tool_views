@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 # Only this explicitly required file loads RubyLLM.
 require "rails_tool_views"
+# PresentUI needs RubyLLM 2.0's Tool.tool_name and its ToolCall argument to
+# #execute. On 1.x the tool loads but every call is refused, so fail here.
+gem "ruby_llm", ">= 2.0"
 require "ruby_llm"
 
 module RailsToolViews

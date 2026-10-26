@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: the RubyLLM adapter loaded on RubyLLM 1.x, where its tool never worked: 1.x advertises the tool under a class-derived name and never passes the `ToolCall` to `execute`, so every call was refused. Requiring `rails_tool_views/adapters/ruby_llm` now raises `Gem::LoadError` unless RubyLLM 2.0 or later is in the bundle.
+
 ## [1.0.0] - 2026-10-26
 
 Freezes the public contract. From 1.0.0, releases follow Semantic Versioning for every name the Public Contract lists. No migration or runtime dependency; data saved by 0.1.0 through 0.4.0 upgrades unchanged. See the Upgrading guide.

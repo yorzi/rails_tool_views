@@ -17,11 +17,13 @@ After reading this guide, you will know:
 
 ## Load Only When Needed
 
-Add `ruby_llm` to the host Gemfile, then load the adapter explicitly:
+Add `ruby_llm` {{ site.requirements.ruby_llm }} to the host Gemfile, then load the adapter explicitly:
 
 ```ruby
 require "rails_tool_views/adapters/ruby_llm"
 ```
+
+The require raises `Gem::LoadError` when the bundle has no RubyLLM or only RubyLLM 1.x. The tool depends on RubyLLM 2.0 passing the real `ToolCall` to it, so on 1.x every call would be refused.
 
 The core does not require RubyLLM or a provider. The adapter is [experimental]({% link _reference/public-contract.md %}#experimental-parts): it has offline coverage against RubyLLM {{ site.requirements.ruby_llm_tested }}, including a real chat loop, but no live provider has been exercised end to end, and it may change in a minor release. Configure provider credentials through the host's RubyLLM setup, not through RailsToolViews.
 

@@ -115,7 +115,7 @@ The Engine owns four tables with the `rails_tool_views_` prefix. You may query `
 
 ## Experimental Parts
 
-The RubyLLM adapter, loaded with `require "rails_tool_views/adapters/ruby_llm"`, is experimental. It is tested offline against RubyLLM {{ site.requirements.ruby_llm_tested }} through a real chat loop, but no live provider has been exercised end to end. `PresentUI`, `Continuation` and the codes they return (`EMPTY_CATALOG`, `MISSING_TOOL_CALL` and `INVALID_TOOL_CALL`) may change in a minor release. The provider-free core is not affected.
+The RubyLLM adapter, loaded with `require "rails_tool_views/adapters/ruby_llm"`, is experimental. It requires RubyLLM {{ site.requirements.ruby_llm }} and raises `Gem::LoadError` on load otherwise. It is tested offline against RubyLLM {{ site.requirements.ruby_llm_tested }} through a real chat loop, but no live provider has been exercised end to end. `PresentUI`, `Continuation` and the codes they return (`EMPTY_CATALOG`, `MISSING_TOOL_CALL` and `INVALID_TOOL_CALL`) may change in a minor release. The provider-free core is not affected.
 
 ## Supported Versions
 

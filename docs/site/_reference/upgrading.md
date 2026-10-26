@@ -57,4 +57,4 @@ Focus now moves to a Surface's status only after a Turbo replacement. If a test 
 
 ## Review the Contract
 
-Read the [Public Contract]({% link _reference/public-contract.md %}) before relying on a name. The RubyLLM adapter is experimental and may change in a minor release. MySQL is outside the supported matrix; stay on a supported database or run your own migration and concurrency checks.
+Read the [Public Contract]({% link _reference/public-contract.md %}) before relying on a name. The RubyLLM adapter is experimental and may change in a minor release. It now requires RubyLLM {{ site.requirements.ruby_llm }} and raises `Gem::LoadError` on 1.x, where its tool was never callable. MySQL is outside the supported matrix; stay on a supported database or run your own migration and concurrency checks.

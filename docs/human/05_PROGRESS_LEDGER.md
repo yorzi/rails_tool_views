@@ -541,3 +541,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 打开 https://rails-tool-views.wangyaodi.com 、/v0/ 与Release页面核对。条件5与条件6的独立审核/正式处置仍是NOT_MET，由DELTA-008豁免，已在证据与ROADMAP写明。无schema/运行时依赖/provider/外部联系；未启动服务，临时clone/下载/GEM_HOME已删除。
 
 **下一步：** 推送本记录并核对其CI/Docs。不自动开始下一迭代；外部试用、独立安全审核等仍是1.x的开放证据。
+
+### WORK-20261026-03 — RubyLLM适配器拒绝在RubyLLM 1.x上加载
+
+**内容/映射：** FR-03、1.0条件4（适配器声明有界）。owner要求审计gem并确保RubyLLM集成正确。核查RubyLLM真实源码：2.0起`Tool#call(tool_call:, **args)`把ToolCall传给`execute`并使用`Tool.tool_name`；1.0..1.16均为`call(args)`→`execute(**args)`，不传ToolCall，也不认`tool_name`。gemspec不约束可选的ruby_llm，所以1.x host能正常`require`适配器，但工具以类名派生名`rails_tool_views--adapters--ruby_llm--present_ui`暴露，模型调用`present_ui`被RubyLLM拒绝；即使调用长名，也只会得到`MISSING_TOOL_CALL`。适配器在`require "ruby_llm"`前加`gem "ruby_llm", ">= 2.0"`（与Active Record数据库适配器相同的激活检查），不满足时`Gem::LoadError`。文档新增`site.requirements.ruby_llm`，RubyLLM指南、Public Contract、Upgrading与CHANGELOG（Unreleased）同步。同时记录本轮pre-flight、SPEC_BASELINE授权与Current Work。
+
+**复查/验证：** 用真实gem复现：RubyLLM 1.16.0上同一聊天循环，修复前适配器加载成功、工具结果为“unavailable tool `present_ui`”、0个Surface；修复后`require`即抛`Gem::LoadError: can't activate ruby_llm (>= 2.0), already activated ruby_llm-1.16.0`。同一脚本在2.0.0/2.1.0/2.1.1上均创建Surface。适配器测试在2.0.0、2.1.0、2.1.1各7/45通过（2.0.0与2.1.1为本地一次性bundle，CI只锁2.1.0）。无RubyLLM的core bundle改为`Gem::LoadError: ruby_llm is not part of the bundle`，仍是LoadError子类。core 144/1254+eager load、文档示例（core与adapter）通过；docs build（本clone无tag，只构建工作树）1611链接零断链、internal排除PASS（本机需`LANG=C.UTF-8`，否则postprocess脚本按US-ASCII读文件报错，CI不受影响）。1.x回归没有放进CI：需要第二套锁文件安装旧RubyLLM，代价不成比例，以本记录的实测为证据。
+
+**影响/人工复查：** 读`lib/rails_tool_views/adapters/ruby_llm.rb`开头三行与RubyLLM指南“Load Only When Needed”。对1.x host不是功能回退（工具本来不可用），只是从静默失败变为加载期报错；已写入Upgrading。无schema/运行时依赖变化。
+
+**下一步：** WORK-04：demo正确性与可复用的demo配置。
