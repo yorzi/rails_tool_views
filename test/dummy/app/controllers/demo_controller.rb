@@ -12,7 +12,8 @@ class DemoController < ApplicationController
   def lifecycle
     scope = RailsToolViews.configuration.scope_resolver.call(self)
     operation = params[:operation] == "abandon" ? :abandon : :close
-    RailsToolViews.public_send(operation, params[:surface_id], scope: scope, retain_until: 1.day.from_now)
+    # A short deadline lets a visitor watch cleanup become eligible; hosts choose their own.
+    RailsToolViews.public_send(operation, params[:surface_id], scope: scope, retain_until: 1.minute.from_now)
     redirect_to root_path, status: :see_other
   end
   def cleanup

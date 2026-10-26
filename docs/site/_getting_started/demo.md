@@ -14,6 +14,7 @@ After reading this guide, you will know:
 
 * Run and stop the local reference application.
 * Exercise successful actions, validation and role boundaries.
+* Close a view and watch cleanup become eligible.
 * Inspect continuation failure without contacting a provider.
 
 ## Start the workbench
@@ -34,6 +35,10 @@ The application uses deterministic fixtures. It does not send customer messages 
 In **Component playground**, choose **Present ChoiceCard**, select an option, and save it. Refresh to verify that the view retains the selection. **Refresh action log** reloads committed selections; the log is a page-load snapshot, not a live event feed.
 
 **Present in chat** uses the same trusted component with a deterministic host callback. **Render ViewComponent** exercises the optional renderer. **Show empty state** checks a component without options. Each presentation adds a saved view to the current browser session's workspace.
+
+## Close and clean up a view
+
+Choose **Close view** under a saved view. It becomes read-only, and its saved actions can no longer change. **Preview cleanup** reports it as protected, because the demo keeps a closed view's data for one minute. After a minute, preview again and the view is eligible. **Clean eligible views** removes its props, state and action receipts. The view's identity and the business action log remain. Read [Surface Lifecycle]({% link _advanced/lifecycle.md %}) for the deadlines and policies a real host sets.
 
 ## Validate a customer
 

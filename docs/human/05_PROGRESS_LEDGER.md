@@ -551,3 +551,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读`lib/rails_tool_views/adapters/ruby_llm.rb`开头三行与RubyLLM指南“Load Only When Needed”。对1.x host不是功能回退（工具本来不可用），只是从静默失败变为加载期报错；已写入Upgrading。无schema/运行时依赖变化。
 
 **下一步：** WORK-04：demo正确性与可复用的demo配置。
+
+### WORK-20261026-04 — demo：已发布版本标签与可实际观察的清理
+
+**内容/映射：** FR-07（生命周期/保留）、1.0条件2（完整host工作流）。审计发现两处demo与事实不符：(1) 侧栏把已发布的1.0.0标为“Unpublished development preview”，改为与发布状态无关的“Local reference host”；(2) “Close view”以`retain_until: 1.day.from_now`关闭，交互用户在一个会话里永远看不到“Clean eligible views”生效，只有浏览器测试用`travel_to`才能走到清理。改为1分钟期限（代码注释说明这是demo选择，真实host自定），页面文案与Demo指南新增“Close and clean up a view”一节，说明期限、只读、清理移除props/state/receipt而保留身份与业务日志。核心API与默认值不变。
+
+**复查/验证：** Chromium按真实时钟走完：保存选择→关闭→预览“0 eligible”→等待62秒→预览“1 eligible”→应用“1 purged”、“1 cleaned views”。Selenium浏览器套件9/81通过（含原`travel_to`清理测试；本机PATH里的chromedriver 147与Chrome 153不匹配，移出PATH后由Selenium Manager解析驱动）。core 144/1254；docs build 1611链接零断链。
+
+**影响/人工复查：** `bin/demo`后在Component playground关闭一个视图，一分钟后点“Preview cleanup”。仅demo host与指南变化；无schema/依赖/安全影响。
+
+**下一步：** WORK-05：运行真实RubyLLM循环的agent chat demo。

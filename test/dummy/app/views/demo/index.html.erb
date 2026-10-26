@@ -29,7 +29,7 @@
     <% if @effects.empty? %><p class="demo-muted">Waiting for your first selection.</p><% end %>
     <%= link_to "Refresh action log", root_path, data: { turbo: false } %>
     <ol><% @effects.each do |effect| %><li><strong>Selection saved</strong><span><%= effect.value %></span></li><% end %></ol>
-    <h2>Payload retention</h2><p>Close keeps a view read-only for at least one day. Cleanup preserves its identity and business action log.</p>
+    <h2>Payload retention</h2><p>A closed view stays read-only and keeps its saved data for one minute. After that, cleanup removes its data and keeps its identity and the business action log.</p>
     <%= button_to "Preview cleanup", demo_cleanup_path, data: { turbo: false } %>
     <%= button_to "Clean eligible views", demo_cleanup_path, params: { apply: "yes" }, data: { turbo: false } %>
     <p><%= @purged_count %> cleaned views</p>
