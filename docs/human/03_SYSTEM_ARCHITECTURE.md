@@ -16,7 +16,7 @@ Surface 保存 actor/tenant 不透明标识、context 引用、组件摘要、pr
 
 默认拒绝读取/展示/动作；Surface 的 actor+tenant 必须匹配，并再次调用 host policy。source/target 绑定当前 Surface。模型 props 和客户端 policy 文本不能决定业务权限。host 自行解决数据库备份、保留期、敏感数据投影、远端去重与队列。
 
-v1 的业务权威在参考 host 的九张表：DemoStaff、DemoCustomer、DemoTicket、DemoReply、DemoOutboundReply、DemoArtifact、DemoArtifactVersion、DemoExport、DemoAgentReceipt。gem 包不带这些模型/迁移。TicketCard/ResultReview 的 props 只保存记录 ID；resolver 每次检查当前租户和关联，业务 lock_version/current_version 独立于 Surface revision。
+v1 的业务权威在参考 host 的九张表：DemoStaff、DemoCustomer、DemoTicket、DemoReply、DemoOutboundReply、DemoArtifact、DemoArtifactVersion、DemoExport、DemoAgentReceipt。gem 包不带这些模型/迁移。Agent chat demo另有两张demo表（DemoConversation、DemoChatMessage）；需要RubyLLM的代码只在`test/dummy/lib/demo_llm.rb`，仅当bundle含RubyLLM 2.0+时加载，网络由离线Faraday adapter替换，RubyLLM的请求渲染、解析与工具循环保持真实。TicketCard/ResultReview 的 props 只保存记录 ID；resolver 每次检查当前租户和关联，业务 lock_version/current_version 独立于 Surface revision。
 
 ```mermaid
 erDiagram

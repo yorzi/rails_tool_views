@@ -77,3 +77,7 @@ owner授权的远端main/tag CI、OIDC与GitHub/RubyGems发布、公开下载包
 ## 2026-10-26 — 1.0.0 公开交付（owner例外）
 
 owner选择跳过rc1直接发布1.0.0，条件5（外部试用/对照/非dummy使用）与条件6的独立安全审核/正式gate处置以例外豁免（DELTA-008），并非满足。精确main/tag CI、OIDC发布、checksum一致、公开包重装与稳定1.0、/next/、/v0/验收完成。公共契约自此是SemVer承诺：契约变更需要新major，后续发现以1.x修复。详见RELEASE_1_0_0。
+
+## 2026-10-26 — 1.0之后的审计（未发布）
+
+RubyLLM适配器需要RubyLLM 2.0+：1.x不把ToolCall传给工具也不认工具名，适配器加载成功但每次调用都被拒绝，现在改为加载时`Gem::LoadError`。demo新增Agent chat，第一次在运行中的Rails host里走通PresentUI→Surface→动作→Continuation→模型回复；只有网络是脚本化的。默认Rails 8 importmap宿主有了可照做的Stimulus接入步骤。ROADMAP的“After 1.0”把适配器稳定化（live provider证据、组件与props绑定、续接所有权、acts_as_chat）列为1.1提议，并列出三项需要owner决定的默认行为。未发布；1.0公共契约不变。

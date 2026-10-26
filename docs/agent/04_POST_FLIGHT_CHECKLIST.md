@@ -228,3 +228,12 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the tested build; empty GEM_HOME registry install loads without `ruby_llm`. GitHub Release is not a prerelease and is Latest.
 - [x] Stable 1.0, `/next/` and `/v0/` serve over enforced HTTPS with the right install commands and canonicals; internal paths 404.
 - [x] Exception boundaries stated in evidence, ROADMAP, status and acceptance. No server, provider call or external contact; scratch clones, downloads and temporary GEM_HOME removed.
+
+## WORK-20261026-03..07 — post-1.0 audit, RubyLLM demo and roadmap
+
+- [x] Every finding was reproduced before it was fixed: real RubyLLM 1.16.0 chat loop, real-clock demo cleanup, a generated Rails 8.1 importmap host with a no-pin control. New demo tests were mutation-checked (owner check, receipt check, tool attachment).
+- [x] Public 1.0 contract unchanged except the adapter's load-time requirement, which affects only RubyLLM 1.x hosts, where the tool never worked; recorded in CHANGELOG (Unreleased), Upgrading, the RubyLLM guide and the Public Contract's experimental section.
+- [x] No core schema, runtime dependency, migration or lockfile change. Demo tables and RubyLLM-dependent demo code stay in `test/dummy`; the gem package is unchanged in scope (app, config, db, lib).
+- [x] Guides updated in the same commits as the behavior they describe: RubyLLM Integration, Demo Workbench, Getting Started, Upgrading, Public Contract, README, CONTRIBUTING. ROADMAP gains "After 1.0"; status, at-a-glance, feature map, architecture, human changelog, acceptance matrix, RE_ENTRY and Current Work reflect the result.
+- [x] Not run for this work: Ruby 4, Rails 7.2, PostgreSQL, remote CI, live provider. The Selenium flake under Chrome 153 predates the work (base f741646 fails 3/3 full runs) and is recorded as a risk, not fixed.
+- [x] Demo (3100) and verification host (3101) servers, browsers and drivers stopped and verified; scratch hosts and RubyLLM version bundles deleted. Pushed only to `claude/laughing-pasteur-p18ora`; no tag, publication, pull request, provider call or contact.

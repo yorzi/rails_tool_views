@@ -21,6 +21,7 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 | 通用表单反馈 | 有界 ValidationError；422 JSON/HTML/Turbo 保留批准字段 | lib/rails_tool_views/core.rb、SurfacesController |
 | 主应用控制器集成 | 继承认证方法、过滤器与 helper | SurfacesController < ::ApplicationController |
 | 续接业务去重 | 同事务写业务结果与 delivery_key receipt | DemoAgentReceipt、DemoV1::Agent |
+| Agent chat（post-1.0 demo） | 真实RubyLLM::Chat挂载PresentUI、离线Chat Completions transport、transcript重载渲染Surface、Continuation续接、所有权检查与receipt去重 | AgentController、DemoLLM（test/dummy/lib）、DemoConversation/DemoChatMessage、test/adapter/demo_agent_test.rb |
 
 验收边界见 ../agent/08_V1_ACCEPTANCE.md。UC-06..09、真实 provider 与外部发送不在本次范围。
 

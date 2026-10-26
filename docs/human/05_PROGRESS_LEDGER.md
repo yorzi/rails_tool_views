@@ -581,3 +581,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读Getting Started“Enable Turbo Updates”。Sprockets宿主未验证，文档未作声明。无代码/schema/依赖变化。
 
 **下一步：** WORK-07：1.0之后的路线图、状态与验收记录。
+
+### WORK-20261026-07 — 1.0之后的路线图、状态与验收记录
+
+**内容/映射：** owner要求“对尚未准备好的部分更新后续版本路线图”。ROADMAP改名为“Roadmap”，新增“After 1.0”（全部为提议，发布需owner授权，不承诺日期）：`main`上未发布、可作为1.0.1的补丁（适配器版本下限、Agent chat demo、集成与importmap指南），以及发布前先在CI加RubyLLM 2.0.0覆盖；1.1“适配器稳定化”表格列出四个缺口及完成标准（live provider证据、component与props绑定、续接所有权参数、acts_as_chat持久化聊天）；三项需owner决定的默认行为（无adapter时dispatch记skipped、同步auto_deliver、引擎自动importmap pin，改默认值即breaking）；风险（Chrome 153下Selenium既有不稳定、Sprockets未验证、MySQL不支持、条件5/6仍开放）。原有1.0历程降为“Road to 1.0”历史节，内容不变。同步RE_ENTRY（原文仍写“local v1、未发布、无remote”，与事实严重不符）、项目状态、at-a-glance、feature map、架构、human changelog、验收矩阵、post-flight与Current Work。
+
+**复查/验证：** 只改文档。确认无文件链接ROADMAP的锚点；版本化docs build零断链；ledger linkage检查通过。路线图中的每条事实都出自本轮实测或既有ADR/证据（ADR 010、DELTA-008、RELEASE_1_0_0），未写入未验证的provider行为。
+
+**影响/人工复查：** 读ROADMAP“After 1.0”，尤其“Decisions for the owner”三项；读RE_ENTRY与项目状态首段。
+
+**下一步：** owner审阅本轮5个提交与路线图决定；如需发布1.0.1，另行授权（版本号、tag、CI、OIDC）。

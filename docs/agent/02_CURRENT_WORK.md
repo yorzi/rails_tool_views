@@ -3,12 +3,14 @@
 ## Owner-requested post-1.0 audit, demo and roadmap (2026-10-26)
 
 - [x] WORK-20261026-03: the RubyLLM adapter refuses RubyLLM 1.x, where its tool was never callable.
-- [x] WORK-20261026-04: demo correctness (stale preview label, interactive cleanup window) and a reusable demo setup.
-- [x] WORK-20261026-05: an agent-chat demo that runs the real RubyLLM loop offline, with tests and guides.
+- [x] WORK-20261026-04: demo correctness: the published-version label and an interactive cleanup window.
+- [x] WORK-20261026-05: an agent-chat demo that runs the real RubyLLM loop offline, a reusable demo setup, tests and guides.
 - [x] WORK-20261026-06: importmap setup for the Stimulus controller, verified in a generated Rails host.
-- [ ] WORK-20261026-07: roadmap after 1.0, status and acceptance records.
+- [x] WORK-20261026-07: roadmap after 1.0, status and acceptance records.
 
 Branch `claude/laughing-pasteur-p18ora`. No version bump, tag, publication or provider call is authorized.
+
+All five units are committed and pushed. Next: the owner reviews them and the roadmap's "Decisions for the owner", then decides on a 1.0.1 release. The Selenium flake under Chrome 153 predates this work and is recorded in the roadmap.
 
 ## Owner-authorized 1.0.0 release (2026-10-26)
 
