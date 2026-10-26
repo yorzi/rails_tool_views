@@ -571,3 +571,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** `bin/demo`后打开Agent chat，发送消息、选择并保存、刷新；读`test/dummy/lib/demo_llm.rb`与RubyLLM指南“Continue the Chat”。demo不进gem包（gemspec只含app/config/db/lib）。无core schema/运行时依赖变化；demo表只在dummy迁移中。
 
 **下一步：** WORK-06：importmap宿主的Stimulus控制器接入，在生成的Rails host中验证。
+
+### WORK-20261026-06 — importmap宿主的Stimulus控制器接入，在生成的Rails 8.1 host中验证
+
+**内容/映射：** FR-02/04、1.0条件2（宿主集成）。`rails new`默认是importmap+Propshaft+Stimulus，但Getting Started只说“参照dummy布局的Propshaft写法”，dummy用内联module与`asset_path`，默认宿主没有可照做的路径。Getting Started新增“Enable Turbo Updates”一节：先说明无JS表单照常工作，再给`config/importmap.rb`的`pin "rails_tool_views_controller"`和`controllers/index.js`三行注册；说明工厂函数接收宿主的`Controller`因而不会加载第二份Stimulus，修改importmap后需重启，非importmap宿主沿用`asset_path`写法。只改文档，不改Engine（未增加自动pin，避免新增公开行为）。
+
+**复查/验证：** 在scratchpad用`rails _8.1.4_ new`生成默认宿主，运行importmap/turbo/stimulus安装器，以path引用本checkout，执行install与component生成器、迁移，按新文档接入。Chromium：`window.Stimulus`对Surface返回`rails-tool-views`控制器实例；提交后同一document内出现“Saved revision 2”（Turbo Stream替换，无整页加载），焦点移到status，无console错误。对照：删除pin并重启后，浏览器报`Failed to resolve module specifier "rails_tool_views_controller"`且控制器未挂载；恢复后pin解析为引擎的指纹资源`/assets/rails_tool_views_controller-ce8dfbe5.js`。第一次对照未重启，开发期importmap缓存仍含旧映射，误显示已挂载——据此在文档写明需重启。文档示例core通过、版本化docs build零断链。临时宿主端口3101已停止。
+
+**影响/人工复查：** 读Getting Started“Enable Turbo Updates”。Sprockets宿主未验证，文档未作声明。无代码/schema/依赖变化。
+
+**下一步：** WORK-07：1.0之后的路线图、状态与验收记录。

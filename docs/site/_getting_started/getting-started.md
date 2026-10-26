@@ -14,6 +14,7 @@ After reading this guide, you will know:
 
 * Install the engine into a Rails host.
 * Register a trusted view and persist its state.
+* Enable Turbo updates in an importmap application.
 * Resolve identity before accepting browser actions.
 
 ## Install the Engine
@@ -77,7 +78,28 @@ Save this Partial as `app/views/choices/_card.html.erb`:
 <% end %>
 ```
 
-The form helper includes revision, action, component, and replay fields. The host still provides Rails CSRF protection. For enhanced Turbo updates, keep Turbo enabled and register the shipped `rails_tool_views_controller.js` asset with Stimulus as `rails-tool-views`; ordinary forms also work without it. Follow the asset setup in the reference host's `app/views/layouts/application.html.erb` when using Propshaft.
+The form helper includes revision, action, component, and replay fields. The host still provides Rails CSRF protection.
+
+## Enable Turbo Updates
+
+Ordinary forms work without JavaScript: an action redirects back and the page renders the saved state. With Turbo enabled, an action replaces only its Surface. Register the shipped Stimulus controller to add loading feedback, ignore out-of-date replacements and move focus to the result.
+
+In a default Rails 8 application with importmap, pin the controller:
+
+```ruby
+# config/importmap.rb
+pin "rails_tool_views_controller"
+```
+
+Then register it in `app/javascript/controllers/index.js`:
+
+```js
+import { Controller } from "@hotwired/stimulus"
+import railsToolViewsController from "rails_tool_views_controller"
+application.register("rails-tool-views", railsToolViewsController(Controller))
+```
+
+Restart the server after you change `config/importmap.rb`. The asset exports a factory that takes your Stimulus `Controller` class, so the gem never loads a second copy of Stimulus. Without importmap, import the asset from `asset_path("rails_tool_views_controller.js")`, as the demo's `test/dummy/app/views/layouts/application.html.erb` does with Propshaft.
 
 ## Present and Restore
 
