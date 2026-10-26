@@ -1,5 +1,12 @@
 # Current work
 
+## Owner-authorized 1.0.0 release (2026-10-26)
+
+- [x] WORK-20261026-01: owner exception (DELTA-008), 1.0.0 metadata (`released: true`), release history, What's New and Upgrading for stable, final local checks, push and exact main CI/Docs.
+- [ ] WORK-20261026-02: annotated `v1.0.0`, OIDC publication, registry/checksum/Release and stable 1.0, `/next/`, `/v0/` HTTPS acceptance, delivery evidence.
+
+The owner chose 1.0.0 over rc1 and waived conditions 5 and 6's independent review and formal disposition. Runtime is frozen at 8be445d unless a real release failure needs a fix.
+
 ## Owner-requested audit and 1.0 RC preparation (2026-10-21)
 
 - [x] WORK-20261021-01: pre-flight record; focus moves only after a Turbo replacement (browser regression first).
@@ -18,9 +25,7 @@
 - [x] WORK-20261021-11: D2, attested `reconcile_delivery`.
 - [x] WORK-20261021-12: installed-host and upgrade evidence, full matrix, readiness update.
 
-Next owner action: review the public contract and decide D4/D5 in the readiness record. Conditions 5 and 6 remain open; rc1 is not pushed, tagged or published. Conditions 2, 5 and 6 remain open; rc1 is not pushed, tagged or published.
-
-Local commits only. No push, tag, publication, provider call or external contact.
+D4/D5 were decided on 2026-10-26; see the 1.0.0 release section above.
 
 ## Owner-authorized 0.4 delivery
 

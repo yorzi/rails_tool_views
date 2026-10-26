@@ -1,6 +1,6 @@
 # 项目状态
 
-2026-10-21：**1.0.0.rc1 本地候选已准备（未推送/未tag/未发布）；最新公开版本仍为0.4.0。**
+2026-10-26：**owner授权直接发布1.0.0（跳过rc1），1.0条件5与条件6中的独立安全审核/正式gate处置以例外豁免（DELTA-008），并非已满足。** 发布结果以交付证据为准；tag发布前最新公开版本仍为0.4.0。
 
 本轮审计修复5类缺陷（刷新抢焦点、注册错误码、标识符编码/SafeBuffer/digest边界/竞争诊断、CSP nonce、RC会成为GitHub Latest），声明1.0公开契约，RubyLLM适配器标为experimental、MySQL排除出支持矩阵，升级覆盖0.1.0..0.4.0全部已发布版本。随后按owner要求解决D1..D3（ADR 010/DELTA-007）：purge_closed游标分页、host证明的reconcile_delivery、无adapter投递抛AGENT_NOT_CONFIGURED。本地全矩阵通过，详见[RC1准备记录](../evidence/RC1_READINESS.md)。
 
@@ -17,7 +17,7 @@
 
 ## 当前工作与下一步
 
-owner审阅public-contract清单与RC1准备记录中的D4/D5。1.0条件5（外部试用与≥2周非dummy使用）、6（独立安全审核/正式gate/远端CI）仍开放；补齐证据或明确记录例外，并另行授权push/远端CI/tag/发布后才能发布rc1。即时清单见[Current Work](../agent/02_CURRENT_WORK.md)。
+D4/D5已决定：发布1.0.0，条件5/6的外部试用、对照、非dummy使用、独立安全审核与正式gate豁免为owner例外。WORK-20261026-01推送1.0.0元数据并核验精确CI，WORK-02打tag、OIDC发布、核验registry与stable 1.0、/next/、/v0/站点。即时清单见[Current Work](../agent/02_CURRENT_WORK.md)。
 
 升级从0.3无需迁移，必须drain旧web/worker，deliver移到host commit后；更旧版本先执行0.3迁移。fence不等于远端exactly-once，uncertain仍隔离，host负责durable dedup/outbox和reconcile。notice是显示寿命，回执仍保留，不能存秘密。
 

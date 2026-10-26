@@ -65,6 +65,9 @@ D1 (purge batches), D2 (uncertain delivery) and D3 (missing adapter) are resolve
 
 ## Owner decisions before rc1
 
+**Decided 2026-10-26.** The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived as an explicit exception (SPEC_BASELINE, DELTA-008). D4 is an exception, not evidence; D5 is authorized for 1.0.0. The decisions as originally posed:
+
+
 - **D4 Conditions 5 and 6.** Supply external setup trials, the bespoke comparison and two weeks of non-dummy use, an independent security review and the formal-gate disposition, or record an explicit exception for rc1.
 - **D5 Publication.** Push, exact remote CI, `v1.0.0.rc1` tag and OIDC publication each need separate authorization.
 

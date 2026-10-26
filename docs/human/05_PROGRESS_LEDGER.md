@@ -521,3 +521,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 重点读public-contract新增成员与lifecycle“Reconcile an Uncertain Delivery”。条件2按工程host满足，外部adopter属条件5。RC1_READINESS现只剩D4（条件5/6证据或例外）与D5（发布授权）。所有浏览器/driver/Puma/临时PG库已结束并核实为0，既有PG服务保留。
 
 **下一步：** owner审阅并决定D4/D5；未授权前不push/tag/发布。
+
+### WORK-20261026-01 — 1.0.0 授权发布准备（owner例外）
+
+**内容/映射：** Andy要求发布新版本gem并更新文档与站点，并在“rc1+例外 / 1.0.0+例外 / 暂缓”中明确选择直接发布1.0.0。记录D4/D5决定：SPEC_BASELINE授权、DELTA-008（条件5的外部试用/对照/≥2周非dummy使用，与条件6的独立安全审核/正式H2/C/R处置以例外豁免，未满足，不标为满足）、ROADMAP（rc1标为跳过）、发布流程、RC1准备记录、Current Work与状态。版本、六个路径lockfile、`released: true`、CHANGELOG日期、Release History（加1.0.0行，0.4.0归档于`/v0/`）、What's New、Upgrading（`~> 1.0`）和Public Contract改为1.0.0，删除候选措辞。运行时代码冻结于8be445d。
+
+**验证：** core与Rails 7.2各144/1254+eager load，adapter 7/45，实际安装包host（两种渲染器）、0.1.0..0.4.0真实升级、core/adapter文档示例、正式`RELEASE_PACKAGE_PASS`（35文件）、空GEM_HOME安装+activated audit、docs build 3262链接零断链与internal排除均通过。bundle-audit发现开发lockfile中crass 1.0.7（GHSA-pq4g-8rxf-4g29），保守升级到1.0.8后七个lockfile在advisory 03da937a均无漏洞，升级后core/7.2/adapter/包host重跑通过。Ruby 4与PostgreSQL本地未重跑，由tag前精确远端CI覆盖。本地包SHA eea95020f4e2f61c1b921beca9df47f568bb33cdbb0871b29814af846ee79bca，不是发布校验和。
+
+**影响/人工复查：** 读DELTA-008与ROADMAP例外段，确认豁免范围；读Upgrading与What's New的安装指令。crass仅是开发bundle的传递依赖，不进gemspec，不影响host解析，故不写CHANGELOG。无schema/运行时依赖/provider调用。未启动服务。
+
+**下一步：** 推送后等待精确main CI/Docs；通过再打annotated v1.0.0并由OIDC发布。WORK-02记录真实运行、校验和与stable 1.0、/next/、/v0/的HTTPS核验。

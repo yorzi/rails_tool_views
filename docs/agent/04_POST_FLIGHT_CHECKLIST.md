@@ -213,3 +213,11 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] FR-06-AC-03 preserved (dispatch without an agent succeeds); lock order, callback isolation, attempt fence and default-deny kept; no schema, dependency or queue.
 - [x] Public contract, lifecycle, continuation, diagnostics, configuration, Upgrading, What's New, CHANGELOG and readiness record updated; corrected a lifecycle example whose policy wrongly treated the owner scope as an operator.
 - [x] Browsers, drivers, Puma and all temporary PostgreSQL databases stopped/removed and verified (0 remaining); pre-existing PG service retained. No push, tag, publication, provider call or contact.
+
+## WORK-20261026-01 — 1.0.0 release preparation
+
+- [x] Owner decision recorded before metadata changes: SPEC_BASELINE, DELTA-008, ROADMAP, release checklist, readiness record, Current Work and status. Conditions 5 and 6's review and formal disposition are waived, not reported as met.
+- [x] Version, six path lockfiles, `released: true`, CHANGELOG 2026-10-26, release history, What's New, Upgrading and Public Contract name 1.0.0; candidate wording removed.
+- [x] Local checks: core and Rails 7.2 each 144/1254 with eager load, adapter 7/45, package smoke (both renderers), upgrade smoke from 0.1.0..0.4.0, core and adapter docs examples, formal `RELEASE_PACKAGE_PASS` (35 files), empty GEM_HOME install and activated audit, docs build 3262 links with internal records excluded. Ruby 4 and PostgreSQL were not rerun locally; exact remote CI covers them before the tag.
+- [x] `bundle-audit` found GHSA-pq4g-8rxf-4g29 in dev-lockfile `crass` 1.0.7; conservative bump to 1.0.8 in six lockfiles, then all seven clean at advisory 03da937a. Not a runtime or gemspec dependency, so no CHANGELOG entry.
+- [x] Local build SHA-256 eea95020f4e2f61c1b921beca9df47f568bb33cdbb0871b29814af846ee79bca; not the published checksum. No server left running. Next: scratch-clone `v1.0.0` docs layout, push, exact main CI/Docs, then tag (WORK-02).

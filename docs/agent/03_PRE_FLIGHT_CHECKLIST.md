@@ -128,3 +128,11 @@ Base 9887701, clean main, local 1.0.0.rc1 candidate. Owner asks to resolve D1..D
 - Classification: implementation designs inside FR-04/05/06 and NFR-05, recorded in ADR 010; the added public names are an owner-approved contract supplement, DELTA-007, recorded before implementation.
 - Invariants to keep: dispatch without an agent still succeeds (FR-06-AC-03); Surface-then-interaction lock order; callbacks outside transactions; the attempt fence rejects stale acknowledgments; uncertainty never clears on age or status; cursor narrows but never widens a scoped query; default-deny for the new hook; no schema, dependency or queue.
 - Order: decisions (08), D3 (09), D1 (10), D2 (11), real-host and upgrade evidence plus full matrix (12). Failing tests first; stop task-owned processes.
+
+## WORK-20261026-01..02 — owner-authorized 1.0.0 release
+
+Base 8be445d, clean main, already pushed by the owner; its RailsToolViews CI and Docs runs (40254474230, 40254474364) succeeded. Andy requests releasing the new gem version and updating the docs and site, then chooses 1.0.0 stable with an explicit exception over rc1 or holding. Read entrypoint, baseline, status, current work, ROADMAP 1.0 conditions, RC1_READINESS, release checklist, release/docs workflows, build.sh and prepare_versions.rb. `docs/specs` is the tracked pinned copy, unchanged since 57edc3e, and is not edited. Tags end at v0.4.0; v1.0.0 is unused.
+
+- Classification: RELEASE_GATE_EXCEPTION (DELTA-008) for conditions 5 and 6's independent review and formal disposition; no runtime, API, schema or dependency change. Runtime frozen at 8be445d.
+- First major tag: build.sh will build v1.0.0 at `/`, the working tree at `/next/` and v0.4.0 at `/v0/`. Verify in a scratch clone with a local tag before pushing the real tag.
+- WORK-01 sets version, lockfiles, `released: true`, changelog date, history, What's New and Upgrading, runs the release checklist locally, commits and pushes; exact main CI/Docs must pass before the tag. WORK-02 records actual runs, checksums and hosted results. Stop every task-created process.

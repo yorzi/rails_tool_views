@@ -19,10 +19,10 @@ After reading this guide, you will know:
 ## Rely on a Frozen Contract
 
 ```ruby
-gem "rails_tool_views", "1.0.0.rc1"
+gem "rails_tool_views", "~> 1.0"
 ```
 
-The candidate freezes the [Public Contract]({% link _reference/public-contract.md %}): the Ruby API, error codes and statuses, helpers, HTTP fields, browser identifiers, events, delivery keys and saved data. From 1.0.0, only a major release removes or changes a listed name. A candidate installs only by exact version.
+1.0 freezes the [Public Contract]({% link _reference/public-contract.md %}): the Ruby API, error codes and statuses, helpers, HTTP fields, browser identifiers, events, delivery keys and saved data. From 1.0.0, only a major release removes or changes a listed name.
 
 The RubyLLM adapter is experimental and may change in a minor release. MySQL is outside the supported matrix. SQLite and PostgreSQL remain supported on Ruby 3.3 and 4.0 with Rails 7.2 and 8.1.
 

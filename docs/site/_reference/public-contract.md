@@ -20,7 +20,7 @@ After reading this guide, you will know:
 
 Your host code, saved data and browser markup depend on names the gem chooses. This page lists those names. From 1.0.0 they follow [Semantic Versioning](https://semver.org/): a patch release fixes behavior, a minor release only adds, and only a major release removes or changes a listed name. A deprecated name keeps working for at least one minor release and is listed in [Upgrading]({% link _reference/upgrading.md %}) before a major release removes it.
 
-The contract is frozen from 1.0.0.rc1. A later candidate may change it only to fix a defect, and that candidate repeats the affected checks. Anything not listed here is internal and may change in any release. That includes code marked `:nodoc:`, code absent from the [API Reference]({% link _reference/api-reference.md %}), private methods, `RailsToolViews::Data`, the Engine controller class and the Engine's own partials.
+The contract is frozen from 1.0.0. Anything not listed here is internal and may change in any release. That includes code marked `:nodoc:`, code absent from the [API Reference]({% link _reference/api-reference.md %}), private methods, `RailsToolViews::Data`, the Engine controller class and the Engine's own partials.
 
 The guides own behavior. This page names what is stable and links to the guide that explains it.
 

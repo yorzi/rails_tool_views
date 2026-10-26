@@ -2,7 +2,7 @@
 layout: default
 title: "Upgrading"
 nav_order: 2
-description: "Upgrade from 0.4 to the 1.0 candidate without a migration or a change to saved data."
+description: "Upgrade from 0.4 to 1.0 without a migration or a change to saved data."
 ---
 
 # {{ page.title }}
@@ -12,24 +12,24 @@ description: "Upgrade from 0.4 to the 1.0 candidate without a migration or a cha
 
 After reading this guide, you will know:
 
-* Install the candidate and keep saved data.
+* Install 1.0 and keep saved data.
 * Update code that rescued raw registration or identifier exceptions.
 * Configure every delivery worker with its adapter.
 * Resolve uncertain deliveries and page through cleanup.
 * Keep focus, styling and supported versions in view.
 
-## Install the Candidate
+## Install 1.0
 
 ```ruby
 # Gemfile
-gem "rails_tool_views", "1.0.0.rc1"
+gem "rails_tool_views", "~> 1.0"
 ```
 
 ```sh
 bundle update rails_tool_views
 ```
 
-A release candidate installs only by exact version. There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 0.4.0 and replays it with {{ site.version }}.
+There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 0.4.0 and replays it with {{ site.version }}.
 
 Hosts on 0.3 or earlier first follow the [0.4 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.4.0/docs/site/_reference/upgrading.md). It covers draining old workers and delivering after commit.
 

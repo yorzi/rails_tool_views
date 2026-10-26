@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**1.0.0.rc1 prepared locally, 2026-10-21; 0.4.0 is the latest published release.** The candidate on `main` declares the [public contract](docs/site/_reference/public-contract.md) and carries audit fixes. It also settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). Its [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met and conditions 5 and 6 open, so rc1 is not tagged or published. Versions 0.1.0 through0.4.0 are published. Owner-authorized0.4 candidate/tag CI, OIDC publication and registry/hosted verification are complete; see [delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Reassess each version using feedback from the previous one; dates are not promised.
+**1.0.0 is being released under an owner exception, 2026-10-26; 0.4.0 is the latest published release until the tag publishes.** 1.0.0 declares the [public contract](docs/site/_reference/public-contract.md), carries the audit fixes and settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). The [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met. The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived rather than met (DELTA-008). Versions 0.1.0 through 0.4.0 are published; see [0.4 delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -17,10 +17,10 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 | 0.2.0 | Easier integration | Component generator; complete HTML error feedback | Fresh host: install, author, render, correct an error and restore |
 | 0.3.0 | Controlled lifecycle | Explicit lifecycle rules; opt-in retention tooling | Safe cleanup, replay/continuation protection and upgrade coverage |
 | 0.4.0 | Reliable operation | Continuation recovery, diagnostics and UI feedback | Real host recovers failures without duplicate effects or leaked data |
-| 1.0.0.rc1 | Frozen contract | Upgrade, independent review and setup trials | All 1.0 conditions below are evidenced |
+| 1.0.0.rc1 | Frozen contract | Skipped by owner decision, 2026-10-26 | Conditions 5 and 6 waived for 1.0.0 (DELTA-008) |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is0.4.0; future publication needs separate authorization.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 0.4.0 until v1.0.0 publishes; future publication needs separate authorization.
 
 ## 0.2.0: two small improvements
 
@@ -64,7 +64,9 @@ The published `purge_closed` implementation uses explicit scope/cutoff, dry-run 
 
 At rc1, freeze features and prefer fixes. Observe the non-dummy host for at least two weeks, including normal use, restart and recovery; elapsed time alone is not acceptance. A contract change needs another candidate and affected checks.
 
-Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish0.4.0 does not authorize future releases.
+Use RubyGems version `1.0.0.rc1` and matching tag `v1.0.0.rc1`. Before the first RC, mark its GitHub Release as a prerelease in the workflow and verify it does not replace stable docs or the latest stable release. Publish 1.0 only after the conditions and owner authorization; permission to publish 0.4.0 does not authorize future releases.
+
+**Owner exception, 2026-10-26.** The owner authorized 1.0.0 directly, without rc1. Conditions 5 and 6's independent security review and formal baseline disposition are waived for 1.0.0, not met (DELTA-008). They remain the open evidence for 1.x: setup trials, a bespoke comparison and non-dummy use may still narrow scope, and review findings ship as fixes. A finding that needs a contract change waits for a planned major.
 
 ## Outside 1.0
 
