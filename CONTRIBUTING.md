@@ -9,6 +9,8 @@ bundle install
 bin/check
 ```
 
+The adapter checks and `bin/demo` run on `gemfiles/adapter.gemfile`, which adds RubyLLM. `bin/demo` installs it; for `bin/check`, run `BUNDLE_GEMFILE=gemfiles/adapter.gemfile bundle install` once. Code that needs RubyLLM stays out of the core: the demo keeps it in `test/dummy/lib/demo_llm.rb` and loads it only when the bundle has RubyLLM.
+
 For browser changes, install `BUNDLE_GEMFILE=gemfiles/browser.gemfile bundle install` and run `bin/check --browser`. Chrome is required; Selenium manages its driver. Fixture screenshots are written under `tmp/browser/`. Follow [the agent verification loop](docs/operations/03_AGENT_VALIDATION.md) for browser review and isolated installation.
 
 Run database-backed suites sequentially because they share the dummy test database. Reproduce behavior through the public API, cover successful and rejected requests, and run the relevant [compatibility and package checks](docs/operations/02_RELEASE_CHECKLIST.md). Offline fixtures do not prove live-provider behavior.

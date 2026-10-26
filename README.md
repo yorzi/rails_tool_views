@@ -21,11 +21,10 @@ Continue with [Getting Started](https://rails-tool-views.wangyaodi.com/getting-s
 From this checkout:
 
 ```sh
-bundle install
 bin/demo
 ```
 
-Open http://127.0.0.1:3100 and stop with Ctrl-C. The demo covers choices, customer forms, support and content review using offline fixtures. See the [walkthrough](https://rails-tool-views.wangyaodi.com/demo/).
+Open http://127.0.0.1:3100 and stop with Ctrl-C. The demo covers choices, customer forms, support, content review and an agent chat that runs RubyLLM's real tool loop, all on offline fixtures. See the [walkthrough](https://rails-tool-views.wangyaodi.com/demo/).
 
 ## Contribute
 

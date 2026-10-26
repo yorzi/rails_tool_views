@@ -2,7 +2,7 @@
 layout: default
 title: "Demo Workbench"
 nav_order: 4
-description: "Explore persistent components and host-owned workflows with offline fixtures."
+description: "Explore persistent components, host-owned workflows and a RubyLLM agent chat with offline fixtures."
 ---
 
 # {{ page.title }}
@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Run and stop the local reference application.
 * Exercise successful actions, validation and role boundaries.
 * Close a view and watch cleanup become eligible.
+* Watch a RubyLLM chat present a view and continue from your choice.
 * Inspect continuation failure without contacting a provider.
 
 ## Start the workbench
@@ -22,11 +23,10 @@ After reading this guide, you will know:
 From the repository root, run:
 
 ```sh
-bundle install
 bin/demo
 ```
 
-Open `http://127.0.0.1:3100`. The server binds to loopback. Use `Ctrl-C` to stop it when finished. The default local SQLite database preserves completed work across restarts. If the port is occupied, run `PORT=3197 bin/demo` and open `http://127.0.0.1:3197`.
+The first run installs the demo bundle from `gemfiles/adapter.gemfile`, which adds RubyLLM to the core dependencies. Open `http://127.0.0.1:3100`. The server binds to loopback. Use `Ctrl-C` to stop it when finished. The default local SQLite database preserves completed work across restarts. If the port is occupied, run `PORT=3197 bin/demo` and open `http://127.0.0.1:3197`.
 
 The application uses deterministic fixtures. It does not send customer messages or call an AI provider. Synthetic identity switching is a testing aid, not production authentication.
 
@@ -39,6 +39,14 @@ In **Component playground**, choose **Present ChoiceCard**, select an option, an
 ## Close and clean up a view
 
 Choose **Close view** under a saved view. It becomes read-only, and its saved actions can no longer change. **Preview cleanup** reports it as protected, because the demo keeps a closed view's data for one minute. After a minute, preview again and the view is eligible. **Clean eligible views** removes its props, state and action receipts. The view's identity and the business action log remain. Read [Surface Lifecycle]({% link _advanced/lifecycle.md %}) for the deadlines and policies a real host sets.
+
+## Talk to an agent
+
+Open **Agent chat** and ask for help, for example "Help me choose the next step". The model calls the `present_ui` tool, and the transcript shows the trusted ChoiceCard it presented. Choose a workflow and save. Your choice returns to the same chat as a new user turn, and the model answers below it. Reload the page: the transcript, the saved selection and the reply remain.
+
+The chat is a real `RubyLLM::Chat`. RubyLLM renders the OpenAI Chat Completions request, parses the tool call, passes the `ToolCall` to `PresentUI` and runs the follow-up through `Continuation`. Only the network is replaced: an offline transport answers in the provider's format, so no API key is needed. Read [RubyLLM Integration]({% link _advanced/ruby-llm.md %}) for the same wiring in your host.
+
+To try a live OpenAI model with your own key, set `OPENAI_API_KEY` in your shell, then start the demo with `RAILS_TOOL_VIEWS_DEMO_LLM=openai bin/demo`. `RAILS_TOOL_VIEWS_DEMO_MODEL` chooses the model. The project does not test live mode, and each message and each follow-up is a paid request.
 
 ## Validate a customer
 

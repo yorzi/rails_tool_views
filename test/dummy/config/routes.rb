@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   post "demo/present", to: "demo#create", as: :demo_present
   post "demo/lifecycle", to: "demo#lifecycle", as: :demo_lifecycle
   post "demo/cleanup", to: "demo#cleanup", as: :demo_cleanup
+  get "agent", to: "agent#show", as: :agent
+  post "agent/messages", to: "agent#create", as: :agent_messages
+  post "agent/conversations", to: "agent#restart", as: :agent_conversations
   get "v1", to: "v1/demo#support"
   get "v1/customer", to: "v1/demo#customer", as: :v1_customer
   post "v1/customer/new", to: "v1/demo#new_customer", as: :v1_new_customer

@@ -1,0 +1,47 @@
+<header class="demo-header"><p class="demo-eyebrow">05 / AGENT CHAT</p><h1>A model proposes.<br>Your Rails app decides.</h1><p class="demo-lead">A real RubyLLM chat calls the <code>present_ui</code> tool. The view it presents is a trusted Partial, and your choice returns to the chat as a new turn.</p></header>
+<% if flash[:alert] %><p class="agent-alert" role="alert"><%= flash[:alert] %></p><% end %>
+<% unless @available %>
+  <div class="demo-empty"><span class="section-kicker">RUBYLLM NOT LOADED</span><h2>This page needs the RubyLLM bundle.</h2><p>Start the demo with <code>bin/demo</code>, which uses <code>gemfiles/adapter.gemfile</code> and RubyLLM 2.0 or later.</p></div>
+<% else %>
+<div class="agent-grid">
+  <section class="agent-chat" aria-label="Conversation">
+    <% messages = @conversation ? @conversation.messages.to_a : [] %>
+    <% if messages.empty? %>
+      <div class="demo-empty"><span class="empty-art" aria-hidden="true">✦</span><span class="section-kicker">START A CONVERSATION</span><h2>Ask for help with a decision.</h2><p>Try “Help me choose the next step”. The model answers with an interactive view instead of a wall of text.</p></div>
+    <% end %>
+    <ol class="agent-transcript">
+      <% messages.each do |message| %>
+        <% if (payload = message.continuation) %>
+          <li class="agent-turn agent-turn-follow-up"><span class="section-kicker">YOUR CHOICE, SENT AS A NEW USER TURN</span><pre><code><%= JSON.pretty_generate(payload) %></code></pre></li>
+        <% elsif message.role == "user" %>
+          <li class="agent-turn agent-turn-user"><span class="section-kicker">YOU</span><p><%= message.content %></p></li>
+        <% elsif message.role == "assistant" && message.tool_calls.present? %>
+          <% message.tool_calls.each_value do |call| %>
+            <li class="agent-turn agent-turn-tool-call"><span class="section-kicker">MODEL CALLED <%= call["name"] %></span><p>Component <code><%= call.dig("arguments", "component") %></code> with props the application validates before saving.</p></li>
+          <% end %>
+        <% elsif message.role == "assistant" %>
+          <li class="agent-turn agent-turn-model"><span class="section-kicker">MODEL</span><p><%= message.content %></p></li>
+        <% elsif (surface_id = message.presented_surface_id) && (surface = RailsToolViews::Surface.find_by(id: surface_id)) %>
+          <%# Full-page forms return here, so the follow-up reply appears with the saved view. %>
+          <li class="agent-turn agent-turn-view" data-turbo="false"><%= rails_tool_views_surface(surface, scope: @scope) %></li>
+        <% else %>
+          <li class="agent-turn agent-turn-tool-call"><span class="section-kicker">TOOL RESULT</span><pre><code><%= message.content %></code></pre></li>
+        <% end %>
+      <% end %>
+    </ol>
+    <%= form_with url: agent_messages_path, method: :post, class: "agent-composer" do %>
+      <%= label_tag :message, "Message" %>
+      <%= text_field_tag :message, nil, maxlength: AgentController::MESSAGE_LIMIT, required: true, autocomplete: "off", placeholder: "Help me choose the next step" %>
+      <button type="submit">Send</button>
+    <% end %>
+  </section>
+  <aside class="demo-log" aria-label="How this works">
+    <span class="section-kicker">WHAT IS REAL</span><h2>One RubyLLM chat loop</h2>
+    <p>RubyLLM renders the OpenAI Chat Completions request, parses the tool call and passes the real <code>ToolCall</code> to <code>PresentUI</code>. Your choice reaches the chat through <code>Continuation</code>, once per delivery key.</p>
+    <h2>What is scripted</h2>
+    <p><% if DemoLLM.live? %>Live mode: requests go to OpenAI with your own key, model <code><%= DemoLLM.model %></code>.<% else %>Only the network. An offline transport answers in the provider's format, so no API key is needed.<% end %></p>
+    <%= button_to "Start a new conversation", agent_conversations_path %>
+    <p class="demo-note">The model may propose any props. The closed schema and the action policy decide what is saved and which options can be chosen.</p>
+  </aside>
+</div>
+<% end %>

@@ -561,3 +561,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** `bin/demo`后在Component playground关闭一个视图，一分钟后点“Preview cleanup”。仅demo host与指南变化；无schema/依赖/安全影响。
 
 **下一步：** WORK-05：运行真实RubyLLM循环的agent chat demo。
+
+### WORK-20261026-05 — demo新增运行真实RubyLLM循环的Agent chat
+
+**内容/映射：** FR-03/06、1.0条件2/4。owner要求demo能正确测试和演示RubyLLM与Rails集成；审计发现demo的“Present in chat”只调用普通lambda，`PresentUI`与`Continuation`从未在运行中的Rails host里执行。新增“05 Agent chat”：真实`RubyLLM::Chat`（OpenAI provider，Chat Completions协议）挂载`PresentUI`；只替换网络——注册为Faraday adapter的离线transport按OpenAI格式应答，所以请求渲染、工具schema序列化、tool call解析、ToolCall传入`execute`、工具结果与`Continuation`的新user turn全部走RubyLLM真实代码。transcript存于demo专用表`demo_conversations/demo_chat_messages`（不依赖acts_as_chat的schema），一轮成功后才持久化；工具结果中的surface_id在重载后以当前scope渲染Surface。续接adapter先按host数据核对会话属于Surface的actor/tenant，再以`DemoAgentReceipt`与transcript同事务去重。playground配置抽到`DemoSetup`（行为不变），供测试复用；`bin/demo`改用`gemfiles/adapter.gemfile`并自动安装；核心Gemfile下demo其余部分照常运行（RubyLLM代码只在`test/dummy/lib/demo_llm.rb`，按需require）。可选live模式只读owner自己的环境变量，本项目未运行。RubyLLM指南新增挂载工具、渲染已呈现视图、带所有权检查和去重的续接示例；Demo指南、README、CONTRIBUTING、CHANGELOG同步。
+
+**复查/验证：** 新增`test/adapter/demo_agent_test.rb` 5个集成测试：完整循环（provider收到的工具名/enum、PresentUI schema未加strict、presentation关联call_demo_2、transcript角色序列、HTML动作后interaction completed、receipt、回复内容与重载渲染）；重复投递不增消息；模型编造的选项可显示但选择被403拒绝且无interaction；他人会话不能接收续接（failed/AGENT_UNAVAILABLE、对方transcript为空）；模型请求失败不存任何消息并提示。三个变异（去所有权检查/去receipt检查/不挂工具）均使测试失败。adapter 12/83（原7/45）、core 144/1254+eager load（两套bundle的zeitwerk均通过）、文档示例core/adapter、package smoke、真实0.1.0..0.4.0升级smoke均通过；拉取tag并装rsync后版本化docs build（v1.0.0在/、工作树在/next/、v0.4.0在/v0/）5123链接零断链，新节只出现在/next/。Chromium实测：发送→present_ui→选择→续接回复→重载6条消息，无console错误，390px宽无横向滚动。Selenium套件4次全量运行2次9/81、2次各1个“Node with given id does not belong to the document”错误；改动前基线`f741646`全量3次均同样出错（不同测试），单测各5/5通过，属本机Chrome 153与Selenium驱动的既有不稳定，非本改动引入，未改测试。
+
+**影响/人工复查：** `bin/demo`后打开Agent chat，发送消息、选择并保存、刷新；读`test/dummy/lib/demo_llm.rb`与RubyLLM指南“Continue the Chat”。demo不进gem包（gemspec只含app/config/db/lib）。无core schema/运行时依赖变化；demo表只在dummy迁移中。
+
+**下一步：** WORK-06：importmap宿主的Stimulus控制器接入，在生成的Rails host中验证。

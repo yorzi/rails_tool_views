@@ -13,7 +13,7 @@ class ActiveSupport::TestCase
   self.use_transactional_tests = false
   setup do
     [RailsToolViews::AgentInteraction, RailsToolViews::ActionExecution, RailsToolViews::Presentation, RailsToolViews::Surface, DemoEffect,
-      DemoAgentReceipt, DemoOutboundReply, DemoReply, DemoTicket, DemoExport, DemoArtifactVersion, DemoArtifact, DemoCustomer, DemoStaff].each(&:delete_all)
+      DemoAgentReceipt, DemoOutboundReply, DemoReply, DemoTicket, DemoExport, DemoArtifactVersion, DemoArtifact, DemoCustomer, DemoStaff, DemoChatMessage, DemoConversation].each(&:delete_all)
     RailsToolViews.reset!
     register_card
   end
