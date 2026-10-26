@@ -172,3 +172,7 @@ FR-04/05/06/07/08, NFR-03/05 RELEASE_PASS: immutable v1.0.0→5ded407; main CI 4
 ## WORK-20261026-03..07 — post-1.0 audit (unreleased, branch claude/laughing-pasteur-p18ora)
 
 FR-02/03/04/06/07, 1.0 conditions 2 and 4 LOCAL_PASS on Ruby 3.3.6 / Rails 8.1.4 SQLite: core 144/1254 with eager load (core and adapter bundles), adapter 12/83 including five demo agent-chat integration tests (three mutations caught), docs examples core/adapter, package smoke, real 0.1.0..0.4.0 upgrades, versioned docs build 5123 links. RubyLLM adapter: real 1.16.0 now refuses to load (before: tool refused at runtime, 0 Surfaces); 2.0.0/2.1.0/2.1.1 present a Surface; adapter suite 7/45 on each. Chromium: agent chat present/act/continue/reload, real-clock cleanup after the one-minute demo deadline, generated Rails 8.1 importmap host attaches the controller and saves via Turbo Stream (control without pin fails to resolve). Selenium 9/81 in 2 of 4 runs; the intermittent Chrome 153 inspector error also occurs on base f741646 (3/3 runs). Ruby 4, Rails 7.2, PostgreSQL, remote CI, live provider: NOT_RUN for this work.
+
+## WORK-20261026-08 — browser suite on Chrome 153+
+
+Branch CI run 40325055783 failed only its browser job on Chrome 155 with chromedriver's "Node with given id does not belong to the document" UnknownError inside Capybara's visibility check. Mapping that error to StaleElementReferenceError in test/browser_test_helper.rb restores Capybara's retry: local full suite 5/5 runs at 9/81 (before: base f741646 0/3, branch 2/4). Test-only change.

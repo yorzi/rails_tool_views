@@ -15,6 +15,19 @@ module RailsToolViewsLoopbackPortProbe
 end
 Selenium::WebDriver::PortProber.singleton_class.prepend(RailsToolViewsLoopbackPortProbe)
 
+# Since Chrome 153, chromedriver reports an element that a page load replaced
+# as an unknown inspector error instead of a stale reference, so Capybara stops
+# instead of finding the element again. Report it as the stale reference it is.
+module RailsToolViewsStaleNodeError
+  def error
+    failure = super
+    return failure unless failure.is_a?(Selenium::WebDriver::Error::UnknownError) &&
+      failure.message.include?("Node with given id does not belong to the document")
+    Selenium::WebDriver::Error::StaleElementReferenceError.new(failure.message)
+  end
+end
+Selenium::WebDriver::Remote::Response.prepend(RailsToolViewsStaleNodeError)
+
 Capybara.app = Rails.application
 Capybara.server = :puma, { Silent: true }
 Capybara.server_host = "127.0.0.1"

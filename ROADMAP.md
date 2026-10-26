@@ -39,7 +39,7 @@ These trade-offs came up in the audit. Each is a documented 1.0 behavior, so cha
 
 ### Risks to watch
 
-- The Selenium browser suite fails intermittently with Chrome 153 here ("Node with given id does not belong to the document"). It fails the same way on the 1.0.0 commit, so it predates the audit; the 1.0.0 release CI passed on its Chrome. Check the CI Chrome version before GitHub's runners move.
+- Since Chrome 153, chromedriver reports an element replaced by a page load as an unknown error, which broke Capybara's retry and made the browser suite fail intermittently, on the 1.0.0 commit and on CI's Chrome 155 alike. The browser test helper now maps that error back to a stale reference. Watch for other chromedriver changes when runners update Chrome.
 - Sprockets hosts are unverified. MySQL stays outside the supported matrix.
 - 1.0 conditions 5 and 6 stay open under DELTA-008: external setup trials, the bespoke comparison, non-dummy use, an independent security review and the formal baseline disposition.
 

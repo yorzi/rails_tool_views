@@ -591,3 +591,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读ROADMAP“After 1.0”，尤其“Decisions for the owner”三项；读RE_ENTRY与项目状态首段。
 
 **下一步：** owner审阅本轮5个提交与路线图决定；如需发布1.0.1，另行授权（版本号、tag、CI、OIDC）。
+
+### WORK-20261026-08 — 浏览器套件在Chrome 153+上恢复Capybara重试
+
+**内容/映射：** 测试基础设施维护。推送后分支CI（run 40325055783）只有browser job失败：Chrome 155上`temporary feedback ... no_js`报`unknown error: Node with given id does not belong to the document`。栈显示发生在Capybara选择器的可见性检查：刷新替换了元素，旧版chromedriver报`StaleElementReferenceError`（Capybara在synchronize里重试），新版改报`UnknownError`，Capybara直接失败。本机Chrome 153在改动前的1.0.0提交上全量3/3都失败，说明不是本轮代码引入，而是runner浏览器升级后必然出现的红灯。在`test/browser_test_helper.rb`为`Selenium::WebDriver::Remote::Response#error`加prepend，只把这一条消息映射回stale reference，其余错误不变。路线图的风险条目改为已处理。
+
+**复查/验证：** 修复后本机全量浏览器套件连续5次均9/81（修复前：基线0/3，分支2/4）。只改测试helper，不涉及gem或demo代码。推送后以分支CI确认。
+
+**影响/人工复查：** 读`test/browser_test_helper.rb`新增模块。若以后chromedriver对其他情形也改用UnknownError，需要按同样方式核实后再映射，不应扩大为吞掉所有UnknownError。
+
+**下一步：** 推送并确认分支CI全绿；owner审阅后决定是否发布1.0.1。
