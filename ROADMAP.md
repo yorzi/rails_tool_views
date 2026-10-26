@@ -1,6 +1,6 @@
 # Road to 1.0
 
-**1.0.0 is being released under an owner exception, 2026-10-26; 0.4.0 is the latest published release until the tag publishes.** 1.0.0 declares the [public contract](docs/site/_reference/public-contract.md), carries the audit fixes and settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). The [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met. The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived rather than met (DELTA-008). Versions 0.1.0 through 0.4.0 are published; see [0.4 delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Dates are not promised.
+**1.0.0 is published, 2026-10-26, under an owner exception.** See [delivery evidence](docs/evidence/RELEASE_1_0_0.md). 1.0.0 declares the [public contract](docs/site/_reference/public-contract.md), carries the audit fixes and settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). The [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met. The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived rather than met (DELTA-008). Versions 0.1.0 through 0.4.0 are published; see [0.4 delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -20,7 +20,7 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 | 1.0.0.rc1 | Frozen contract | Skipped by owner decision, 2026-10-26 | Conditions 5 and 6 waived for 1.0.0 (DELTA-008) |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 0.4.0 until v1.0.0 publishes; future publication needs separate authorization.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 1.0.0; future publication needs separate authorization.
 
 ## 0.2.0: two small improvements
 

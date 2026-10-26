@@ -38,3 +38,7 @@ WORK-20261019-01 lifecycle/migration and Surface-first delivery coordination →
 ## Owner-authorized 0.4 local sequence
 
 WORK-20261020-01 attempt-fenced recovery/host job and crash boundary → WORK-02 metadata-only ordinary diagnostics/browser feedback → explicit DELTA-006 owner choices → WORK-03 additive replayed/notice and upgrade/installed-host fixtures → WORK-04 supported matrix/PG/browser/isolated/audit/docs acceptance. No new schema/dependency/queue. Completed locally; V0_4_VALIDATION records outcomes and remaining1.0 evidence limits. Owner subsequently authorized release; WORK-05..06 verifies exact remote CI/OIDC/registry/Pages and records delivery in RELEASE_0_4_0.
+
+## Owner-authorized 1.0.0 release
+
+WORK-20261026-01 owner exception (DELTA-008), 1.0.0 metadata/docs and exact candidate CI → WORK-02 annotated v1.0.0, OIDC publication and hosted acceptance. Runtime unchanged from 8be445d. Evidence: ../evidence/RELEASE_1_0_0.md.

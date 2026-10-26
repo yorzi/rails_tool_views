@@ -6,7 +6,7 @@ The owner authorized the first public `rails_tool_views` release as **0.1.0** on
 
 Andy explicitly authorizes the 0.2.0 candidate push, remote CI and publication on 2026-10-18. Work proceeds without repeating that approval; 0.2.0 delivery is complete; [actual evidence](../evidence/RELEASE_0_2_0.md) records the exact commit, runs and checksum. The v0.1.0 tag remains immutable.
 
-Andy explicitly authorizes 1.0.0 push, exact remote CI, `v1.0.0`, OIDC publication and docs on 2026-10-26, choosing 1.0.0 over rc1 with ROADMAP conditions 5 and 6's independent review and formal disposition waived (DELTA-008). The 1.0 tag makes 0.4.0 the archived 0.x site at `/v0/`.
+Andy explicitly authorizes 1.0.0 push, exact remote CI, `v1.0.0`, OIDC publication and docs on 2026-10-26, choosing 1.0.0 over rc1 with ROADMAP conditions 5 and 6's independent review and formal disposition waived (DELTA-008). The 1.0 tag makes 0.4.0 the archived 0.x site at `/v0/`. Delivery is verified; [actual evidence](../evidence/RELEASE_1_0_0.md) records the tag, runs, checksums and hosted checks.
 
 Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. 0.3 delivery is verified; [actual evidence](../evidence/RELEASE_0_3_0.md) records the immutable tag, remote runs, published checksums and hosted checks. Prior tags remain immutable.
 

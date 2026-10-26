@@ -37,3 +37,7 @@ v1 是主应用参考实现，未把客户/工单/创作业务加入 gem：
 WORK-20261020-03：action.executed 增加 replayed 布尔；Transition.notice 是≤500bytes的响应反馈，JSON/Turbo直接返回，HTML由匹配Surface/actor/tenant的Rails flash显示一次。Surface state/snapshot无notice，回执保留同一响应以便精确重放，现有state.message不变。
 
 0.4完整本地验收已完成，见 ../evidence/V0_4_VALIDATION.md；包含真实0.2/0.3升级（旧closed/purged guard）、三个installed host与空GEM_HOME、PG真实竞争和Chrome8场景。公共版本已是0.4；精确远端/registry/Pages证据见 ../evidence/RELEASE_0_4_0.md。
+
+## 1.0 已发布
+
+声明公共契约（Ruby API、错误码/状态、helper、HTTP字段、DOM/Stimulus、事件、delivery key、持久数据）；新增host证明的`reconcile_delivery`与默认拒绝的`reconciliation_policy`，`purge_closed`支持`after:`/`next_after`分页，无adapter的`deliver`抛`AGENT_NOT_CONFIGURED`。RubyLLM适配器为experimental，MySQL不在支持矩阵。无新schema/依赖。证据见 ../evidence/RC1_READINESS.md 与 ../evidence/RELEASE_1_0_0.md。

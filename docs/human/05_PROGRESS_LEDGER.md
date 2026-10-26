@@ -531,3 +531,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读DELTA-008与ROADMAP例外段，确认豁免范围；读Upgrading与What's New的安装指令。crass仅是开发bundle的传递依赖，不进gemspec，不影响host解析，故不写CHANGELOG。无schema/运行时依赖/provider调用。未启动服务。
 
 **下一步：** 推送后等待精确main CI/Docs；通过再打annotated v1.0.0并由OIDC发布。WORK-02记录真实运行、校验和与stable 1.0、/next/、/v0/的HTTPS核验。
+
+### WORK-20261026-02 — 1.0.0 公开交付记录
+
+**内容/映射：** 记录WORK-01之后实际观察到的发布结果。FR-04..08、NFR-03/05。新增RELEASE_1_0_0证据；更新ROADMAP、状态、at-a-glance、feature map（1.0节）、human changelog、实施计划、验收矩阵、Current Work、发布流程与postflight。
+
+**验证：** 候选5ded407的main CI 40255325539/Docs 40255325572通过后打annotated v1.0.0；tag CI 40255472016、Release 40255472062全部8个job、Pages 40255852479通过。精确tag三组SQLite各144/1254、PG 148/1274、adapter 7/45、Chrome 9/81；真实0.1.0..0.4.0升级、安装包host、七锁与activated audit（03da937a）干净、docs 5119链接零断链。发布SHA c71a31c88099cd851ffa4adbe3bbed811c137de72e987a3b0e0d11d916ec5df8在RubyGems API/下载/GitHub资产/SHA256SUMS一致；35个文件与本地测试构建逐字节相同；空GEM_HOME从RubyGems安装并加载1.0.0（无ruby_llm）。17个HTTPS入口200，稳定1.0/next(main)/v0(0.4.0)安装指令与canonical正确，HTTP→HTTPS，内部路径404。
+
+**影响/人工复查：** 打开 https://rails-tool-views.wangyaodi.com 、/v0/ 与Release页面核对。条件5与条件6的独立审核/正式处置仍是NOT_MET，由DELTA-008豁免，已在证据与ROADMAP写明。无schema/运行时依赖/provider/外部联系；未启动服务，临时clone/下载/GEM_HOME已删除。
+
+**下一步：** 推送本记录并核对其CI/Docs。不自动开始下一迭代；外部试用、独立安全审核等仍是1.x的开放证据。

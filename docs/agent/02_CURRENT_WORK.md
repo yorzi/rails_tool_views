@@ -3,9 +3,9 @@
 ## Owner-authorized 1.0.0 release (2026-10-26)
 
 - [x] WORK-20261026-01: owner exception (DELTA-008), 1.0.0 metadata (`released: true`), release history, What's New and Upgrading for stable, final local checks, push and exact main CI/Docs.
-- [ ] WORK-20261026-02: annotated `v1.0.0`, OIDC publication, registry/checksum/Release and stable 1.0, `/next/`, `/v0/` HTTPS acceptance, delivery evidence.
+- [x] WORK-20261026-02: annotated `v1.0.0`, OIDC publication, registry/checksum/Release and stable 1.0, `/next/`, `/v0/` HTTPS acceptance, delivery evidence.
 
-The owner chose 1.0.0 over rc1 and waived conditions 5 and 6's independent review and formal disposition. Runtime is frozen at 8be445d unless a real release failure needs a fix.
+The owner chose 1.0.0 over rc1 and waived conditions 5 and 6's independent review and formal disposition. Published 1.0.0 at 5ded407; see ../evidence/RELEASE_1_0_0.md. No next iteration, provider call or future release is automatically authorized.
 
 ## Owner-requested audit and 1.0 RC preparation (2026-10-21)
 

@@ -73,3 +73,7 @@ owner授权的候选推送、精确标签远端CI、OIDC与GitHub/RubyGems发布
 ## 2026-10-20 — 0.4 公开交付
 
 owner授权的远端main/tag CI、OIDC与GitHub/RubyGems发布、公开下载包重装和稳定0.4/next验收完成。恢复fence、metadata-only诊断、兼容replayed与临时notice已交付，无新migration/dependency。升级仍需drain旧web/worker和事务后投递，uncertain/durable dedup边界不变。详见RELEASE_0_4_0；1.0的契约/独立review/外部试用证据尚未完成，不自动开始下一迭代。
+
+## 2026-10-26 — 1.0.0 公开交付（owner例外）
+
+owner选择跳过rc1直接发布1.0.0，条件5（外部试用/对照/非dummy使用）与条件6的独立安全审核/正式gate处置以例外豁免（DELTA-008），并非满足。精确main/tag CI、OIDC发布、checksum一致、公开包重装与稳定1.0、/next/、/v0/验收完成。公共契约自此是SemVer承诺：契约变更需要新major，后续发现以1.x修复。详见RELEASE_1_0_0。

@@ -221,3 +221,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Local checks: core and Rails 7.2 each 144/1254 with eager load, adapter 7/45, package smoke (both renderers), upgrade smoke from 0.1.0..0.4.0, core and adapter docs examples, formal `RELEASE_PACKAGE_PASS` (35 files), empty GEM_HOME install and activated audit, docs build 3262 links with internal records excluded. Ruby 4 and PostgreSQL were not rerun locally; exact remote CI covers them before the tag.
 - [x] `bundle-audit` found GHSA-pq4g-8rxf-4g29 in dev-lockfile `crass` 1.0.7; conservative bump to 1.0.8 in six lockfiles, then all seven clean at advisory 03da937a. Not a runtime or gemspec dependency, so no CHANGELOG entry.
 - [x] Local build SHA-256 eea95020f4e2f61c1b921beca9df47f568bb33cdbb0871b29814af846ee79bca; not the published checksum. No server left running. Next: scratch-clone `v1.0.0` docs layout, push, exact main CI/Docs, then tag (WORK-02).
+
+## WORK-20261026-02 — 1.0.0 delivery record
+
+- [x] Exact candidate CI/Docs passed before the annotated tag; tag CI, all eight Release jobs and post-release Pages passed. Run URLs in RELEASE_1_0_0.
+- [x] Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the tested build; empty GEM_HOME registry install loads without `ruby_llm`. GitHub Release is not a prerelease and is Latest.
+- [x] Stable 1.0, `/next/` and `/v0/` serve over enforced HTTPS with the right install commands and canonicals; internal paths 404.
+- [x] Exception boundaries stated in evidence, ROADMAP, status and acceptance. No server, provider call or external contact; scratch clones, downloads and temporary GEM_HOME removed.
