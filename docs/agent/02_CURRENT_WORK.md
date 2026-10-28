@@ -3,9 +3,9 @@
 ## Owner-requested review and 1.0.1 preparation (2026-10-28)
 
 - [x] WORK-20261028-01: review of WORK-20261026-03..08; demo follow-ups; adapter CI on RubyLLM 2.0.0, the new floor.
-- [ ] WORK-20261028-02: 1.0.1 metadata (`released: true`), changelog, release history, Upgrading, 1.0.0 upgrade coverage, full local release checks.
+- [x] WORK-20261028-02: 1.0.1 metadata (`released: true`), changelog, release history, Upgrading, 1.0.0 upgrade coverage, full local release checks.
 
-Local commits on `claude/laughing-pasteur-p18ora` only. Pushing, merging to `main`, `v1.0.1`, publication and provider calls wait for the owner's go-ahead.
+Local commits on `claude/laughing-pasteur-p18ora` only. The candidate passed the full local release matrix. Next, with the owner's go-ahead: fast-forward and push `main`, check the exact main CI and Docs runs, tag `v1.0.1`, then record delivery evidence in a separate commit.
 
 ## Owner-requested post-1.0 audit, demo and roadmap (2026-10-26)
 

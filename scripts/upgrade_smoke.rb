@@ -7,7 +7,7 @@ require "fileutils"
 require "open3"
 require "rbconfig"
 root = File.expand_path("..", __dir__)
-%w[v0.1.0 v0.2.0 v0.3.0 v0.4.0].each do |previous_tag|
+%w[v0.1.0 v0.2.0 v0.3.0 v0.4.0 v1.0.0].each do |previous_tag|
   Dir.mktmpdir("rails-tool-views-upgrade-") do |temporary|
     previous = File.join(temporary, "old")
     FileUtils.mkdir_p(previous)

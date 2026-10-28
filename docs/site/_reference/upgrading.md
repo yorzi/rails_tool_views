@@ -13,6 +13,7 @@ description: "Upgrade from 0.4 to 1.0 without a migration or a change to saved d
 After reading this guide, you will know:
 
 * Install 1.0 and keep saved data.
+* Update RubyLLM before the 1.0.1 adapter loads.
 * Update code that rescued raw registration or identifier exceptions.
 * Configure every delivery worker with its adapter.
 * Resolve uncertain deliveries and page through cleanup.
@@ -29,9 +30,19 @@ gem "rails_tool_views", "~> 1.0"
 bundle update rails_tool_views
 ```
 
-There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 0.4.0 and replays it with {{ site.version }}.
+There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 1.0.0 and replays it with {{ site.version }}.
 
 Hosts on 0.3 or earlier first follow the [0.4 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.4.0/docs/site/_reference/upgrading.md). It covers draining old workers and delivering after commit.
+
+## Update RubyLLM for 1.0.1
+
+On RubyLLM 1.x the adapter loaded, but every `present_ui` call was refused: 1.x advertises the tool under a class-derived name and never passes the `ToolCall` to `execute`. From 1.0.1, `require "rails_tool_views/adapters/ruby_llm"` raises `Gem::LoadError` unless the bundle has RubyLLM {{ site.requirements.ruby_llm }}. Update both gems together:
+
+```sh
+bundle update ruby_llm rails_tool_views
+```
+
+Hosts that do not load the adapter, and hosts already on RubyLLM 2, need no change.
 
 ## Handle Stable Error Codes
 
@@ -57,4 +68,4 @@ Focus now moves to a Surface's status only after a Turbo replacement. If a test 
 
 ## Review the Contract
 
-Read the [Public Contract]({% link _reference/public-contract.md %}) before relying on a name. The RubyLLM adapter is experimental and may change in a minor release. It now requires RubyLLM {{ site.requirements.ruby_llm }} and raises `Gem::LoadError` on 1.x, where its tool was never callable. MySQL is outside the supported matrix; stay on a supported database or run your own migration and concurrency checks.
+Read the [Public Contract]({% link _reference/public-contract.md %}) before relying on a name. The RubyLLM adapter is experimental and may change in a minor release. MySQL is outside the supported matrix; stay on a supported database or run your own migration and concurrency checks.

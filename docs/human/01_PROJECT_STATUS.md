@@ -1,5 +1,7 @@
 # 项目状态
 
+2026-10-28：owner要求审阅post-1.0审计并准备1.0.1。审阅无阻塞缺陷，修正demo两处小问题，CI的adapter job增加RubyLLM 2.0.0（新下限）。1.0.1候选（版本、lockfile、`released: true`、CHANGELOG、发布历史、What's New、Upgrading，升级检查新增1.0.0起点）已在分支`claude/laughing-pasteur-p18ora`本地提交并通过本地发布检查。**尚未推送main、未打tag、未发布**，等待owner确认后按发布清单执行。
+
 2026-10-26（1.0.0之后）：owner要求审计gem、补齐正确的demo并更新路线图。分支`claude/laughing-pasteur-p18ora`上已完成且未发布：RubyLLM适配器在1.x上拒绝加载（1.x上工具从来不可用）；demo修正已发布版本标签与可实际观察的清理期限，并新增运行RubyLLM真实工具循环的Agent chat（离线transport，含集成测试）；Getting Started补充importmap宿主的Stimulus接入（在生成的Rails 8.1宿主中验证）；ROADMAP新增“After 1.0”。未打tag、未发布、未调用provider。下一步由owner审阅并决定是否作为1.0.1发布，以及路线图中的三项默认行为决定。
 
 2026-10-26：**owner授权直接发布1.0.0（跳过rc1），1.0条件5与条件6中的独立安全审核/正式gate处置以例外豁免（DELTA-008），并非已满足。** **1.0.0已发布**（v1.0.0→5ded407，RubyGems/GitHub Release/SHA256SUMS一致，稳定1.0、/next/、/v0/已上线），见[交付证据](../evidence/RELEASE_1_0_0.md)。

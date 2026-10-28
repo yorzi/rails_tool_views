@@ -13,6 +13,7 @@ guide: false
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [1.0.1](https://github.com/yorzi/rails_tool_views/releases/tag/v1.0.1) | 2026-10-28 | The RubyLLM adapter requires RubyLLM 2.0 ([Upgrading]({% link _reference/upgrading.md %})), chat integration guides and an agent chat demo. |
 | [1.0.0](https://github.com/yorzi/rails_tool_views/releases/tag/v1.0.0) | 2026-10-26 | [Frozen public contract]({% link _getting_started/whats-new-in-1-0.md %}), attested delivery reconciliation and paged cleanup. |
 | [0.4.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.4.0) | 2026-10-20 | [Recovery and diagnostics]({% link _reference/whats-new-in-0-4.md %}). |
 | [0.3.0](https://github.com/yorzi/rails_tool_views/releases/tag/v0.3.0) | 2026-10-19 | [Explicit lifecycle and scoped retention]({% link _reference/whats-new-in-0-3.md %}). |

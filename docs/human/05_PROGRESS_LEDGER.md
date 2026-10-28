@@ -611,3 +611,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读`.github/workflows/ci.yml` adapter job与`gemfiles/ruby_llm20.gemfile`。新lockfile自动进入release workflow的`gemfiles/*.lock`审计循环。无gem运行时代码、schema或依赖变化。
 
 **下一步：** WORK-02：1.0.1版本元数据与完整本地发布检查。
+
+### WORK-20261028-02 — 1.0.1发布候选：版本元数据与完整本地发布检查
+
+**内容/映射：** NFR-03/05与发布清单第1–3步。版本改为1.0.1，7个lockfile的path条目同步，`docs/site/_config.yml`为`version: "1.0.1"`（`released: true`保持）。CHANGELOG的Unreleased改为`[1.0.1] - 2026-10-28`，补充无迁移/无依赖说明与测试覆盖条目；发布历史新增1.0.1行；What's New in 1.0新增“Connect a RubyLLM Chat in 1.0.1”一节；Upgrading新增“Update RubyLLM for 1.0.1”一节，并从“Review the Contract”中删掉重复的一句；升级检查描述改为0.1.0至1.0.0。`scripts/upgrade_smoke.rb`加入v1.0.0起点。发布清单的tag命令改为`v1.0.1`，并记录本次只授权准备、不含推送与发布。ROADMAP、RE_ENTRY、项目状态、human changelog、Current Work、验收矩阵与post-flight同步。
+
+**复查/验证：** 完整本地矩阵全部通过：core 144/1254（Ruby 3.3.5、Rails 7.2、Ruby 4.0.9三种组合）、adapter 12/83（RubyLLM 2.1.0与2.0.0）、docs示例、package smoke、从真实0.1.0/0.2.0/0.3.0/0.4.0/1.0.0升级到1.0.1、更新漏洞库后8个lockfile均无漏洞、build与`verify_release.rb`（35个文件）、RubyGems clean install与激活依赖审计、版本化docs build 5127链接0断链、Chrome 9/81。未运行：PostgreSQL（本机未安装）、远端CI、tag workflow、线上docs。
+
+**影响/人工复查：** 读CHANGELOG 1.0.1、Upgrading新节与What's New新节。日期写为2026-10-28；如果发布推迟，打tag前要同时改CHANGELOG与发布历史的日期。
+
+**下一步：** owner确认后：把`main`快进到本分支并推送，检查精确提交的CI与Docs，打`v1.0.1`，再用单独提交记录交付证据。

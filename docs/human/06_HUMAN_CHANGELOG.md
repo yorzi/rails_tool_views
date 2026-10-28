@@ -81,3 +81,7 @@ owner选择跳过rc1直接发布1.0.0，条件5（外部试用/对照/非dummy�
 ## 2026-10-26 — 1.0之后的审计（未发布）
 
 RubyLLM适配器需要RubyLLM 2.0+：1.x不把ToolCall传给工具也不认工具名，适配器加载成功但每次调用都被拒绝，现在改为加载时`Gem::LoadError`。demo新增Agent chat，第一次在运行中的Rails host里走通PresentUI→Surface→动作→Continuation→模型回复；只有网络是脚本化的。默认Rails 8 importmap宿主有了可照做的Stimulus接入步骤。ROADMAP的“After 1.0”把适配器稳定化（live provider证据、组件与props绑定、续接所有权、acts_as_chat）列为1.1提议，并列出三项需要owner决定的默认行为。未发布；1.0公共契约不变。
+
+## 2026-10-28 — 1.0.1候选（未发布）
+
+1.0.1是补丁版本：无迁移、无运行时依赖变化；宿主可感知的唯一变化是加载RubyLLM适配器需要RubyLLM 2.0+（1.x上工具本就不可用）。CI同时覆盖RubyLLM 2.0.0与2.1.0，升级检查覆盖从1.0.0升级。发布需owner确认后推送、跑精确CI、打`v1.0.1`。

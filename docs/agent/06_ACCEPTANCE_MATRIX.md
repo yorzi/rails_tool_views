@@ -176,3 +176,7 @@ FR-02/03/04/06/07, 1.0 conditions 2 and 4 LOCAL_PASS on Ruby 3.3.6 / Rails 8.1.4
 ## WORK-20261026-08 — browser suite on Chrome 153+
 
 Branch CI run 40325055783 failed only its browser job on Chrome 155 with chromedriver's "Node with given id does not belong to the document" UnknownError inside Capybara's visibility check. Mapping that error to StaleElementReferenceError in test/browser_test_helper.rb restores Capybara's retry: local full suite 5/5 runs at 9/81 (before: base f741646 0/3, branch 2/4). Test-only change.
+
+## WORK-20261028-01..02 — 1.0.1 candidate (local, unpublished)
+
+FR-02/04/06/07, NFR-03/05 LOCAL_PASS on the uncommitted 1.0.1 tree, which is the WORK-20261028-02 commit apart from its records: Ruby 3.3.5 / Rails 8.1.4 SQLite core 144/1254 with eager load; Rails 7.2 144/1254; Ruby 4.0.9 144/1254; adapter on RubyLLM 2.1.0 12/83 with eager load and on 2.0.0 12/83; docs examples core and adapter; package smoke; upgrades from real 0.1.0, 0.2.0, 0.3.0, 0.4.0 and 1.0.0 to 1.0.1; bundle-audit (updated DB) clean on Gemfile.lock, seven gemfiles locks and docs; `rake build` and `verify_release.rb` RELEASE_PACKAGE_PASS (35 files, `released: true`); clean install from RubyGems with activated-dependency audit PASS; versioned docs build with 5127 links and 0 broken; Chrome 9/81. PostgreSQL, remote CI, the tag workflow and hosted docs: NOT_RUN (no local PostgreSQL; push and tag not yet authorized).

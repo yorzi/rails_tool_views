@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Find the names 1.0 keeps stable.
 * Recognize registration and identifier errors by their stable codes.
 * Keep focus and styling correct in the browser.
+* Find what 1.0.1 adds for RubyLLM hosts.
 
 ## Rely on a Frozen Contract
 
@@ -48,6 +49,10 @@ A delivery call without an adapter now raises `AGENT_NOT_CONFIGURED` and keeps t
 
 Focus moves to a Surface's status only after a Turbo replacement. A page load or refresh keeps the reader's place. The Engine's complete HTML page carries your Content Security Policy nonce on its stylesheet. See [Status and Temporary Feedback]({% link _core_features/feedback.md %}) and [Validation and Errors]({% link _core_features/validation.md %}).
 
+## Connect a RubyLLM Chat in 1.0.1
+
+The RubyLLM adapter now requires RubyLLM {{ site.requirements.ruby_llm }}. On 1.x it loaded, but every tool call was refused, so the require now raises `Gem::LoadError` instead. [RubyLLM Integration]({% link _advanced/ruby-llm.md %}) shows how to attach `PresentUI` to a chat, render what it presented and continue the same chat after the user acts. The [demo]({% link _getting_started/demo.md %}#talk-to-an-agent) runs that wiring with RubyLLM's real chat loop. Getting Started covers the [Stimulus controller in an importmap host]({% link _getting_started/getting-started.md %}#enable-turbo-updates).
+
 ## Upgrade
 
-There is no migration or runtime dependency. Data saved by every release from 0.1.0 through 0.4.0 upgrades unchanged. Read [Upgrading]({% link _reference/upgrading.md %}) before you switch.
+There is no migration or runtime dependency. Data saved by every release from 0.1.0 through 1.0.0 upgrades unchanged. Read [Upgrading]({% link _reference/upgrading.md %}) before you switch.

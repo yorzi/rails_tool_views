@@ -237,3 +237,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Guides updated in the same commits as the behavior they describe: RubyLLM Integration, Demo Workbench, Getting Started, Upgrading, Public Contract, README, CONTRIBUTING. ROADMAP gains "After 1.0"; status, at-a-glance, feature map, architecture, human changelog, acceptance matrix, RE_ENTRY and Current Work reflect the result.
 - [x] Not run for this work: Ruby 4, Rails 7.2, PostgreSQL, remote CI, live provider. The Selenium flake under Chrome 153 predates the work (base f741646 fails 3/3 full runs) and is recorded as a risk, not fixed.
 - [x] Demo (3100) and verification host (3101) servers, browsers and drivers stopped and verified; scratch hosts and RubyLLM version bundles deleted. Pushed only to `claude/laughing-pasteur-p18ora`; no tag, publication, pull request, provider call or contact.
+
+## WORK-20261028-01..02 — review and 1.0.1 candidate
+
+- [x] Review findings reproduced before change: the Turn comment claim was checked with a temporary probe test (one saved Surface, zero messages), then the probe was deleted.
+- [x] Public contract unchanged beyond the RubyLLM 2.0 load-time floor from WORK-20261026-03, now explained in its own Upgrading section, What's New in 1.0 and CHANGELOG 1.0.1. No schema, migration or runtime dependency change; lockfile changes are the path version only, plus the new RubyLLM 2.0.0 lock.
+- [x] Full local release matrix passed (see Acceptance Matrix). Not run: PostgreSQL (not installed locally), remote CI, tag workflow, hosted docs.
+- [x] The browser and package checks started their own servers and temporary hosts and removed them. No process from this task remains running. No push, tag, publication, provider call or external contact.

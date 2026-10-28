@@ -8,9 +8,9 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 1.0.0 is a Semantic Versioning promise for every name the [Public Contract](docs/site/_reference/public-contract.md) lists. Fixes ship as patches, compatible capabilities as minors, and a contract change waits for a major. Everything in this section is proposed. Each release needs the owner's authorization, and dates are not promised.
 
-### On `main`, unreleased
+### 1.0.1, prepared and unpublished
 
-The 2026-10-26 audit added these after 1.0.0. They are patch-sized, need no migration, and are candidates for 1.0.1:
+The 2026-10-26 audit added these after 1.0.0. They are patch-sized and need no migration. The 1.0.1 candidate carries them on `claude/laughing-pasteur-p18ora`, reviewed and checked locally on 2026-10-28; pushing, tagging and publication wait for the owner:
 
 - The RubyLLM adapter raises `Gem::LoadError` on RubyLLM 1.x, where its tool was never callable. It requires RubyLLM 2.0 or later.
 - The demo adds an agent chat that runs RubyLLM's real tool loop offline, with integration tests.

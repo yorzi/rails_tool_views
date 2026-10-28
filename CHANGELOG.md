@@ -1,9 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.1] - 2026-10-28
 
-- Docs: the RubyLLM guide shows how to attach `PresentUI` to a chat, render what it presented and continue the chat with an ownership check and deduplicated delivery. The demo adds an agent chat that runs RubyLLM's real tool loop offline.
+No migration or runtime dependency. Data saved by 0.1.0 through 1.0.0 upgrades unchanged. Hosts that load the RubyLLM adapter need RubyLLM 2.0 or later; see the Upgrading guide.
+
 - Fix: the RubyLLM adapter loaded on RubyLLM 1.x, where its tool never worked: 1.x advertises the tool under a class-derived name and never passes the `ToolCall` to `execute`, so every call was refused. Requiring `rails_tool_views/adapters/ruby_llm` now raises `Gem::LoadError` unless RubyLLM 2.0 or later is in the bundle.
+- Docs: the RubyLLM guide shows how to attach `PresentUI` to a chat, render what it presented and continue the chat with an ownership check and deduplicated delivery. Getting Started shows how to register the Stimulus controller in an importmap host. The demo adds an agent chat that runs RubyLLM's real tool loop offline.
+- Tests: the adapter suite runs on RubyLLM 2.0.0 and 2.1.0, and the upgrade check starts from every release through 1.0.0.
 
 ## [1.0.0] - 2026-10-26
 
