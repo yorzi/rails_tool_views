@@ -72,3 +72,5 @@ Andy requests a review and audit of the gem, a correct demo Rails application in
 ## 2026-10-28 review and 1.0.1 release preparation
 
 Andy requests a code review of the post-1.0 audit on `claude/laughing-pasteur-p18ora` and preparation of the 1.0.1 release. This authorizes review fixes, the RubyLLM 2.0.0 CI coverage that ROADMAP required before tagging, 1.0.1 version and documentation metadata, the local release checks and local commits. It does not authorize pushing, merging to `main`, the `v1.0.1` tag, RubyGems or GitHub publication or provider calls; those wait for Andy's explicit go-ahead. The public 1.0 contract and the pinned external Specs stay unchanged.
+
+Later on 2026-10-28, after the review and local checks, Andy explicitly authorizes releasing v1.0.1 and updating the docs accordingly. This authorizes fast-forwarding and pushing `main`, exact remote CI, the annotated `v1.0.1` tag, the existing OIDC publication and GitHub Release, versioned Pages verification and a delivery-record commit.

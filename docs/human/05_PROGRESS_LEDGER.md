@@ -621,3 +621,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读CHANGELOG 1.0.1、Upgrading新节与What's New新节。日期写为2026-10-28；如果发布推迟，打tag前要同时改CHANGELOG与发布历史的日期。
 
 **下一步：** owner确认后：把`main`快进到本分支并推送，检查精确提交的CI与Docs，打`v1.0.1`，再用单独提交记录交付证据。
+
+### WORK-20261028-03 — 1.0.1公开交付与线上验收记录
+
+**内容/映射：** owner在审阅与本地检查之后明确授权“发布v1.0.1并相应更新文档”，授权记入SPEC_BASELINE。执行：`main`从f741646快进到7f50284并推送；精确提交的CI 40615340900（7个job，含PostgreSQL、浏览器、RubyLLM 2.1.0与2.0.0）和Docs 40615340842通过后，打注释tag `v1.0.1`；tag CI 40615530643、Release 40615530715（9个job，含OIDC发布与GitHub Release）、发布后Pages 40615978017全部通过。新增`docs/evidence/RELEASE_1_0_1.md`；ROADMAP、发布清单、Current Work、实施计划、验收矩阵、post-flight、项目状态、at-a-glance、feature map、human changelog与RE_ENTRY改为已发布状态。
+
+**复查/验证：** RubyGems最新版本API为1.0.1，MFA与文档/源码URI正确；API SHA、registry下载、GitHub资产与SHA256SUMS一致（b35d7926…）；35个文件与7f50284的本地构建逐字节相同（只有时间戳不同）。空GEM_HOME不经Bundler安装57个gem，能加载1.0.1且不加载ruby_llm。线上19个HTTPS入口返回200（search索引为`/search.json`），稳定版安装`--version 1.0.1`，`/next/`从main安装，`/v0/`仍为0.4.0且canonical独立，HTTP跳转HTTPS，内部记录路径404。
+
+**影响/人工复查：** 读RELEASE_1_0_1与RubyGems/GitHub Release页面。只改记录文档，不改gem代码。DELTA-008例外仍然有效；适配器仍为experimental；未调用provider，未对外联系。
+
+**下一步：** 推送本记录提交并确认其CI/Docs；owner决定路线图中的三项默认行为，以及1.1适配器稳定化所需的live provider运行是否授权。

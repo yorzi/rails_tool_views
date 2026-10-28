@@ -1,11 +1,13 @@
 # Current work
 
-## Owner-requested review and 1.0.1 preparation (2026-10-28)
+## Owner-authorized review and 1.0.1 release (2026-10-28)
 
 - [x] WORK-20261028-01: review of WORK-20261026-03..08; demo follow-ups; adapter CI on RubyLLM 2.0.0, the new floor.
 - [x] WORK-20261028-02: 1.0.1 metadata (`released: true`), changelog, release history, Upgrading, 1.0.0 upgrade coverage, full local release checks.
 
-Local commits on `claude/laughing-pasteur-p18ora` only. The candidate passed the full local release matrix. Next, with the owner's go-ahead: fast-forward and push `main`, check the exact main CI and Docs runs, tag `v1.0.1`, then record delivery evidence in a separate commit.
+- [x] WORK-20261028-03: owner go-ahead; `main` fast-forwarded and pushed, exact CI/Docs, annotated `v1.0.1`, OIDC publication, registry/checksum/Release, stable 1.0.1, `/next/`, `/v0/` HTTPS acceptance, delivery evidence.
+
+Published 1.0.1 at 7f50284; see ../evidence/RELEASE_1_0_1.md. No next iteration, provider call or future release is automatically authorized. The roadmap's "Decisions for the owner" stay open.
 
 ## Owner-requested post-1.0 audit, demo and roadmap (2026-10-26)
 

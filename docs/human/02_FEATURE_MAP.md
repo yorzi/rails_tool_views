@@ -42,3 +42,7 @@ WORK-20261020-03：action.executed 增加 replayed 布尔；Transition.notice �
 ## 1.0 已发布
 
 声明公共契约（Ruby API、错误码/状态、helper、HTTP字段、DOM/Stimulus、事件、delivery key、持久数据）；新增host证明的`reconcile_delivery`与默认拒绝的`reconciliation_policy`，`purge_closed`支持`after:`/`next_after`分页，无adapter的`deliver`抛`AGENT_NOT_CONFIGURED`。RubyLLM适配器为experimental，MySQL不在支持矩阵。无新schema/依赖。证据见 ../evidence/RC1_READINESS.md 与 ../evidence/RELEASE_1_0_0.md。
+
+## 1.0.1 已发布
+
+RubyLLM适配器在加载时要求RubyLLM 2.0+（`lib/rails_tool_views/adapters/ruby_llm.rb`），CI覆盖2.0.0与2.1.0。demo的Agent chat（`/agent`，`test/dummy/lib/demo_llm.rb`、`test/adapter/demo_agent_test.rb`）在离线transport上运行RubyLLM真实工具循环与Continuation。证据见 ../evidence/RELEASE_1_0_1.md。

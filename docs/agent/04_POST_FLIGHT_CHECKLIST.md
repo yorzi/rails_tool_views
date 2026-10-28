@@ -244,3 +244,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Public contract unchanged beyond the RubyLLM 2.0 load-time floor from WORK-20261026-03, now explained in its own Upgrading section, What's New in 1.0 and CHANGELOG 1.0.1. No schema, migration or runtime dependency change; lockfile changes are the path version only, plus the new RubyLLM 2.0.0 lock.
 - [x] Full local release matrix passed (see Acceptance Matrix). Not run: PostgreSQL (not installed locally), remote CI, tag workflow, hosted docs.
 - [x] The browser and package checks started their own servers and temporary hosts and removed them. No process from this task remains running. No push, tag, publication, provider call or external contact.
+
+## WORK-20261028-03 — 1.0.1 publication
+
+- [x] Owner go-ahead recorded in SPEC_BASELINE before push. `main` fast-forwarded from f741646 to 7f50284; exact CI and Docs passed before the annotated tag.
+- [x] Tag CI, Release (nine jobs) and post-release Pages passed. Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the local build. GitHub Release is not a prerelease and is Latest.
+- [x] Stable 1.0.1, `/next/` and `/v0/` serve over enforced HTTPS with the right install commands and canonicals; internal paths 404.
+- [x] No server, provider call or external contact. Download directories, extracted packages and the temporary GEM_HOME removed.

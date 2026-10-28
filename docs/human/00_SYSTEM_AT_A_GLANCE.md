@@ -2,7 +2,7 @@
 
 把已有 Rails Partial/ViewComponent 注册为可信、可持久化、可交互的展示能力。普通 Rails 代码可以使用；RubyLLM 是可选适配器。v0 的 ChoiceCard 继续可用；v1 增加客户表单、客服工单和版本化结果审阅，业务记录与权限仍由主应用决定。demo还有Agent chat：真实RubyLLM聊天循环通过present_ui呈现可信组件，用户选择作为新的user turn续接（离线运行，无需API key）。
 
-已实现：Registry/schema、Surface/恢复、授权动作与幂等、JSON/Turbo、可选工具和后续交互、安装器、表单错误反馈与三个 v1 演示。客户创建、工单分配、结果接受/导出是确定性的主应用服务；回复草拟与再生成通过明确续接触发。演示使用离线夹具，回复只入本地 outbox。1.0.0 已以 MIT 发布到 RubyGems，文档站 https://rails-tool-views.wangyaodi.com 由 GitHub Pages 托管；稳定与 next 文档分开，发布由经过验证的 Git 标签通过 OIDC 触发。
+已实现：Registry/schema、Surface/恢复、授权动作与幂等、JSON/Turbo、可选工具和后续交互、安装器、表单错误反馈与三个 v1 演示。客户创建、工单分配、结果接受/导出是确定性的主应用服务；回复草拟与再生成通过明确续接触发。演示使用离线夹具，回复只入本地 outbox。1.0.1 已以 MIT 发布到 RubyGems，文档站 https://rails-tool-views.wangyaodi.com 由 GitHub Pages 托管；稳定与 next 文档分开，发布由经过验证的 Git 标签通过 OIDC 触发。
 
 ```mermaid
 flowchart LR
@@ -22,3 +22,5 @@ flowchart LR
 0.4已完成公开交付：既有attempts为投递确认加fence，host job验证中断恢复；action.executed新增replayed，notice只显示一次响应并保留旧message语义。无新schema/依赖/内置队列。完整本地验收见V0_4_VALIDATION，精确远端CI、公开包/隔离安装和稳定0.4/next验收见[发布证据](../evidence/RELEASE_0_4_0.md)。
 
 1.0.0已公开发布（2026-10-26）：声明公共契约、reconcile_delivery、purge_closed游标分页、无adapter投递报AGENT_NOT_CONFIGURED。owner跳过rc1并豁免条件5/6的外部试用与独立审核（DELTA-008）。稳定1.0在`/`，0.4在`/v0/`，见[发布证据](../evidence/RELEASE_1_0_0.md)。不自动推进新版本。
+
+1.0.1已公开发布（2026-10-28）：RubyLLM适配器要求RubyLLM 2.0+（1.x上加载即报`Gem::LoadError`），demo新增运行RubyLLM真实工具循环的Agent chat，RubyLLM接入与importmap接入指南。无迁移、无运行时依赖变化。见[发布证据](../evidence/RELEASE_1_0_1.md)。
