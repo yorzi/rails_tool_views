@@ -17,8 +17,7 @@ class AgentController < ApplicationController
     end
     DemoLLM.chat_for(conversations.last || conversations.create!).ask(text)
     redirect_to agent_path, status: :see_other
-  rescue StandardError => error
-    raise unless error.is_a?(::RubyLLM::Error)
+  rescue ::RubyLLM::Error => error
     redirect_to agent_path, status: :see_other, alert: "The model request failed (#{error.class.name.demodulize})."
   end
 

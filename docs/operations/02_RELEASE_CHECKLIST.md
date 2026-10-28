@@ -33,6 +33,7 @@ bundle exec ruby scripts/docs_examples.rb
 BUNDLE_GEMFILE=gemfiles/rails72.gemfile bundle exec rake test zeitwerk:check
 BUNDLE_GEMFILE=gemfiles/adapter.gemfile bundle exec rake test:adapter
 BUNDLE_GEMFILE=gemfiles/adapter.gemfile DOCS_ADAPTER=1 bundle exec ruby scripts/docs_examples.rb
+BUNDLE_GEMFILE=gemfiles/ruby_llm20.gemfile bundle exec rake test:adapter
 bundle exec rake build
 bundle exec ruby scripts/verify_release.rb
 ruby scripts/clean_install_smoke.rb --audit

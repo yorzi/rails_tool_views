@@ -148,3 +148,12 @@ Owner request in this session: audit the gem, add a correct demo Rails app for t
 - [x] Considered and kept: dispatch records `skipped` when no adapter is configured (ADR 010, FR-06-AC-03); the action handler runs inside the Surface lock; synchronous `auto_deliver`. These are documented contract choices; trade-offs go to the roadmap.
 - [x] Classification: IMPLEMENTATION_BUG for (1), (3), (4); implementation-aligned demo and documentation for (2), (5). No product-intent change, no new delta, no core schema or runtime dependency. Demo-only tables live in `test/dummy`.
 - [x] Security: the demo's model output is untrusted props; the existing closed schema and action policies still decide. No credential is added; the optional live mode reads the owner's own environment and is never run by the agent. Tests stay offline.
+
+## WORK-20261028-01..02 — review of the post-1.0 audit and 1.0.1 preparation
+
+Owner request in this session: review the changes on `claude/laughing-pasteur-p18ora`, then prepare the 1.0.1 release. Authorization recorded in SPEC_BASELINE (2026-10-28). Base `d71b63b` (branch head, remote CI 40326211289 green), clean tree, fast-forward of `main` at `f741646`.
+
+- [x] Read AGENTS, entrypoint, Current Work, release checklist, maintenance contract, the six commits' diff (code, tests, docs, governance) and the runtime delivery path the demo adapter relies on.
+- [x] Branch baseline on Ruby 3.3.5 / Rails 8.1 SQLite: core 144/1254 with eager load, adapter 12/83, adapter-bundle eager load, package smoke, upgrades from 0.1.0..0.4.0, docs examples core/adapter, Rails 7.2 144/1254. Ledger linkage for main..HEAD passes.
+- [x] Classification: implementation-aligned review fixes and release metadata; no product-intent change, no new delta, no schema or runtime dependency. The 1.0.1 change visible to hosts is the RubyLLM 2.0 load-time requirement already recorded in WORK-20261026-03.
+- [x] Pushing, tagging and publication are out of scope until the owner confirms.

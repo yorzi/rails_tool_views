@@ -601,3 +601,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读`test/browser_test_helper.rb`新增模块。若以后chromedriver对其他情形也改用UnknownError，需要按同样方式核实后再映射，不应扩大为吞掉所有UnknownError。
 
 **下一步：** 推送并确认分支CI全绿；owner审阅后决定是否发布1.0.1。
+
+### WORK-20261028-01 — 审阅post-1.0审计提交；demo小修；CI覆盖RubyLLM 2.0.0下限
+
+**内容/映射：** owner要求审阅`claude/laughing-pasteur-p18ora`上的6个提交（WORK-20261026-03..08）并准备1.0.1。审阅结论：无阻塞缺陷。适配器的`gem "ruby_llm", ">= 2.0"`在Bundler下对1.x与缺失均抛`Gem::LoadError`，demo初始化器的`rescue LoadError`正确兜底；demo的投递在Engine事务外执行，所有权检查、receipt唯一索引与事务配合正确；浏览器helper的挂钩点在selenium-webdriver 4.51.0中存在，只映射一条消息。两处demo小问题已修：(1) `DemoLLM::Turn`注释称“失败的轮次什么都不存”，实测（工具执行后第二次请求失败）留下1个已保存的Surface、0条消息；离线重试因call ID相同复用它，live模型会生成新ID再呈现一个，注释改为如实说明；(2) `AgentController#create`的`rescue StandardError`+`raise unless`改为`rescue ::RubyLLM::Error`，行为相同。路线图要求打tag前补RubyLLM 2.0.0 CI覆盖：新增`gemfiles/ruby_llm20.gemfile`及lockfile，CI adapter job改为两项matrix；`ruby_llm_tested`改为“2.0.0 and 2.1.0”；发布清单、CONTRIBUTING、ROADMAP同步。在SPEC_BASELINE记录本次授权（不含推送、tag、发布）。
+
+**复查/验证：** RubyLLM 2.0.0：adapter 12/83、DOCS_ADAPTER文档示例通过、bundle-audit无漏洞。修改后core与adapter套件见WORK-02的完整本地矩阵。Turn注释的结论来自临时探针测试（已删除）。
+
+**影响/人工复查：** 读`.github/workflows/ci.yml` adapter job与`gemfiles/ruby_llm20.gemfile`。新lockfile自动进入release workflow的`gemfiles/*.lock`审计循环。无gem运行时代码、schema或依赖变化。
+
+**下一步：** WORK-02：1.0.1版本元数据与完整本地发布检查。

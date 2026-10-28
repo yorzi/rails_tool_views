@@ -68,3 +68,7 @@ After pushing the rc1 lifecycle work, Andy explicitly requests releasing the new
 ## 2026-10-26 post-1.0 audit, demo and roadmap authorization
 
 Andy requests a review and audit of the gem, a correct demo Rails application inside the gem for testing and demonstration, fixes that make the features correct and well designed for RubyLLM and Rails hosts, and a roadmap update for work that is not ready. This authorizes reversible fixes, tests, demo and documentation changes, incremental commits and pushing them to the development branch `claude/laughing-pasteur-p18ora`. It does not authorize a version bump, tag, RubyGems or GitHub publication, a pull request, provider calls by the agent or external contact. The demo may offer an owner-run live provider mode, but the agent does not run it. The public 1.0 contract stays compatible; the pinned external Specs stay unchanged.
+
+## 2026-10-28 review and 1.0.1 release preparation
+
+Andy requests a code review of the post-1.0 audit on `claude/laughing-pasteur-p18ora` and preparation of the 1.0.1 release. This authorizes review fixes, the RubyLLM 2.0.0 CI coverage that ROADMAP required before tagging, 1.0.1 version and documentation metadata, the local release checks and local commits. It does not authorize pushing, merging to `main`, the `v1.0.1` tag, RubyGems or GitHub publication or provider calls; those wait for Andy's explicit go-ahead. The public 1.0 contract and the pinned external Specs stay unchanged.

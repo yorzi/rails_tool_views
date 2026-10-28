@@ -16,7 +16,7 @@ The 2026-10-26 audit added these after 1.0.0. They are patch-sized, need no migr
 - The demo adds an agent chat that runs RubyLLM's real tool loop offline, with integration tests.
 - Guides show how to attach `PresentUI` to a chat and continue it safely, and how to register the Stimulus controller in an importmap host.
 
-Before tagging, add CI coverage for RubyLLM 2.0.0 (the new floor) next to 2.1.x. Versions 2.0.0, 2.1.0 and 2.1.1 pass locally; CI only locks 2.1.0.
+CI runs the adapter suite on RubyLLM 2.0.0, the new floor, and on 2.1.0. Version 2.1.1 passed locally.
 
 ### 1.1: make the RubyLLM adapter stable
 

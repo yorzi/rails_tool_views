@@ -1,5 +1,12 @@
 # Current work
 
+## Owner-requested review and 1.0.1 preparation (2026-10-28)
+
+- [x] WORK-20261028-01: review of WORK-20261026-03..08; demo follow-ups; adapter CI on RubyLLM 2.0.0, the new floor.
+- [ ] WORK-20261028-02: 1.0.1 metadata (`released: true`), changelog, release history, Upgrading, 1.0.0 upgrade coverage, full local release checks.
+
+Local commits on `claude/laughing-pasteur-p18ora` only. Pushing, merging to `main`, `v1.0.1`, publication and provider calls wait for the owner's go-ahead.
+
 ## Owner-requested post-1.0 audit, demo and roadmap (2026-10-26)
 
 - [x] WORK-20261026-03: the RubyLLM adapter refuses RubyLLM 1.x, where its tool was never callable.

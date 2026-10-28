@@ -80,7 +80,9 @@ module DemoLLM
   end
 
   # Persists the messages one turn adds after the turn completes. A failed turn
-  # stores nothing, so it can be retried from the same transcript.
+  # adds no messages, so it can be retried from the same transcript. A view that
+  # PresentUI saved before a later request failed stays saved; the scripted
+  # retry reuses it through its call ID, but a live model's new ID presents another.
   Turn = Struct.new(:conversation, :chat) do
     def ask(content)
       known = chat.messages.length

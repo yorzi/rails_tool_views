@@ -35,8 +35,13 @@ jobs:
       - run: node scripts/check-progress-ledger.mjs --range HEAD
   adapter:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The current RubyLLM and the lowest one the adapter accepts.
+        gemfile: [gemfiles/adapter.gemfile, gemfiles/ruby_llm20.gemfile]
     env:
-      BUNDLE_GEMFILE: gemfiles/adapter.gemfile
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
