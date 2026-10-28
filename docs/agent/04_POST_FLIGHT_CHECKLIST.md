@@ -251,3 +251,11 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Tag CI, Release (nine jobs) and post-release Pages passed. Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the local build. GitHub Release is not a prerelease and is Latest.
 - [x] Stable 1.0.1, `/next/` and `/v0/` serve over enforced HTTPS with the right install commands and canonicals; internal paths 404.
 - [x] No server, provider call or external contact. Download directories, extracted packages and the temporary GEM_HOME removed.
+
+## WORK-20261028-04 — 独立 Rails demo 规划
+
+- [x] 用户选择独立宿主；计划存入忽略的 `drafts/`，已列出现状、两个主流程、阶段退出条件、验收、风险和下一步。
+- [x] pinned Specs 59 文件逐字节匹配；无 Specs、API、schema、依赖或应用行为变更，IMPLEMENTATION_ALIGNED / PROPOSED。
+- [x] Current Work、pre-flight、Progress Ledger 已记录；human 架构图/运行流程、实际验收矩阵和操作手册无当前实现变化，不改写。
+- [x] Markdown 本地链接和 diff 空白检查通过。运行时测试未运行：仅规划；未来行为与 live provider 验证未标为通过。
+- [x] 用户随后要求提交；本提交仅含 `.gitignore` 与规划维护记录，草稿不暂存。未 push 或发布；未调用 provider，未启动服务、watcher、driver 或 worker。

@@ -1,5 +1,11 @@
 # Current work
 
+## Owner-requested standalone demo planning (2026-10-28)
+
+- [x] WORK-20261028-04：制定仓库内独立 Rails demo 计划；owner 选择独立宿主以验证真实 gem 接入。范围为 `examples/demo/`、普通组件往返与持久化 RubyLLM 回复审阅，默认离线。
+
+计划是本地可选材料：`drafts/2026-10-28-standalone-rails-demo-plan.md`，不纳入版本控制。当前仅完成规划，应用尚未实现；下一步收到实施指令后激活阶段 A（独立宿主、安装器及 `acts_as_chat` 探针）。不自动启动新版本、provider 调用或发布。
+
 ## Owner-authorized review and 1.0.1 release (2026-10-28)
 
 - [x] WORK-20261028-01: review of WORK-20261026-03..08; demo follow-ups; adapter CI on RubyLLM 2.0.0, the new floor.

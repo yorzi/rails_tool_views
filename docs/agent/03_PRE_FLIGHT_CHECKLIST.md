@@ -157,3 +157,9 @@ Owner request in this session: review the changes on `claude/laughing-pasteur-p1
 - [x] Branch baseline on Ruby 3.3.5 / Rails 8.1 SQLite: core 144/1254 with eager load, adapter 12/83, adapter-bundle eager load, package smoke, upgrades from 0.1.0..0.4.0, docs examples core/adapter, Rails 7.2 144/1254. Ledger linkage for main..HEAD passes.
 - [x] Classification: implementation-aligned review fixes and release metadata; no product-intent change, no new delta, no schema or runtime dependency. The 1.0.1 change visible to hosts is the RubyLLM 2.0 load-time requirement already recorded in WORK-20261026-03.
 - [x] Pushing, tagging and publication are out of scope until the owner confirms.
+
+## WORK-20261028-04 — 独立 Rails demo 规划
+
+用户要求制定计划，并明确选择仓库内独立 Rails demo。起点 `main` / `d2ec23f`，工作树干净。已读入口、基线、human 状态、实施/当前工作、Spec Delta、pre/post-flight、维护契约、ROADMAP、demo/adapter 指南及当前代码与测试。外部 Specs HEAD 与 pinned revision 不同；使用 pinned `0ea28b1` 对象比较，59 个本地参考文件完全一致。只规划，不修改应用行为、公共契约、依赖、schema 或 Specs；分类 IMPLEMENTATION_ALIGNED / PROPOSED。计划存入忽略的 `drafts/`，未来验收保持未执行。
+
+随后用户要求“submit changes wisely”，本单元提交 `.gitignore` 与规划维护记录，使用相同 Work-ID。草稿不暂存；不创建应用、推送、打 tag 或发布。

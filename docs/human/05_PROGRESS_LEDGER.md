@@ -631,3 +631,9 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读RELEASE_1_0_1与RubyGems/GitHub Release页面。只改记录文档，不改gem代码。DELTA-008例外仍然有效；适配器仍为experimental；未调用provider，未对外联系。
 
 **下一步：** 推送本记录提交并确认其CI/Docs；owner决定路线图中的三项默认行为，以及1.1适配器稳定化所需的live provider运行是否授权。
+
+### WORK-20261028-04 — 独立 Rails demo 计划
+
+用户选择仓库内独立 Rails demo，用于验证真实宿主接入。已对照现有 dummy、RubyLLM 离线工具循环、打包检查及 ROADMAP，制定阶段 A..D 和验收矩阵。重点是标准安装器、importmap、`acts_as_chat`、ownership、幂等与失败续接；两个主流程为组件往返和聊天回复审阅。计划是可选本地材料 `drafts/2026-10-28-standalone-rails-demo-plan.md`；不跟踪、不作为代码依赖。`.gitignore` 增加 `/drafts/`。
+
+映射 FR-02..08 / NFR-02/03/05/06，IMPLEMENTATION_ALIGNED / PROPOSED。已核对 59 个 Specs 文件与 pinned revision 一致；Markdown 本地链接及 diff 空白检查通过。运行时测试未运行：仅规划与维护记录，无代码、依赖或 schema 变更。人工审阅两个流程、阶段退出条件及持久化聊天的并发/事务边界。human 架构图与运行流程无需修改，当前实现尚未改变；验收矩阵与运行手册待实际实施时更新。用户随后要求“submit changes wisely”；本提交仅含 `.gitignore` 与规划维护记录，草稿不暂存。无迁移、数据、安全/隐私/无障碍行为变化，无服务或后台进程启动；未 push/发布或调用 provider。下一步收到实施指令后激活阶段 A。
