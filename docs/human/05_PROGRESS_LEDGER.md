@@ -637,3 +637,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 用户选择仓库内独立 Rails demo，用于验证真实宿主接入。已对照现有 dummy、RubyLLM 离线工具循环、打包检查及 ROADMAP，制定阶段 A..D 和验收矩阵。重点是标准安装器、importmap、`acts_as_chat`、ownership、幂等与失败续接；两个主流程为组件往返和聊天回复审阅。计划是可选本地材料 `drafts/2026-10-28-standalone-rails-demo-plan.md`；不跟踪、不作为代码依赖。`.gitignore` 增加 `/drafts/`。
 
 映射 FR-02..08 / NFR-02/03/05/06，IMPLEMENTATION_ALIGNED / PROPOSED。已核对 59 个 Specs 文件与 pinned revision 一致；Markdown 本地链接及 diff 空白检查通过。运行时测试未运行：仅规划与维护记录，无代码、依赖或 schema 变更。人工审阅两个流程、阶段退出条件及持久化聊天的并发/事务边界。human 架构图与运行流程无需修改，当前实现尚未改变；验收矩阵与运行手册待实际实施时更新。用户随后要求“submit changes wisely”；本提交仅含 `.gitignore` 与规划维护记录，草稿不暂存。无迁移、数据、安全/隐私/无障碍行为变化，无服务或后台进程启动；未 push/发布或调用 provider。下一步收到实施指令后激活阶段 A。
+
+### WORK-20261030-01 — 安装器保留已有mount；文档说明进程内共享运行时
+
+**内容/映射：** owner要求核实rails_ai_admin记录的两项rails_tool_views问题并修复真实问题。DEP-006属实：宿主按文档保留`:rails_tool_views`名称、改用自定义路径（如`/product_surfaces`）后，再运行`rails_tool_views:install`会追加同名默认mount，路由加载报`Invalid route name, already in use`。现在安装器发现`config/routes.rb`已mount Engine时跳过并提示，`rails destroy`仍删除默认mount。DEP-001不是缺陷：配置、registry与mount名按设计在进程内共享，文档已写明；Configuration新增“Share One Runtime”一节说明另一个gem应把`configure`留给宿主、组件使用自己的key前缀，并在ROADMAP“Decisions for the owner”列出“每进程一个运行时”的取舍。FR-01安装体验，IMPLEMENTATION_BUG修复。
+
+**复查/验证：** 新增`test/install_generator_test.rb`（4个测试）；对1.0.1原安装器失败，分别去掉revoke判断、`::`形式或行首锚点各有测试失败。core 148/1268与eager load通过（Ruby 3.3.5 / Rails 8.1.4）。其余矩阵随1.0.2候选运行。
+
+**影响/人工复查：** 读`lib/generators/rails_tool_views/install/install_generator.rb`与Configuration新节。无schema、迁移、依赖或公共契约变化；新宿主的生成结果不变。
+
+**下一步：** WORK-20261030-02：1.0.2版本元数据与完整本地发布检查。

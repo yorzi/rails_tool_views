@@ -14,7 +14,19 @@ module RailsToolViews
         migration_template "create_rails_tool_views.rb", "db/migrate/create_rails_tool_views.rb"
         migration_template "add_rails_tool_views_lifecycle.rb", "db/migrate/add_rails_tool_views_lifecycle.rb"
         template "rails_tool_views.rb", "config/initializers/rails_tool_views.rb"
-        route 'mount RailsToolViews::Engine => "/rails_tool_views", as: :rails_tool_views'
+        if behavior == :invoke && engine_mounted?
+          say_status :skip, "config/routes.rb already mounts RailsToolViews::Engine", :yellow
+        else
+          route 'mount RailsToolViews::Engine => "/rails_tool_views", as: :rails_tool_views'
+        end
+      end
+
+      private
+      # A host may keep the :rails_tool_views name under its own path; a second
+      # mount with that name stops the routes from loading.
+      def engine_mounted?
+        routes = File.join(destination_root, "config/routes.rb")
+        File.file?(routes) && File.read(routes).match?(/^\s*mount\s+(::)?RailsToolViews::Engine\b/)
       end
     end
   end

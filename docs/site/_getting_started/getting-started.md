@@ -31,7 +31,7 @@ Use a patched Rails release. The compatibility suite covers Rails 7.2.3.2 and 8.
 
 For a local checkout, use `gem "rails_tool_views", path: "/path/to/rails_tool_views"` in the host Gemfile instead. Install `view_component` separately only if you use that renderer. RubyLLM is optional.
 
-The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. An earlier unpublished development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
+The installer creates four tables, a fail-closed initializer, and a mount named `:rails_tool_views`. Keep that name if you change the URL path. When `config/routes.rb` already mounts the Engine, the installer leaves that mount alone and adds no second one. An earlier unpublished development host follows [Upgrading]({% link _reference/upgrading.md %}) instead of running the installer again.
 
 For a new Partial, use the [component generator]({% link _core_features/component-generator.md %}) to create closed schemas and denied policies. The complete registration below also works for an existing Partial.
 

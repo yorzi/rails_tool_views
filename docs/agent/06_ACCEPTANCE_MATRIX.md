@@ -184,3 +184,7 @@ FR-02/04/06/07, NFR-03/05 LOCAL_PASS on the uncommitted 1.0.1 tree, which is the
 ## WORK-20261028-03 — 1.0.1 verified public delivery
 
 FR-02/04/06/07, NFR-03/05 RELEASE_PASS: immutable v1.0.1→7f50284; main CI 40615340900 (seven jobs incl. PostgreSQL, browser, adapter on RubyLLM 2.1.0 and 2.0.0)/Docs 40615340842, tag CI 40615530643, Release 40615530715 (nine jobs), Pages 40615978017 all PASS. Published SHA b35d7926… matches API/download/asset/SHA256SUMS; 35 files identical to a local build of 7f50284; empty GEM_HOME registry install (57 gems) loads 1.0.1 without ruby_llm. Stable 1.0.1, `/next/`, `/v0/` HTTPS PASS, 19 entries 200, internal paths 404. Condition 5 and condition 6's independent review/formal disposition: still NOT_MET, waived by DELTA-008. See ../evidence/RELEASE_1_0_1.md.
+
+## WORK-20261030-01 — installer keeps an existing mount
+
+FR-01 installation LOCAL_PASS on Ruby 3.3.5 / Rails 8.1.4 SQLite: core 148/1268 with eager load, including `test/install_generator_test.rb` (4/14). The consumer's duplicate-mount failure (rails_ai_admin DEP-006) no longer occurs for a custom path. Process-wide configuration (DEP-001) is a documented constraint, not a defect; no runtime change.

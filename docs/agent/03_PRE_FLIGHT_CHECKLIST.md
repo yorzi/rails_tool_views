@@ -163,3 +163,13 @@ Owner request in this session: review the changes on `claude/laughing-pasteur-p1
 用户要求制定计划，并明确选择仓库内独立 Rails demo。起点 `main` / `d2ec23f`，工作树干净。已读入口、基线、human 状态、实施/当前工作、Spec Delta、pre/post-flight、维护契约、ROADMAP、demo/adapter 指南及当前代码与测试。外部 Specs HEAD 与 pinned revision 不同；使用 pinned `0ea28b1` 对象比较，59 个本地参考文件完全一致。只规划，不修改应用行为、公共契约、依赖、schema 或 Specs；分类 IMPLEMENTATION_ALIGNED / PROPOSED。计划存入忽略的 `drafts/`，未来验收保持未执行。
 
 随后用户要求“submit changes wisely”，本单元提交 `.gitignore` 与规划维护记录，使用相同 Work-ID。草稿不暂存；不创建应用、推送、打 tag 或发布。
+
+## WORK-20261030-01..03 — consumer dependency findings and 1.0.2
+
+Owner request in this session: verify the rails_tool_views items in the rails_ai_admin draft `drafts/dependency-issues.md` (a local file in that repository, read only), address the real ones and release 1.0.2. Authorization recorded in SPEC_BASELINE (2026-10-30). Base `9c7bc75` on `main`, clean tree, 1.0.1 published.
+
+- [x] Read AGENTS, entrypoint, Current Work, maintenance contract, release checklist, the install generator, `core.rb` configuration/registry, `SurfacesHelper` route selection, and the Getting Started, Configuration and Public Contract guides.
+- [x] Baseline: core 144/1254 at 1.0.1 (WORK-20261028-02 record); the new behavior is probed directly below.
+- [x] DEP-006 reproduced on the source checkout: running the installer in a host whose routes already have `mount RailsToolViews::Engine => "/product_surfaces", as: :rails_tool_views` appends the default mount with the same name. A host following the documented "keep that name if you change the URL path" then fails to load routes. A rerun on the default path does not duplicate (Thor skips identical text). Classification: IMPLEMENTATION_BUG.
+- [x] DEP-001 checked against the contract: configuration, registry and mount name are process-wide by design, and the guides already say configuration is process-local and the mount must be named `:rails_tool_views`. The consumer's own record says a singleton alone is not an upstream bug. Classification: documented constraint, not a defect. Separate runtimes per process would be a new capability, so it goes to ROADMAP as an owner decision; 1.0.2 only documents the sharing rule.
+- [x] Scope limit: no schema, migration, runtime dependency or public contract change; the generator output for a fresh host is unchanged.

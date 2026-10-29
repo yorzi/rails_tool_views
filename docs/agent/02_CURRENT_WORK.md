@@ -1,5 +1,11 @@
 # Current work
 
+## Owner-authorized consumer findings and 1.0.2 release (2026-10-30)
+
+- [x] WORK-20261030-01: rails_ai_admin DEP-006 fixed (installer keeps an existing Engine mount); DEP-001 confirmed as a documented process-wide constraint, documented in Configuration and listed as an owner decision in ROADMAP.
+- [ ] WORK-20261030-02: 1.0.2 metadata, changelog, release history and full local release checks.
+- [ ] WORK-20261030-03: push `main`, exact CI/Docs, annotated `v1.0.2`, OIDC publication, registry/checksum/Release, hosted docs, delivery evidence.
+
 ## Owner-requested standalone demo planning (2026-10-28)
 
 - [x] WORK-20261028-04：制定仓库内独立 Rails demo 计划；owner 选择独立宿主以验证真实 gem 接入。范围为 `examples/demo/`、普通组件往返与持久化 RubyLLM 回复审阅，默认离线。

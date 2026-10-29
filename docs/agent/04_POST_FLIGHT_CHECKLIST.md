@@ -259,3 +259,11 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Current Work、pre-flight、Progress Ledger 已记录；human 架构图/运行流程、实际验收矩阵和操作手册无当前实现变化，不改写。
 - [x] Markdown 本地链接和 diff 空白检查通过。运行时测试未运行：仅规划；未来行为与 live provider 验证未标为通过。
 - [x] 用户随后要求提交；本提交仅含 `.gitignore` 与规划维护记录，草稿不暂存。未 push 或发布；未调用 provider，未启动服务、watcher、driver 或 worker。
+
+## WORK-20261030-01 — installer mount fix and shared-runtime docs
+
+- [x] The installer skips the default mount when `config/routes.rb` already mounts `RailsToolViews::Engine` (with or without `::`, ignoring commented lines) and says so; `rails destroy` still removes the default mount.
+- [x] Four installer tests: fresh host and rerun keep one mount that draws; two existing custom mounts stay byte-identical and draw at their path; a commented mount does not count; revoke removes the default mount. Against the 1.0.1 generator the custom-mount test fails; removing the revoke guard, the `::` form or the line anchor each fails a test.
+- [x] Core 148/1268 with eager load on Ruby 3.3.5 / Rails 8.1.4. Remaining matrix runs with the 1.0.2 candidate (WORK-20261030-02).
+- [x] Getting Started, Configuration ("Share One Runtime"), CHANGELOG Unreleased and ROADMAP updated. Nothing breaks existing code, so Upgrading is unchanged.
+- [x] No server or background process started. No push, tag or publication in this commit.

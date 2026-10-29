@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix: `rails_tool_views:install` added a second `:rails_tool_views` mount when `config/routes.rb` already mounted the Engine at another path, and the host's routes then failed to load with `Invalid route name, already in use`. The installer now leaves an existing mount alone and reports that it skipped the route.
+- Docs: Configuration explains that the configuration, the registry and the mount are shared by every gem in the process, and what a gem that registers components should leave to the host.
+
 ## [1.0.1] - 2026-10-28
 
 No migration or runtime dependency. Data saved by 0.1.0 through 1.0.0 upgrades unchanged. Hosts that load the RubyLLM adapter need RubyLLM 2.0 or later; see the Upgrading guide.

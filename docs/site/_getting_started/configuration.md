@@ -15,6 +15,7 @@ After reading this guide, you will know:
 * Configure authenticated actor and tenant resolution.
 * Choose controller inheritance and delivery behavior.
 * Find the default runtime limits.
+* Share one runtime with other gems in the same process.
 
 ## Resolve Identity in the Host
 
@@ -61,6 +62,20 @@ Limits bound payloads, nesting, catalogs, and accepted action throughput. They d
 | `reconciliation_policy` | `nil` | Authorize `reconcile_delivery`; unset denies |
 
 Use `RailsToolViews.reset_registry!` in a reload hook to clear definitions while retaining configuration. `RailsToolViews.reset!` clears both and belongs in isolated tests.
+
+## Share One Runtime
+
+An admin engine or another gem in your application may present Surfaces too. It shares your runtime: there is one configuration, one registry and one mount per process.
+
+```ruby
+RailsToolViews.configure { |config| config.scope_resolver = host_resolver }
+RailsToolViews.configure { |config| config.scope_resolver = admin_resolver }
+RailsToolViews.configuration.scope_resolver # => admin_resolver, for every request
+```
+
+The last assignment wins for every Surface, so a second resolver or adapter changes who is authorized and how follow-ups are delivered for your own components too. Action forms always post to the mount named `:rails_tool_views`, whichever code renders them.
+
+Keep `RailsToolViews.configure` in the host application. A gem that registers components should use its own key prefix, such as `admin_`, and document the scope, policies and adapter it expects from the host. Separate configurations or registries in one process are not supported.
 
 ## Next Steps
 

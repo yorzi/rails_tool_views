@@ -33,6 +33,8 @@ The adapter stays experimental until each gap below closes. The provider-free co
 
 These trade-offs came up in the audit. Each is a documented 1.0 behavior, so changing a default is a breaking change.
 
+- **One runtime per process.** Configuration, registry and mount are process-wide, so an admin engine that presents Surfaces inside a host shares the host's scope resolver, adapter and routes. A consumer found this on 2026-10-29; Configuration now documents it. Options: keep one runtime and leave configuration to the host, or design namespaced runtimes as an additive minor once a second consumer shows it needs separate authority.
+
 - **Follow-up recorded as skipped.** When the process that commits an action has no adapter configured, its follow-up is recorded `skipped` for good (ADR 010 keeps FR-06-AC-03). A web tier without adapter configuration in front of a worker that has one drops follow-up work without an error. Options: keep it and document it more prominently, or add an opt-in setting that records `pending` regardless of configuration.
 - **Synchronous delivery.** `auto_deliver` is on by default, so with a live model the action request waits for the model. Options: keep it, since fast host callbacks are unaffected, or have the install generator write `auto_deliver = false` together with a job example.
 - **Automatic importmap pin.** The engine could pin `rails_tool_views_controller` itself, as turbo-rails pins its own module. That saves one line in the host but adds public behavior.
