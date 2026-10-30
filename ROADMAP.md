@@ -1,6 +1,6 @@
 # Roadmap
 
-**1.0.1 is published, 2026-10-28.** See [1.0.1 delivery evidence](docs/evidence/RELEASE_1_0_1.md). **1.0.0 was published on 2026-10-26 under an owner exception.** See [delivery evidence](docs/evidence/RELEASE_1_0_0.md). 1.0.0 declares the [public contract](docs/site/_reference/public-contract.md), carries the audit fixes and settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). The [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met. The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived rather than met (DELTA-008). Versions 0.1.0 through 0.4.0 are published; see [0.4 delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Dates are not promised.
+**1.0.2 is published, 2026-10-30.** See [1.0.2 delivery evidence](docs/evidence/RELEASE_1_0_2.md). 1.0.1 was published on 2026-10-28; see [1.0.1 delivery evidence](docs/evidence/RELEASE_1_0_1.md). **1.0.0 was published on 2026-10-26 under an owner exception.** See [delivery evidence](docs/evidence/RELEASE_1_0_0.md). 1.0.0 declares the [public contract](docs/site/_reference/public-contract.md), carries the audit fixes and settles lifecycle semantics: paged cleanup, host-attested delivery reconciliation and loud failure without an adapter (ADR 010). The [readiness record](docs/evidence/RC1_READINESS.md) shows conditions 1, 2 (engineering host), 3 (local) and 4 met. The owner chose to publish 1.0.0 directly, skipping rc1, with conditions 5 and 6's independent review and formal disposition waived rather than met (DELTA-008). Versions 0.1.0 through 0.4.0 are published; see [0.4 delivery evidence](docs/evidence/RELEASE_0_4_0.md). Provider calls and later releases still need their own authorization. Dates are not promised.
 
 The goal is a Rails component runtime that is easy to integrate, safe to operate and stable to upgrade. The core remains independent of AI providers; customer, ticket and content services stay in the host.
 
@@ -8,9 +8,9 @@ The goal is a Rails component runtime that is easy to integrate, safe to operate
 
 1.0.0 is a Semantic Versioning promise for every name the [Public Contract](docs/site/_reference/public-contract.md) lists. Fixes ship as patches, compatible capabilities as minors, and a contract change waits for a major. Everything in this section is proposed. Each release needs the owner's authorization, and dates are not promised.
 
-### 1.0.2, prepared 2026-10-30
+### 1.0.2, published 2026-10-30
 
-A consumer engine, rails_ai_admin, reported two findings on 2026-10-29. Both are addressed without a migration or contract change:
+A consumer engine, rails_ai_admin, reported two findings on 2026-10-29. Both are addressed without a migration or contract change; see [delivery evidence](docs/evidence/RELEASE_1_0_2.md):
 
 - `rails_tool_views:install` keeps an existing Engine mount. Before, a host with the `:rails_tool_views` name under its own path got a duplicate mount and its routes failed to load.
 - One configuration, registry and mount per process is the documented 1.0 design, not a defect. Configuration now explains it; separate runtimes are an owner decision below.
@@ -72,7 +72,7 @@ The sections below record how 1.0 was reached. They are kept as history.
 | 1.0.0.rc1 | Frozen contract | Skipped by owner decision, 2026-10-26 | Conditions 5 and 6 waived for 1.0.0 (DELTA-008) |
 | 1.0.0 | Compatibility commitment | Fixes and final release verification | Owner reviews evidence and authorizes publication |
 
-Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 1.0.1 and 1.0.2 is being released; future publication needs separate authorization.
+Use 0.x.y patches for compatible fixes. Put breaking changes in a planned minor with migration instructions. Add another 0.x iteration only for an unresolved gap, not to fill a version schedule. The public gem is 1.0.2; future publication needs separate authorization.
 
 ### 0.2.0: two small improvements
 

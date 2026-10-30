@@ -4,7 +4,9 @@
 
 - [x] WORK-20261030-01: rails_ai_admin DEP-006 fixed (installer keeps an existing Engine mount); DEP-001 confirmed as a documented process-wide constraint, documented in Configuration and listed as an owner decision in ROADMAP.
 - [x] WORK-20261030-02: 1.0.2 metadata, changelog, release history and full local release checks.
-- [ ] WORK-20261030-03: push `main`, exact CI/Docs, annotated `v1.0.2`, OIDC publication, registry/checksum/Release, hosted docs, delivery evidence.
+- [x] WORK-20261030-03: push `main`, exact CI/Docs, annotated `v1.0.2`, OIDC publication, registry/checksum/Release, hosted docs, delivery evidence.
+
+Published 1.0.2 at 1964ed5; see ../evidence/RELEASE_1_0_2.md. No next iteration, provider call or future release is automatically authorized. The roadmap's "Decisions for the owner", now including one runtime per process, stay open.
 
 ## Owner-requested standalone demo planning (2026-10-28)
 

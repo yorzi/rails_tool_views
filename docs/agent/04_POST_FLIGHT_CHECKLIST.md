@@ -274,3 +274,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] No schema, migration, runtime dependency or public contract change. Lockfile changes are the path version only.
 - [x] Full local release matrix passed (see Acceptance Matrix). Not run locally: PostgreSQL (not installed); remote CI, tag workflow and hosted docs follow in WORK-20261030-03.
 - [x] The browser, package and clean-install checks started their own servers and temporary hosts and removed them; no process from this task remains. An unrelated puma on 127.0.0.1:4319 belongs to another rails_ai_admin session and was left alone.
+
+## WORK-20261030-03 — 1.0.2 delivery
+
+- [x] Owner authorization recorded in SPEC_BASELINE before push. `main` pushed d2ec23f..1964ed5 (including the earlier unpushed WORK-20261028-04 planning commit); exact CI and Docs passed before the annotated tag.
+- [x] Tag CI, Release (nine jobs) and post-release Pages passed. Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the local build. GitHub Release is not a prerelease and is Latest.
+- [x] Stable 1.0.2, `/next/` and `/v0/` serve over HTTPS with the right install commands, the new installer and Configuration text, and canonicals; internal paths 404.
+- [x] No server, provider call or external contact; nothing posted to rails_ai_admin. Download directories, extracted packages and the temporary GEM_HOME removed.

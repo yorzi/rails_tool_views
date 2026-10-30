@@ -1,6 +1,6 @@
 # 项目状态
 
-2026-10-30：owner要求核实rails_ai_admin记录的rails_tool_views问题并发布1.0.2。DEP-006属实已修复：安装器发现已有Engine mount时不再追加同名默认mount（原先会让宿主路由无法加载）。DEP-001不是缺陷：配置、registry与mount按设计在进程内共享，Configuration新增说明，ROADMAP把“每进程一个运行时”列为owner决定。1.0.2候选通过完整本地发布检查，按发布清单推送、跑精确CI、打`v1.0.2`。
+2026-10-30：owner要求核实rails_ai_admin记录的rails_tool_views问题并发布1.0.2。DEP-006属实已修复：安装器发现已有Engine mount时不再追加同名默认mount（原先会让宿主路由无法加载）。DEP-001不是缺陷：配置、registry与mount按设计在进程内共享，Configuration新增说明，ROADMAP把“每进程一个运行时”列为owner决定。**1.0.2已公开发布**（v1.0.2→1964ed5，精确CI七个job含PostgreSQL、tag CI、Release九个job、Pages全部通过，RubyGems/GitHub Release/SHA256SUMS一致，稳定1.0.2、/next/、/v0/已上线），见[交付证据](../evidence/RELEASE_1_0_2.md)。下一步：owner决定路线图“Decisions for the owner”（现含每进程一个运行时）。
 
 2026-10-28：owner要求审阅post-1.0审计并准备1.0.1。审阅无阻塞缺陷，修正demo两处小问题，CI的adapter job增加RubyLLM 2.0.0（新下限）。随后owner授权发布：**1.0.1已公开发布**（v1.0.1→7f50284，main已快进，精确CI/tag CI/Release九个job/Pages全部通过，RubyGems/GitHub Release/SHA256SUMS一致，稳定1.0.1、/next/、/v0/已上线），见[交付证据](../evidence/RELEASE_1_0_1.md)。下一步：owner决定路线图中“Decisions for the owner”三项，以及是否授权1.1适配器稳定化所需的live provider运行。
 

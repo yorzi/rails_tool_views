@@ -657,3 +657,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读CHANGELOG 1.0.2与What's New新节。只改版本与文档元数据。
 
 **下一步：** WORK-20261030-03：推送`main`，检查精确提交的CI与Docs，打`v1.0.2`，再用单独提交记录交付证据。
+
+### WORK-20261030-03 — 1.0.2公开交付与线上验收记录
+
+**内容/映射：** 按owner授权执行发布：`main`从d2ec23f推送到1964ed5（含此前未推送的WORK-20261028-04规划提交）；精确提交的CI 40977195850（7个job，含PostgreSQL、浏览器、RubyLLM 2.1.0与2.0.0）和Docs 40977195868通过后打注释tag `v1.0.2`；tag CI 40977410022、Release 40977410069（9个job，含OIDC发布与GitHub Release）、发布后Pages 40978013823全部通过。新增`docs/evidence/RELEASE_1_0_2.md`；ROADMAP、发布清单、Current Work、实施计划、验收矩阵、post-flight、项目状态与RE_ENTRY改为已发布状态。
+
+**复查/验证：** RubyGems最新版本API为1.0.2，MFA与文档/源码URI正确；API SHA、registry下载、GitHub资产与SHA256SUMS一致（3d169601…）；35个文件与本地候选构建逐字节相同。空GEM_HOME不经Bundler安装57个gem，能加载1.0.2及其安装器且不加载ruby_llm。线上20个HTTPS入口返回200，稳定版安装`--version 1.0.2`并含新安装器说明与“Share One Runtime”，`/next/`从main安装，`/v0/`仍为0.4.0，HTTP跳转HTTPS，内部记录路径404。
+
+**影响/人工复查：** 读RELEASE_1_0_2与RubyGems/GitHub Release页面。只改记录文档，不改gem代码。未调用provider，未对外联系，未在rails_ai_admin仓库发布任何内容。
+
+**下一步：** 推送本记录提交并确认其CI/Docs；owner决定路线图“Decisions for the owner”。rails_ai_admin可将DEP-006标为在1.0.2修复。

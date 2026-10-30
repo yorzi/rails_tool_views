@@ -10,7 +10,7 @@ Andy explicitly authorizes 1.0.0 push, exact remote CI, `v1.0.0`, OIDC publicati
 
 On 2026-10-28 Andy requests the review of the post-1.0 audit and the 1.0.1 preparation. The candidate (version, lockfiles, `released: true`, changelog, release history, What's New and Upgrading) and its local checks are prepared on `claude/laughing-pasteur-p18ora`. Andy then authorized the release and docs on 2026-10-28. 1.0.1 adds no migration or runtime dependency; it raises the adapter's RubyLLM floor to 2.0. Delivery is verified; [actual evidence](../evidence/RELEASE_1_0_1.md) records the tag, runs, checksums and hosted checks.
 
-On 2026-10-30 Andy asks to fix the rails_tool_views findings from the rails_ai_admin consumer and release 1.0.2, which authorizes push, exact remote CI, `v1.0.2`, OIDC publication and docs. 1.0.2 adds no migration, runtime dependency or contract change: the installer keeps an existing Engine mount, and Configuration documents one runtime per process.
+On 2026-10-30 Andy asks to fix the rails_tool_views findings from the rails_ai_admin consumer and release 1.0.2, which authorizes push, exact remote CI, `v1.0.2`, OIDC publication and docs. 1.0.2 adds no migration, runtime dependency or contract change: the installer keeps an existing Engine mount, and Configuration documents one runtime per process. Delivery is verified; [actual evidence](../evidence/RELEASE_1_0_2.md) records the tag, runs, checksums and hosted checks.
 
 Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. 0.3 delivery is verified; [actual evidence](../evidence/RELEASE_0_3_0.md) records the immutable tag, remote runs, published checksums and hosted checks. Prior tags remain immutable.
 
@@ -80,7 +80,7 @@ Each candidate still needs owner authorization, exact remote CI and the evidence
 - Post-release Docs workflow succeeds; stable home/Getting Started name the new release, `/next/` uses the Git branch install command, API/search/llms files work, and HTTPS is enforced. Check canonical URLs and internal-record exclusion.
 - Record outcome in evidence, acceptance, project status and a separate ledger-linked delivery commit. Stop every task-created server.
 
-## Evidence limits retained after 1.0.1
+## Evidence limits retained after 1.0.2
 
 Formal H2/C/R and independent security review remain open. MySQL has arithmetic/index-width coverage but no real migration run. Live-provider behavior, upstream runtime comparison, external setup trials and measured adoption value remain unverified. PostgreSQL evidence must identify the exact local or remote candidate; past green runs do not cover a later commit. These limits do not silently become release approval; the owner's explicit release instruction and the 1.0.0 exception (DELTA-008) are recorded separately.
 
