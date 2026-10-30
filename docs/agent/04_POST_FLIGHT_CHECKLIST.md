@@ -281,3 +281,9 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Tag CI, Release (nine jobs) and post-release Pages passed. Published SHA-256 agrees across RubyGems API, download, GitHub asset and SHA256SUMS; 35 files identical to the local build. GitHub Release is not a prerelease and is Latest.
 - [x] Stable 1.0.2, `/next/` and `/v0/` serve over HTTPS with the right install commands, the new installer and Configuration text, and canonicals; internal paths 404.
 - [x] No server, provider call or external contact; nothing posted to rails_ai_admin. Download directories, extracted packages and the temporary GEM_HOME removed.
+
+## WORK-20261030-04 — installer test isolation
+
+- [x] Reproduced CI's failure locally with seed 10767 (five rendering/controller failures). A stand-in engine with the real name still captured the shared `rails_tool_views` mount helper under lazy route loading, so the draw now renames both the Engine and the mount name.
+- [x] Core 148/1268 on seeds 10767, 48951 and 1 to 8; Rails 7.2 and Ruby 4.0.9 with eager load on seed 10767. The test still fails against the 1.0.1 generator, and the probe still raises on a duplicate name.
+- [x] Test and records only; no gem code or package change. Evidence RELEASE_1_0_2 records the finding.

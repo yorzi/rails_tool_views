@@ -667,3 +667,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读RELEASE_1_0_2与RubyGems/GitHub Release页面。只改记录文档，不改gem代码。未调用provider，未对外联系，未在rails_ai_admin仓库发布任何内容。
 
 **下一步：** 推送本记录提交并确认其CI/Docs；owner决定路线图“Decisions for the owner”。rails_ai_admin可将DEP-006标为在1.0.2修复。
+
+### WORK-20261030-04 — 安装器测试隔离（仅测试）
+
+**内容/映射：** 记录提交7043686的CI在Ruby 4.0与PostgreSQL上失败（seed 10767、48951）。原因是WORK-01新增的安装器测试：它在独立route set中mount真实Engine并使用`:rails_tool_views`名称，而mount helper与Engine的URL前缀是进程内共享的，Rails 8测试中路由又是懒加载；该测试先运行时，dummy宿主的动作表单指向`/product_surfaces`，5个渲染/控制器测试失败。候选与tag的CI恰好用了让它后运行的seed。现在测试用替身engine与替身名称绘制路由。已发布的1.0.2不含测试文件，不受影响。
+
+**复查/验证：** 本地用seed 10767重现5个失败；修复后core 148/1268在10个seed（含两个CI seed）通过，Rails 7.2与Ruby 4.0.9在seed 10767通过。对1.0.1安装器该测试仍失败；替身名称重复时仍抛出`Invalid route name`。
+
+**影响/人工复查：** 读`test/install_generator_test.rb`的`RoutesProbe`与`draw`。只改测试与记录；RELEASE_1_0_2新增“Post-release test-order finding”。
+
+**下一步：** 推送并确认本提交的CI/Docs。

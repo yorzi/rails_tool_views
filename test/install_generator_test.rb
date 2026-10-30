@@ -19,10 +19,19 @@ class InstallGeneratorTest < ActiveSupport::TestCase
     end
   end
 
+  # Stands in for the Engine under another name. Mount helpers are shared by
+  # every route set in the process, so drawing the real Engine or the
+  # :rails_tool_views name here would re-point the dummy host's action URLs.
+  class RoutesProbe < Rails::Engine
+    engine_name "install_probe"
+  end
+
   # Draws the host file into its own route set, as booting the host would.
   def draw(routes_file)
     set = ActionDispatch::Routing::RouteSet.new
-    eval(File.read(routes_file).sub("Rails.application.routes", "set"), binding, routes_file)
+    source = File.read(routes_file).sub("Rails.application.routes", "set")
+      .gsub("RailsToolViews::Engine", "InstallGeneratorTest::RoutesProbe").gsub(":rails_tool_views", ":install_probe")
+    eval(source, binding, routes_file)
     set
   end
 
@@ -30,7 +39,7 @@ class InstallGeneratorTest < ActiveSupport::TestCase
     host("") do |root, routes|
       2.times { install(root) }
       assert_equal 1, File.read(routes).scan(DEFAULT_MOUNT).length
-      assert_equal "/rails_tool_views", draw(routes).named_routes.get(:rails_tool_views).path.spec.to_s
+      assert_equal "/rails_tool_views", draw(routes).named_routes.get(:install_probe).path.spec.to_s
     end
   end
 
@@ -42,7 +51,7 @@ class InstallGeneratorTest < ActiveSupport::TestCase
         output = install(root).first
         assert_equal original, File.read(routes)
         assert_includes output, "already mounts RailsToolViews::Engine"
-        assert_equal "/product_surfaces", draw(routes).named_routes.get(:rails_tool_views).path.spec.to_s
+        assert_equal "/product_surfaces", draw(routes).named_routes.get(:install_probe).path.spec.to_s
       end
     end
   end

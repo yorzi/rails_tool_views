@@ -196,3 +196,7 @@ FR-01/02/04/06/07, NFR-03/05 LOCAL_PASS on the uncommitted 1.0.2 tree, which is 
 ## WORK-20261030-03 — 1.0.2 verified public delivery
 
 FR-01/02/04/06/07, NFR-03/05 RELEASE_PASS: immutable v1.0.2→1964ed5; main CI 40977195850 (seven jobs incl. PostgreSQL, browser, adapter on RubyLLM 2.1.0 and 2.0.0)/Docs 40977195868, tag CI 40977410022, Release 40977410069 (nine jobs), Pages 40978013823 all PASS. Published SHA 3d169601… matches API/download/asset/SHA256SUMS; 35 files identical to the local candidate build; empty GEM_HOME registry install (57 gems) loads 1.0.2 and its installer without ruby_llm. Stable 1.0.2, `/next/`, `/v0/` HTTPS PASS, 20 entries 200, internal paths 404. Condition 5 and condition 6's independent review/formal disposition: still NOT_MET, waived by DELTA-008. See ../evidence/RELEASE_1_0_2.md.
+
+## WORK-20261030-04 — installer test isolation
+
+Test-only. Record-commit CI 40978385564 failed Ruby 4.0 and PostgreSQL on seed order caused by the new installer test. LOCAL_PASS after the fix: core 148/1268 on ten seeds including both CI seeds; Rails 7.2 and Ruby 4.0.9 on seed 10767. Remote CI result for this commit is reported in the session handoff.

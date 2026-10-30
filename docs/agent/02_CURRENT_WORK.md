@@ -6,6 +6,8 @@
 - [x] WORK-20261030-02: 1.0.2 metadata, changelog, release history and full local release checks.
 - [x] WORK-20261030-03: push `main`, exact CI/Docs, annotated `v1.0.2`, OIDC publication, registry/checksum/Release, hosted docs, delivery evidence.
 
+- [x] WORK-20261030-04: the new installer test leaked a mount into the shared route helpers under some seeds (CI red on the record commit); it now draws under a stand-in engine. Test-only.
+
 Published 1.0.2 at 1964ed5; see ../evidence/RELEASE_1_0_2.md. No next iteration, provider call or future release is automatically authorized. The roadmap's "Decisions for the owner", now including one runtime per process, stay open.
 
 ## Owner-requested standalone demo planning (2026-10-28)

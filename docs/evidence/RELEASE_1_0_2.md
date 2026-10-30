@@ -40,3 +40,7 @@ After Pages deployed, 20 HTTPS entries return 200: root, Getting Started, What's
 ## Evidence boundaries
 
 DELTA-008's exception still stands: ROADMAP condition 5 and condition 6's independent security review and formal disposition are waived, not met. The RubyLLM adapter stays experimental; no live provider call or external contact took place, and nothing was posted to the consumer's repository. MySQL stays excluded. 1.0.2 needs no migration. Download directories and the temporary GEM_HOME were removed, and no local server was started for publication.
+
+## Post-release test-order finding
+
+CI on the record commit 7043686 ([run 40978385564](https://github.com/yorzi/rails_tool_views/actions/runs/40978385564)) failed core Ruby 4.0 and PostgreSQL with seeds 10767 and 48951. The cause was the new installer test, not the gem: it drew host routes that mounted the real Engine under `:rails_tool_views`. Mount helpers and the Engine's URL prefix are shared by every route set in the process, and Rails 8 loads routes lazily in tests. When that test ran first, the dummy host's action forms pointed at `/product_surfaces` and five rendering and controller tests failed. The candidate and tag runs used seeds that ran it later. The published package contains no test files, so 1.0.2 is unaffected. WORK-20261030-04 draws the routes under a stand-in engine and name; seeds 10767, 48951 and 1 to 8 pass on Ruby 3.3, seed 10767 on Rails 7.2 and Ruby 4.0.
