@@ -188,3 +188,7 @@ FR-02/04/06/07, NFR-03/05 RELEASE_PASS: immutable v1.0.1→7f50284; main CI 4061
 ## WORK-20261030-01 — installer keeps an existing mount
 
 FR-01 installation LOCAL_PASS on Ruby 3.3.5 / Rails 8.1.4 SQLite: core 148/1268 with eager load, including `test/install_generator_test.rb` (4/14). The consumer's duplicate-mount failure (rails_ai_admin DEP-006) no longer occurs for a custom path. Process-wide configuration (DEP-001) is a documented constraint, not a defect; no runtime change.
+
+## WORK-20261030-02 — 1.0.2 candidate (local)
+
+FR-01/02/04/06/07, NFR-03/05 LOCAL_PASS on the uncommitted 1.0.2 tree, which is the WORK-20261030-02 commit apart from its records: Ruby 3.3.5 / Rails 8.1.4 SQLite core 148/1268 with eager load; Rails 7.2 148/1268; Ruby 4.0.9 148/1268; adapter on RubyLLM 2.1.0 12/83 and on 2.0.0 12/83; docs examples core and adapter; package smoke; upgrades from real 0.1.0, 0.2.0, 0.3.0, 0.4.0, 1.0.0 and 1.0.1 to 1.0.2; bundle-audit (updated DB) clean on Gemfile.lock, seven gemfiles locks and docs; `rake build` and `verify_release.rb` RELEASE_PACKAGE_PASS (35 files, `released: true`); clean install from RubyGems with activated-dependency audit PASS; versioned docs build with 5137 links and 0 broken; Chrome 9/81. PostgreSQL, remote CI, the tag workflow and hosted docs: NOT_RUN locally (no local PostgreSQL); they run on the exact candidate in WORK-20261030-03.

@@ -30,7 +30,7 @@ gem "rails_tool_views", "~> 1.0"
 bundle update rails_tool_views
 ```
 
-There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 1.0.0 and replays it with {{ site.version }}.
+There is no new migration or runtime dependency. Existing Surfaces, action receipts, presentation correlations, component digests and delivery keys remain valid. The upgrade check saves data with every published release from 0.1.0 through 1.0.1 and replays it with {{ site.version }}.
 
 Hosts on 0.3 or earlier first follow the [0.4 upgrade guide](https://github.com/yorzi/rails_tool_views/blob/v0.4.0/docs/site/_reference/upgrading.md). It covers draining old workers and delivering after commit.
 

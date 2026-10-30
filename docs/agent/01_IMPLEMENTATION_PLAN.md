@@ -46,3 +46,7 @@ WORK-20261026-01 owner exception (DELTA-008), 1.0.0 metadata/docs and exact cand
 ## Owner-authorized 1.0.1 release
 
 WORK-20261028-01 review of the post-1.0 audit and RubyLLM 2.0.0 CI → WORK-02 1.0.1 metadata/docs and local release matrix → WORK-03 exact candidate CI, annotated v1.0.1, OIDC publication and hosted acceptance. Evidence: ../evidence/RELEASE_1_0_1.md.
+
+## Owner-authorized 1.0.2 release
+
+WORK-20261030-01 installer keeps an existing Engine mount and shared-runtime docs (rails_ai_admin DEP-006, DEP-001) → WORK-02 1.0.2 metadata/docs and local release matrix → WORK-03 exact candidate CI, annotated v1.0.2, OIDC publication and hosted acceptance.

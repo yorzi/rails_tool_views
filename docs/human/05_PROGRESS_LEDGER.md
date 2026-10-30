@@ -647,3 +647,13 @@ IMPLEMENTATION_BUG 修复（schema 闭合、无参数表单、Rails 提交按钮
 **影响/人工复查：** 读`lib/generators/rails_tool_views/install/install_generator.rb`与Configuration新节。无schema、迁移、依赖或公共契约变化；新宿主的生成结果不变。
 
 **下一步：** WORK-20261030-02：1.0.2版本元数据与完整本地发布检查。
+
+### WORK-20261030-02 — 1.0.2发布候选：版本元数据与完整本地发布检查
+
+**内容/映射：** NFR-03/05与发布清单第1–3步。版本改为1.0.2，7个gemfiles lockfile与Gemfile.lock的path条目同步，`docs/site/_config.yml`为`version: "1.0.2"`。CHANGELOG改为`[1.0.2] - 2026-10-30`并补充无迁移/无依赖说明；发布历史新增1.0.2行；What's New in 1.0新增“Rerun the Installer in 1.0.2”；Upgrading与What's New的升级范围改为0.1.0至1.0.1；`scripts/upgrade_smoke.rb`加入v1.0.1起点；发布清单tag命令改为`v1.0.2`并记录授权；ROADMAP新增1.0.2一节；实施计划、Current Work、验收矩阵、post-flight、项目状态、human changelog与RE_ENTRY同步。
+
+**复查/验证：** 完整本地矩阵全部通过：core 148/1268（Ruby 3.3.5、Rails 7.2、Ruby 4.0.9三种组合）、adapter 12/83（RubyLLM 2.1.0与2.0.0）、docs示例、package smoke、从真实0.1.0/0.2.0/0.3.0/0.4.0/1.0.0/1.0.1升级到1.0.2、更新漏洞库后8个lockfile均无漏洞、build与`verify_release.rb`（35个文件）、RubyGems clean install与激活依赖审计、版本化docs build 5137链接0断链、Chrome 9/81。未运行：PostgreSQL（本机未安装），远端CI、tag workflow、线上docs在WORK-03运行。
+
+**影响/人工复查：** 读CHANGELOG 1.0.2与What's New新节。只改版本与文档元数据。
+
+**下一步：** WORK-20261030-03：推送`main`，检查精确提交的CI与Docs，打`v1.0.2`，再用单独提交记录交付证据。

@@ -267,3 +267,10 @@ No new schema/dependency/provider/permission/DNS or host production migration. D
 - [x] Core 148/1268 with eager load on Ruby 3.3.5 / Rails 8.1.4. Remaining matrix runs with the 1.0.2 candidate (WORK-20261030-02).
 - [x] Getting Started, Configuration ("Share One Runtime"), CHANGELOG Unreleased and ROADMAP updated. Nothing breaks existing code, so Upgrading is unchanged.
 - [x] No server or background process started. No push, tag or publication in this commit.
+
+## WORK-20261030-02 — 1.0.2 candidate
+
+- [x] Version 1.0.2 in the gem, every lockfile path entry and the docs configuration; CHANGELOG dated 2026-10-30; release history row; What's New in 1.0 "Rerun the Installer in 1.0.2"; Upgrading and What's New upgrade range through 1.0.1; upgrade check starts from v1.0.1 too; release checklist tag command `v1.0.2`.
+- [x] No schema, migration, runtime dependency or public contract change. Lockfile changes are the path version only.
+- [x] Full local release matrix passed (see Acceptance Matrix). Not run locally: PostgreSQL (not installed); remote CI, tag workflow and hosted docs follow in WORK-20261030-03.
+- [x] The browser, package and clean-install checks started their own servers and temporary hosts and removed them; no process from this task remains. An unrelated puma on 127.0.0.1:4319 belongs to another rails_ai_admin session and was left alone.

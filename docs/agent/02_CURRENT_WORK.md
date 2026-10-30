@@ -3,7 +3,7 @@
 ## Owner-authorized consumer findings and 1.0.2 release (2026-10-30)
 
 - [x] WORK-20261030-01: rails_ai_admin DEP-006 fixed (installer keeps an existing Engine mount); DEP-001 confirmed as a documented process-wide constraint, documented in Configuration and listed as an owner decision in ROADMAP.
-- [ ] WORK-20261030-02: 1.0.2 metadata, changelog, release history and full local release checks.
+- [x] WORK-20261030-02: 1.0.2 metadata, changelog, release history and full local release checks.
 - [ ] WORK-20261030-03: push `main`, exact CI/Docs, annotated `v1.0.2`, OIDC publication, registry/checksum/Release, hosted docs, delivery evidence.
 
 ## Owner-requested standalone demo planning (2026-10-28)

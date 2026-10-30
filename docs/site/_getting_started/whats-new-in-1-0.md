@@ -16,6 +16,7 @@ After reading this guide, you will know:
 * Recognize registration and identifier errors by their stable codes.
 * Keep focus and styling correct in the browser.
 * Find what 1.0.1 adds for RubyLLM hosts.
+* Rerun the installer safely in 1.0.2.
 
 ## Rely on a Frozen Contract
 
@@ -53,6 +54,10 @@ Focus moves to a Surface's status only after a Turbo replacement. A page load or
 
 The RubyLLM adapter now requires RubyLLM {{ site.requirements.ruby_llm }}. On 1.x it loaded, but every tool call was refused, so the require now raises `Gem::LoadError` instead. [RubyLLM Integration]({% link _advanced/ruby-llm.md %}) shows how to attach `PresentUI` to a chat, render what it presented and continue the same chat after the user acts. The [demo]({% link _getting_started/demo.md %}#talk-to-an-agent) runs that wiring with RubyLLM's real chat loop. Getting Started covers the [Stimulus controller in an importmap host]({% link _getting_started/getting-started.md %}#enable-turbo-updates).
 
+## Rerun the Installer in 1.0.2
+
+`rails_tool_views:install` now leaves an existing Engine mount alone. Before 1.0.2, a host that kept the `:rails_tool_views` name under its own path got a second mount with the same name, and its routes stopped loading. [Configuration]({% link _getting_started/configuration.md %}#share-one-runtime) now explains that every gem in the process shares one configuration, registry and mount.
+
 ## Upgrade
 
-There is no migration or runtime dependency. Data saved by every release from 0.1.0 through 1.0.0 upgrades unchanged. Read [Upgrading]({% link _reference/upgrading.md %}) before you switch.
+There is no migration or runtime dependency. Data saved by every release from 0.1.0 through 1.0.1 upgrades unchanged. Read [Upgrading]({% link _reference/upgrading.md %}) before you switch.

@@ -10,6 +10,8 @@ Andy explicitly authorizes 1.0.0 push, exact remote CI, `v1.0.0`, OIDC publicati
 
 On 2026-10-28 Andy requests the review of the post-1.0 audit and the 1.0.1 preparation. The candidate (version, lockfiles, `released: true`, changelog, release history, What's New and Upgrading) and its local checks are prepared on `claude/laughing-pasteur-p18ora`. Andy then authorized the release and docs on 2026-10-28. 1.0.1 adds no migration or runtime dependency; it raises the adapter's RubyLLM floor to 2.0. Delivery is verified; [actual evidence](../evidence/RELEASE_1_0_1.md) records the tag, runs, checksums and hosted checks.
 
+On 2026-10-30 Andy asks to fix the rails_tool_views findings from the rails_ai_admin consumer and release 1.0.2, which authorizes push, exact remote CI, `v1.0.2`, OIDC publication and docs. 1.0.2 adds no migration, runtime dependency or contract change: the installer keeps an existing Engine mount, and Configuration documents one runtime per process.
+
 Andy explicitly authorizes 0.3.0 push, remote verification, publication and documentation commits on 2026-10-19. 0.3 delivery is verified; [actual evidence](../evidence/RELEASE_0_3_0.md) records the immutable tag, remote runs, published checksums and hosted checks. Prior tags remain immutable.
 
 ## One-time setup
@@ -55,8 +57,8 @@ For local unreleased candidates, use `bundle exec ruby scripts/verify_release.rb
 For this release, after the exact candidate passes remote CI:
 
 ```sh
-git tag -a v1.0.1 -m "Release RailsToolViews 1.0.1"
-git push origin v1.0.1
+git tag -a v1.0.2 -m "Release RailsToolViews 1.0.2"
+git push origin v1.0.2
 ```
 
 The `Release Gem` workflow runs the full reusable compatibility CI (Ruby 3.3 and 4.0, Rails 7.2 and 8.1, optional RubyLLM and PostgreSQL), metadata/package checks, independent dependency resolution, dependency advisories and versioned documentation builds. Only then can the `release` environment publish through OIDC and create the GitHub Release with the gem and SHA256SUMS.
